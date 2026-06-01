@@ -109,7 +109,7 @@ $('copyConnectedBtn').onclick=()=>{const t=$('connectedAddress').textContent;if(
 $('copyReceiveInlineBtn').onclick=()=>{const t=$('receiveAddress').textContent;if(t&&t.startsWith('0x')){navigator.clipboard&&navigator.clipboard.writeText(t);toast('Receive address copied')}else{toast('Connect wallet first')}};
 $('walletStatusBtn').onclick=()=>{if(state.wallet)disconnectWallet();};
 
-const ARC_TESTNET={chainId:'0x4CEF32',chainName:'Arc Testnet',nativeCurrency:{name:'USDC',symbol:'USDC',decimals:18},rpcUrls:['https://rpc.testnet.arc.network'],blockExplorerUrls:['https://testnet.arcscan.app/']};
+const ARC_TESTNET={chainId:'0x4CEF52',chainName:'Arc Testnet',nativeCurrency:{name:'USDC',symbol:'USDC',decimals:18},rpcUrls:['https://rpc.testnet.arc.network'],blockExplorerUrls:['https://testnet.arcscan.app/']};
 function shortAddr(a){return a?a.slice(0,6)+'...'+a.slice(-4):''}
 function setWalletAddress(addr){state.wallet=addr;if($('walletStatus'))$('walletStatus').textContent='Connected: '+shortAddr(addr)+' (click to disconnect)';if($('connectWalletBtn'))$('connectWalletBtn').textContent='Disconnect wallet';if($('connectedAddress'))$('connectedAddress').textContent=addr;if($('receiveAddress'))$('receiveAddress').textContent=addr;makeWalletQr();}
 function disconnectWallet(){state.wallet='';if($('walletStatus'))$('walletStatus').textContent='Not connected';if($('walletNetwork'))$('walletNetwork').textContent='Network: not checked';if($('connectWalletBtn'))$('connectWalletBtn').textContent='Connect wallet';if($('connectedAddress'))$('connectedAddress').textContent='Connect wallet to show address.';if($('receiveAddress'))$('receiveAddress').textContent='Connect wallet to show receive address.';makeWalletQr();toast('Wallet disconnected')}
