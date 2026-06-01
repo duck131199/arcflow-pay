@@ -79,7 +79,7 @@ const TOKENS=[{symbol:'USDC',address:'0x3600000000000000000000000000000000000000
 function balanceKey(symbol,addr){return 'arcflow:lastBalance:'+symbol+':'+(addr||'').toLowerCase()}
 function readStoredBalance(symbol,addr){try{const v=localStorage.getItem(balanceKey(symbol,addr));return v===null?undefined:BigInt(v)}catch(e){return undefined}}
 function storeBalance(symbol,addr,balance){try{localStorage.setItem(balanceKey(symbol,addr),balance.toString())}catch(e){}}
-function addDetectedReceive(amount,token,label){const item={name:label||'Incoming transfer',type:'Direct Receive',date:new Date().toLocaleString(),amount:'+'+amount,token,status:'Detected',order:'Direct wallet receive',ref:'watch_'+Date.now(),fee:formatTxFee(tx),network:'Arc Testnet',from:'Unknown sender',to:state.wallet,hash:'Open address on Arcscan'};invoices.unshift(item);state.selectedInvoice=0;renderInvoices()}
+function addDetectedReceive(amount,token,label){const item={name:label||'Incoming transfer',type:'Direct Receive',date:new Date().toLocaleString(),amount:'+'+amount,token,status:'Detected',order:'Direct wallet receive',ref:'watch_'+Date.now(),fee:'Fee unavailable',network:'Arc Testnet',from:'Unknown sender',to:state.wallet,hash:'Open address on Arcscan'};invoices.unshift(item);state.selectedInvoice=0;renderInvoices()}
 const BALANCE_OF='0x70a08231000000000000000000000000';
 function padAddress(addr){return (addr||'').toLowerCase().replace('0x','').padStart(64,'0')}
 function hexToBigInt(hex){try{return BigInt(hex||'0x0')}catch(e){return 0n}}
@@ -93,6 +93,7 @@ function topicAddress(addr){return '0x'+padAddress(addr)}
 function addrFromTopic(topic){return '0x'+String(topic||'').slice(-40)}
 function hexQty(n){return '0x'+n.toString(16)}
 function shortHash(h){return h?h.slice(0,8)+'...'+h.slice(-6):''}
+function formatTxFee(tx){try{const gas=BigInt(tx.gasUsed||tx.gas||'0');const price=BigInt(tx.gasPrice||'0');if(gas>0n&&price>0n)return formatUnits(gas*price,18)+' USDC';return 'Fee unavailable'}catch(e){return 'Fee unavailable'}}
 async function rpc(method,params){if(window.ethereum)return window.ethereum.request({method,params});const r=await fetch(ARC_TESTNET.rpcUrls[0],{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:Date.now(),method,params})});const j=await r.json();if(j.error)throw new Error(j.error.message||'RPC error');return j.result}
 async function getLatestBlock(){return Number(await rpc('eth_blockNumber',[]))}
 async function getLogsForToken(t,addr,fromBlock,toBlock,direction){const topic=topicAddress(addr);const filter={address:t.address,fromBlock:hexQty(fromBlock),toBlock:hexQty(toBlock),topics:direction==='in'?[TRANSFER_TOPIC,null,topic]:[TRANSFER_TOPIC,topic]};const logs=await rpc('eth_getLogs',[filter]);return logs.map(l=>({log:l,token:t,direction}))}
