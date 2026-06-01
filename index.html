@@ -213,7 +213,7 @@ sync();
 $('createBtn').onclick=()=>{sync();state.created=true;$('emptyOutput').style.display='none';$('paymentOutput').style.display='block';makeQr();toast('Payment link + QR generated')};
 $('copyBtn').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('payLink').textContent);toast('Payment link copied')};
 $('payBtn').onclick=()=>{state.paid=true;toast('Payer confirmed payment with '+state.source);setTimeout(()=>{state.settled=true;sync();$('receiptBox').style.display='block';toast('Payment successful · settled on Arc')},900)};
-$('copyRef').onclick=()=>{const v=invoices[state.selectedInvoice];if(v&&v.type==='Invoice Payment'&&v.ref){navigator.clipboard&&navigator.clipboard.writeText(v.ref);toast('Invoice reference copied')}};
+
 $('copyConnectedBtn').onclick=()=>{const t=$('connectedAddress').textContent;if(t&&t.startsWith('0x')){navigator.clipboard&&navigator.clipboard.writeText(t);toast('Wallet address copied')}};
 $('copyReceiveInlineBtn').onclick=()=>{const t=$('receiveAddress').textContent;if(t&&t.startsWith('0x')){navigator.clipboard&&navigator.clipboard.writeText(t);toast('Receive address copied')}else{toast('Connect wallet first')}};
 $('walletStatusBtn').onclick=()=>{if(state.wallet)disconnectWallet();};
