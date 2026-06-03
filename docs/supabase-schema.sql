@@ -24,7 +24,7 @@ create table if not exists public.arcflow_invoices (
   amount numeric(38, 6) not null check (amount > 0),
   token text not null default 'USDC',
   memo text not null,
-  expiry text not null check (expiry in ('24h', '3days', '7days')),
+  expiry text not null check (expiry in ('6h', '12h', '24h', '3days', '7days')),
   status text not null default 'unpaid' check (status in ('unpaid', 'pending', 'paid', 'expired', 'cancelled')),
   tx_hash text,
   created_at timestamptz not null default now(),
