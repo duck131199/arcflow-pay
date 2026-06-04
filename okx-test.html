@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Arqis OKX Connect Test</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root{color-scheme:dark;--bg:#07130f;--card:#0f211a;--line:#1f3b30;--text:#eefbf4;--muted:#94ad9f;--green:#45d483;--red:#ff6b6b}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#153326,#07130f 60%);color:var(--text);padding:24px}
+    .wrap{max-width:760px;margin:0 auto}.card{background:rgba(15,33,26,.92);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    h1{margin:0 0 8px;font-size:28px}.muted{color:var(--muted);line-height:1.55}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}@media(max-width:640px){.row{grid-template-columns:1fr}}
+    button{border:0;border-radius:14px;padding:14px 16px;font-weight:800;cursor:pointer;color:#04130b;background:var(--green)}button.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
+    pre{white-space:pre-wrap;word-break:break-word;background:#06100c;border:1px solid var(--line);border-radius:14px;padding:14px;max-height:380px;overflow:auto;color:#d7ffe7}
+    .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 10px;margin:4px 4px 4px 0;color:var(--muted);font-size:12px}.ok{color:var(--green)}.bad{color:var(--red)}
+    a{color:var(--green)}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Arqis OKX Connect Test</h1>
+      <p class="muted">Isolated spike page. This does not touch invoices, Supabase, or payment state. It only tests whether OKX Connect can open OKX Wallet and return an EVM session for Arc Testnet.</p>
+      <div>
+        <span class="pill">Arc Testnet</span>
+        <span class="pill">Chain ID 5042002</span>
+        <span class="pill">RPC rpc.testnet.arc.network</span>
+        <span class="pill">No seed phrase</span>
+      </div>
+      <div class="row">
+        <button id="connectBtn">Connect OKX Wallet</button>
+        <button class="secondary" id="clearBtn">Clear log</button>
+      </div>
+      <p class="muted">If OKX Connect generates a mobile universal link, this page will open it after you tap Connect. After approval, return to this page and check whether a session/address appears.</p>
+      <pre id="log">Ready.</pre>
+      <p class="muted"><a href="/">Back to Arqis</a></p>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@okxconnect/universal-provider@1.9.1/dist/okxconnect_universal.min.js"></script>
+  <script>
+    const ARC_CHAIN_ID_DEC = '5042002';
+    const ARC_CHAIN = 'eip155:' + ARC_CHAIN_ID_DEC;
+    const ARC_RPC = 'https://rpc.testnet.arc.network';
+    const ARC_HEX = '0x' + Number(ARC_CHAIN_ID_DEC).toString(16);
+    const logEl = document.getElementById('log');
+    const connectBtn = document.getElementById('connectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    let okxProvider;
+    function log(...args){
+      const line = args.map(x=>typeof x==='string'?x:JSON.stringify(x,null,2)).join(' ');
+      logEl.textContent += '\n' + new Date().toLocaleTimeString() + '  ' + line;
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(...args);
+    }
+    function getOKXUniversalProviderClass(){
+      const g = window.OKXConnectUniversal;
+      log('Global OKXConnectUniversal type:', typeof g);
+      if(!g) return null;
+      log('Global keys:', Object.keys(g).join(', ') || '(none)');
+      return g.OKXUniversalProvider || g.default || g;
+    }
+    async function initOKX(){
+      const Provider = getOKXUniversalProviderClass();
+      if(!Provider || !Provider.init) throw new Error('OKXUniversalProvider.init not found on browser bundle');
+      okxProvider = await Provider.init({
+        DAppMetaData: {
+          name: 'Arqis',
+          icon: 'https://arqis-web.vercel.app/assets/og-arqis.png'
+        }
+      });
+      log('Provider initialized');
+      okxProvider.on && okxProvider.on('display_uri', uri => {
+        log('display_uri:', uri);
+        if(uri && /^https?:|^[a-z][a-z0-9+.-]*:/i.test(uri)) {
+          log('Opening OKX universal link...');
+          setTimeout(()=>{ location.href = uri; }, 300);
+        }
+      });
+      okxProvider.on && okxProvider.on('short_display_uri', uri => log('short_display_uri:', uri));
+      okxProvider.on && okxProvider.on('session_update', session => log('session_update:', session));
+      okxProvider.on && okxProvider.on('session_delete', payload => log('session_delete:', payload));
+      return okxProvider;
+    }
+    async function connectOKX(){
+      connectBtn.disabled = true;
+      try{
+        log('Starting OKX Connect for', ARC_CHAIN);
+        const provider = okxProvider || await initOKX();
+        const params = {
+          namespaces: {},
+          optionalNamespaces: {
+            eip155: {
+              chains: [ARC_CHAIN],
+              defaultChain: ARC_CHAIN_ID_DEC,
+              rpcMap: { [ARC_CHAIN_ID_DEC]: ARC_RPC }
+            }
+          },
+          sessionConfig: {
+            redirect: location.href,
+            openUniversalUrl: true
+          }
+        };
+        log('Connect params:', params);
+        const session = await provider.connect(params);
+        log('Connect session:', session || '(undefined)');
+        if(session && session.namespaces && session.namespaces.eip155){
+          const accounts = session.namespaces.eip155.accounts || [];
+          log('Accounts:', accounts);
+        }
+        try{
+          const accounts = await provider.request({method:'eth_requestAccounts'}, ARC_CHAIN);
+          log('eth_requestAccounts:', accounts);
+        }catch(e){log('eth_requestAccounts error:', e && (e.message || e));}
+        try{
+          const chainId = await provider.request({method:'eth_chainId'}, ARC_CHAIN);
+          log('eth_chainId:', chainId);
+        }catch(e){log('eth_chainId error:', e && (e.message || e));}
+      }catch(e){
+        log('ERROR:', e && (e.stack || e.message || e));
+      }finally{
+        connectBtn.disabled = false;
+      }
+    }
+    clearBtn.onclick = () => { logEl.textContent = 'Ready.'; };
+    connectBtn.onclick = connectOKX;
+  </script>
+</body>
+</html>
