@@ -10,7 +10,7 @@
     *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#153326,#07130f 60%);color:var(--text);padding:24px}
     .wrap{max-width:760px;margin:0 auto}.card{background:rgba(15,33,26,.92);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
     h1{margin:0 0 8px;font-size:28px}.muted{color:var(--muted);line-height:1.55}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}@media(max-width:640px){.row{grid-template-columns:1fr}}
-    button{border:0;border-radius:14px;padding:14px 16px;font-weight:800;cursor:pointer;color:#04130b;background:var(--green)}button.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:not-allowed}
+    button{border:0;border-radius:14px;padding:14px 16px;font-weight:800;cursor:pointer;color:#04130b;background:var(--green)}button.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:not-allowed}.row{grid-template-columns:1fr 1fr 1fr}@media(max-width:640px){.row{grid-template-columns:1fr}}
     pre{white-space:pre-wrap;word-break:break-word;background:#06100c;border:1px solid var(--line);border-radius:14px;padding:14px;max-height:380px;overflow:auto;color:#d7ffe7}
     .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 10px;margin:4px 4px 4px 0;color:var(--muted);font-size:12px}.ok{color:var(--green)}.bad{color:var(--red)}
     a{color:var(--green)}
@@ -20,7 +20,7 @@
   <main class="wrap">
     <section class="card">
       <h1>Arqis OKX Connect Test</h1>
-      <p class="muted">Isolated spike page. This does not touch invoices, Supabase, or payment state. It only tests whether OKX Connect can open OKX Wallet and return an EVM session for Arc Testnet.</p>
+      <p class="muted">Isolated spike page. This does not touch invoices, Supabase, or payment state. It tests whether OKX Connect can open OKX Wallet and return an EVM session. Try Ethereum first; if that works, try Arc Testnet.</p>
       <div>
         <span class="pill">Arc Testnet</span>
         <span class="pill">Chain ID 5042002</span>
@@ -28,7 +28,8 @@
         <span class="pill">No seed phrase</span>
       </div>
       <div class="row">
-        <button id="connectBtn">Connect OKX Wallet</button>
+        <button id="connectEthBtn">Test OKX on Ethereum</button>
+        <button class="secondary" id="connectArcBtn">Test OKX on Arc</button>
         <button class="secondary" id="clearBtn">Clear log</button>
       </div>
       <p class="muted">If OKX Connect generates a mobile universal link, this page will open it after you tap Connect. After approval, return to this page and check whether a session/address appears.</p>
@@ -43,7 +44,8 @@
     const ARC_RPC = 'https://rpc.testnet.arc.network';
     const ARC_HEX = '0x' + Number(ARC_CHAIN_ID_DEC).toString(16);
     const logEl = document.getElementById('log');
-    const connectBtn = document.getElementById('connectBtn');
+    const connectEthBtn = document.getElementById('connectEthBtn');
+    const connectArcBtn = document.getElementById('connectArcBtn');
     const clearBtn = document.getElementById('clearBtn');
     let okxProvider;
     function log(...args){
@@ -81,48 +83,62 @@
       okxProvider.on && okxProvider.on('session_delete', payload => log('session_delete:', payload));
       return okxProvider;
     }
-    async function connectOKX(){
-      connectBtn.disabled = true;
-      try{
-        log('Starting OKX Connect for', ARC_CHAIN);
-        const provider = okxProvider || await initOKX();
-        const params = {
-          namespaces: {},
-          optionalNamespaces: {
-            eip155: {
-              chains: [ARC_CHAIN],
-              defaultChain: ARC_CHAIN_ID_DEC,
-              rpcMap: { [ARC_CHAIN_ID_DEC]: ARC_RPC }
-            }
-          },
-          sessionConfig: {
-            redirect: location.href,
-            openUniversalUrl: true
+    function describeError(e){
+      if(!e) return '(empty error)';
+      return {name:e.name, code:e.code, message:e.message, stack:e.stack, raw:String(e)};
+    }
+    function ethParams(){
+      return {
+        namespaces: {
+          eip155: { chains: ['eip155:1'], defaultChain: '1' }
+        },
+        sessionConfig: { openUniversalUrl: true }
+      };
+    }
+    function arcParams(){
+      return {
+        namespaces: {},
+        optionalNamespaces: {
+          eip155: {
+            chains: [ARC_CHAIN],
+            defaultChain: ARC_CHAIN_ID_DEC,
+            rpcMap: { [ARC_CHAIN_ID_DEC]: ARC_RPC }
           }
-        };
+        },
+        sessionConfig: { openUniversalUrl: true }
+      };
+    }
+    async function connectOKX(mode){
+      connectEthBtn.disabled = true;
+      connectArcBtn.disabled = true;
+      const chain = mode === 'arc' ? ARC_CHAIN : 'eip155:1';
+      try{
+        log('Starting OKX Connect mode:', mode, 'chain:', chain);
+        const provider = okxProvider || await initOKX();
+        const params = mode === 'arc' ? arcParams() : ethParams();
         log('Connect params:', params);
         const session = await provider.connect(params);
         log('Connect session:', session || '(undefined)');
-        if(session && session.namespaces && session.namespaces.eip155){
-          const accounts = session.namespaces.eip155.accounts || [];
-          log('Accounts:', accounts);
-        }
+        const ns = session && session.namespaces && session.namespaces.eip155;
+        if(ns){ log('EIP155 namespace:', ns); }
         try{
-          const accounts = await provider.request({method:'eth_requestAccounts'}, ARC_CHAIN);
+          const accounts = await provider.request({method:'eth_requestAccounts'}, chain);
           log('eth_requestAccounts:', accounts);
-        }catch(e){log('eth_requestAccounts error:', e && (e.message || e));}
+        }catch(e){log('eth_requestAccounts error:', describeError(e));}
         try{
-          const chainId = await provider.request({method:'eth_chainId'}, ARC_CHAIN);
+          const chainId = await provider.request({method:'eth_chainId'}, chain);
           log('eth_chainId:', chainId);
-        }catch(e){log('eth_chainId error:', e && (e.message || e));}
+        }catch(e){log('eth_chainId error:', describeError(e));}
       }catch(e){
-        log('ERROR:', e && (e.stack || e.message || e));
+        log('ERROR:', describeError(e));
       }finally{
-        connectBtn.disabled = false;
+        connectEthBtn.disabled = false;
+        connectArcBtn.disabled = false;
       }
     }
     clearBtn.onclick = () => { logEl.textContent = 'Ready.'; };
-    connectBtn.onclick = connectOKX;
+    connectEthBtn.onclick = () => connectOKX('eth');
+    connectArcBtn.onclick = () => connectOKX('arc');
   </script>
 </body>
 </html>
