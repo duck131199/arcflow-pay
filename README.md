@@ -1,6 +1,6 @@
-﻿# ArcFlow Pay Prototype
+﻿# SettleLink Prototype
 
-ArcFlow Pay is a seller-first USDC invoice payment prototype built around Arc.
+SettleLink is a seller-first USDC invoice payment prototype built around Arc.
 
 ## MVP
 
