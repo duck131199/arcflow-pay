@@ -1,6 +1,6 @@
-﻿# SettleLink Prototype
+﻿# Arqis Prototype
 
-SettleLink is a seller-first USDC invoice payment prototype built around Arc.
+Arqis is a seller-first USDC invoice payment prototype built around Arc.
 
 ## MVP
 
