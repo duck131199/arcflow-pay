@@ -2,6 +2,8 @@
 
 Arqis is a seller-first USDC invoice payment prototype built around Arc.
 
+Current MVP: validate the USDC invoice flow on Arc Testnet before adding multi-asset routing, webhooks, production APIs, or automated payment operations.
+
 The current MVP focuses on a simple payment flow for individuals, freelancers, and small businesses:
 
 ```text

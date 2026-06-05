@@ -30,6 +30,8 @@ The following features are out of scope for the first prototype but are useful f
 
 ## Universal Balance Pay
 
+Future roadmap, not part of the current MVP. Multi-asset routing, bridge/swap into USDC, and Dust-to-USDC cleanup will be considered after the core USDC invoice flow is validated.
+
 Future payer-side routing layer:
 
 - Let payers complete a USDC invoice using value from multiple assets and chains
