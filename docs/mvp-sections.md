@@ -12,10 +12,12 @@ The seller creates a payment request with only the minimum required fields:
 - Payment memo / order ID
 - Link expiry
 
-After creation, Arqis shows:
+After creation, Arqis creates an invoice record for the payer. In this prototype, the invoice appears in the payer’s Arqis invoice inbox after wallet connection.
 
-- Payment link
-- QR code
+Planned checkout additions:
+
+- Shareable payment link
+- Invoice QR code
 - Reference code
 
 The seller settlement wallet should be configured once in seller settings in a future version. It should not be entered every time an invoice is created.
@@ -24,7 +26,7 @@ The seller settlement wallet should be configured once in seller settings in a f
 
 Pay Invoice is for the payer.
 
-The payer opens the invoice from a link or QR code and chooses which available asset/source to use.
+The payer opens the invoice from the Arqis invoice inbox and chooses which available asset/source to use. Shareable payment links and invoice QR codes are planned for checkout.
 
 The key product rule is payer control:
 

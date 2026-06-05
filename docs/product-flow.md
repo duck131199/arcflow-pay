@@ -10,17 +10,17 @@ The seller enters only the essential invoice details:
 - Payment memo or order ID
 - Link expiry
 
-Arqis then generates:
+Arqis then creates an invoice record for the payer. In the current prototype, the invoice appears in the payer’s Arqis invoice inbox after wallet connection.
+
+Planned checkout additions include:
 
 - Reference code
-- Payment link
-- QR code
-
-The seller can send the payment link or QR code to the payer.
+- Shareable payment link
+- Invoice QR code
 
 ## 2. Payer Opens the Invoice
 
-The payer opens the payment link or scans the QR code.
+The payer opens the invoice from the Arqis invoice inbox. Shareable payment links and invoice QR codes are planned for the checkout flow.
 
 The payer sees:
 
