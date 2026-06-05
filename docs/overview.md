@@ -33,6 +33,6 @@ This prototype intentionally starts small. It is not trying to become a full pay
 
 ## Current Status
 
-Arqis is currently a testnet prototype with demo data. Wallet balances, transaction hashes, addresses, and invoice history are mocked for product review.
+Arqis is currently an Arc Testnet prototype. Placeholder examples are used before wallet data is loaded. After wallet connection, Arqis fetches real Arc Testnet wallet activity where available.
 
 Future versions can add real wallet connection, Arc RPC reads, backend invoice generation, transaction indexing, and production settlement logic.

@@ -41,4 +41,4 @@ Important distinction:
 
 Direct wallet transfers are useful for testing and receiving funds, but invoice payments should use Create Invoice so the seller can track order/payment history.
 
-Note: Arqis still treats USDC as the primary invoice settlement asset. EURC and cirBTC are useful test assets for future FX, routing, and multi-asset payment experiments.
+Note: Current invoice settlement is designed around USDC. EURC and cirBTC are shown as Arc Testnet assets for setup and future routing experiments, not as default invoice settlement assets.

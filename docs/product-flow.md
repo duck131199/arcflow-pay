@@ -30,25 +30,17 @@ The payer sees:
 - Payment preview
 - Confirmation action
 
-## 3. Payer Chooses How to Pay
+## 3. Payer Pays with USDC on Arc Testnet
 
-The payer controls asset selection.
+In the current MVP, the payer pays with USDC on Arc Testnet.
 
-Arqis should not automatically spend, swap, bridge, or route funds without explicit user confirmation.
-
-The payer can choose a source such as:
-
-- Arc USDC
-- Base USDC
-- Arbitrum USDC
-- Solana USDC
-- Unified Balance
+Multi-chain balances, Unified Balance, cross-chain routing, bridge/swap, and automated asset selection are future roadmap items. Arqis should never automatically spend, swap, bridge, or route funds without explicit user confirmation.
 
 ## 4. Payment Settles on Arc
 
 After confirmation, payment settlement is represented as USDC settlement on Arc.
 
-In the current prototype, settlement is mocked. In a production version, this step would require wallet transactions, routing/bridging logic where applicable, transaction monitoring, and final settlement indexing.
+In the current prototype, the core checkout is designed around USDC on Arc Testnet. Production-grade payment operations, routing/bridging where applicable, transaction monitoring, and final settlement indexing are future additions.
 
 ## 5. Seller Tracks Payment
 
