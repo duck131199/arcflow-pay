@@ -1,6 +1,6 @@
 ﻿# Product Flow
 
-ArcFlow Pay is designed around a simple seller-to-payer payment flow.
+Arqis is designed around a simple seller-to-payer payment flow.
 
 ## 1. Seller Creates an Invoice
 
@@ -10,7 +10,7 @@ The seller enters only the essential invoice details:
 - Payment memo or order ID
 - Link expiry
 
-ArcFlow then generates:
+Arqis then generates:
 
 - Reference code
 - Payment link
@@ -34,7 +34,7 @@ The payer sees:
 
 The payer controls asset selection.
 
-ArcFlow should not automatically spend, swap, bridge, or route funds without explicit user confirmation.
+Arqis should not automatically spend, swap, bridge, or route funds without explicit user confirmation.
 
 The payer can choose a source such as:
 

@@ -1,6 +1,6 @@
 ﻿# Arc Testnet Setup
 
-ArcFlow Pay currently targets Arc Testnet for prototype testing.
+Arqis currently targets Arc Testnet for prototype testing.
 
 ## Network Details
 
@@ -41,4 +41,4 @@ Important distinction:
 
 Direct wallet transfers are useful for testing and receiving funds, but invoice payments should use Create Invoice so the seller can track order/payment history.
 
-Note: ArcFlow Pay still treats USDC as the primary invoice settlement asset. EURC and cirBTC are useful test assets for future FX, routing, and multi-asset payment experiments.
+Note: Arqis still treats USDC as the primary invoice settlement asset. EURC and cirBTC are useful test assets for future FX, routing, and multi-asset payment experiments.

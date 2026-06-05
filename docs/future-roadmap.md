@@ -1,6 +1,6 @@
 ﻿# Future Roadmap
 
-ArcFlow Pay is intentionally starting with a small invoice payment MVP.
+Arqis is intentionally starting with a small invoice payment MVP.
 
 The following features are out of scope for the first prototype but are useful future directions.
 
@@ -34,12 +34,12 @@ Future payer-side routing layer:
 
 - Let payers complete a USDC invoice using value from multiple assets and chains
 - Example: invoice is 1,000 USDC, payer has 500 USDC + 250 BNB + 100 ETH + 300 BTC value
-- ArcFlow proposes a route that can swap/bridge selected assets into USDC
+- Arqis proposes a route that can swap/bridge selected assets into USDC
 - Seller still receives clean USDC settlement on Arc
 - Payer must explicitly review and confirm the route before any swap, bridge, or spend happens
 - Receipt should show route transparency for the payer while keeping seller settlement simple
 
-This makes ArcFlow Pay more than a payment link: it becomes a payment router for people who have enough value, but not all in the right asset or chain.
+This makes Arqis more than a payment link: it becomes a payment router for people who have enough value, but not all in the right asset or chain.
 
 ## Dust-to-USDC / Small Balance Cleanup
 
@@ -48,14 +48,14 @@ Future wallet utility inside checkout:
 - Detect small token balances, for example assets worth less than 5 USD
 - Ask the payer whether they want to hide small balances or convert them into USDC
 - Let payer batch tiny balances into USDC where liquidity and fees make sense
-- Use the converted USDC toward invoice payment or keep it as usable ArcFlow balance
+- Use the converted USDC toward invoice payment or keep it as usable Arqis balance
 - Show clear warnings when gas, slippage, or fees would make conversion not worth it
 
 Example UX:
 
 > You have 7 small balances under $5. Hide them, or convert eligible balances to USDC?
 
-This is inspired by the common exchange pattern of hiding small assets or converting dust, but ArcFlow should optimize toward USDC because the payment product settles around USDC.
+This is inspired by the common exchange pattern of hiding small assets or converting dust, but Arqis should optimize toward USDC because the payment product settles around USDC.
 
 ## API + Webhooks
 

@@ -1,6 +1,6 @@
-﻿# ArcFlow Pay
+﻿# Arqis
 
-ArcFlow Pay is a seller-first USDC invoice payment prototype built around Arc.
+Arqis is a seller-first USDC invoice payment prototype built around Arc.
 
 The current MVP focuses on a simple payment flow for individuals, freelancers, and small businesses:
 
@@ -31,6 +31,6 @@ This prototype intentionally starts small. It is not trying to become a full pay
 
 ## Current Status
 
-ArcFlow Pay is currently a testnet prototype with demo data. Wallet balances, transaction hashes, addresses, and invoice history are mocked for product review.
+Arqis is currently a testnet prototype with demo data. Wallet balances, transaction hashes, addresses, and invoice history are mocked for product review.
 
 Future versions can add real wallet connection, Arc RPC reads, backend invoice generation, transaction indexing, and production settlement logic.

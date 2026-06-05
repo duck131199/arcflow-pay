@@ -1,6 +1,6 @@
 ﻿# MVP Sections
 
-ArcFlow Pay currently focuses on four sections.
+Arqis currently focuses on four sections.
 
 ## Create Invoice
 
@@ -12,7 +12,7 @@ The seller creates a payment request with only the minimum required fields:
 - Payment memo / order ID
 - Link expiry
 
-After creation, ArcFlow shows:
+After creation, Arqis shows:
 
 - Payment link
 - QR code
@@ -28,7 +28,7 @@ The payer opens the invoice from a link or QR code and chooses which available a
 
 The key product rule is payer control:
 
-> ArcFlow should not automatically spend, swap, bridge, or route funds without explicit payer confirmation.
+> Arqis should not automatically spend, swap, bridge, or route funds without explicit payer confirmation.
 
 The payment screen should feel like opening a wallet, checking available balances, selecting a source, and confirming payment.
 
