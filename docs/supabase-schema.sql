@@ -1,4 +1,4 @@
--- ArcFlow Pay MVP Supabase schema
+-- Arqis MVP Supabase schema
 -- Run this in Supabase SQL Editor after creating a project.
 
 create extension if not exists pgcrypto;
