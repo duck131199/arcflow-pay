@@ -1,4 +1,4 @@
--- ArcFlow Pay migration: allow shorter invoice expiry options.
+-- Arqis migration: allow shorter invoice expiry options.
 -- Run this once in Supabase SQL Editor.
 
 alter table public.arcflow_invoices
