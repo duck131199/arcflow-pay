@@ -6,4 +6,4 @@ alter table public.arcflow_invoices
 
 alter table public.arcflow_invoices
   add constraint arcflow_invoices_expiry_check
-  check (expiry in ('6h', '12h', '24h', '3days', '7days'));
+  check (expiry in ('6h', '12h', '24h', '3d', '7d'));
