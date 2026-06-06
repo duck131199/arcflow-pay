@@ -1,0 +1,18 @@
+{
+  "name": "Arqis",
+  "short_name": "Arqis",
+  "description": "USDC invoice records, testnet checkout flows, and seller payment tracking on Arc Testnet.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
