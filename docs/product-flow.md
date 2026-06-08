@@ -1,4 +1,4 @@
-﻿# Product Flow
+# Product Flow
 
 Arqis is designed around a simple seller-to-payer payment flow.
 
@@ -38,9 +38,9 @@ Multi-chain balances, Unified Balance, cross-chain routing, bridge/swap, and aut
 
 ## 4. Payment Settles on Arc
 
-After confirmation, payment settlement is represented as USDC settlement on Arc.
+After wallet/network confirmation, the prototype records the submitted Arc Testnet transaction for the invoice.
 
-In the current prototype, the core checkout is designed around USDC on Arc Testnet. Production-grade payment operations, routing/bridging where applicable, transaction monitoring, and final settlement indexing are future additions.
+In the current prototype, the core checkout is designed around USDC on Arc Testnet. Production-grade server-side payment verification, routing/bridging where applicable, transaction monitoring, and final settlement indexing are future additions.
 
 ## 5. Seller Tracks Payment
 
@@ -52,5 +52,6 @@ Seller Console answers:
 - How much was paid?
 - What is the status?
 - What is the reference code?
-- What transaction hash proves payment?
+- What transaction hash can be inspected on Arcscan?
 - Where can the transaction be viewed on Arcscan?
+
