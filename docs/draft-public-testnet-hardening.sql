@@ -19,14 +19,14 @@ alter table public.arcflow_invoices
 
 alter table public.arcflow_invoices
   add constraint arcflow_invoices_memo_length_check
-  check (char_length(memo) between 1 and 240);
+  check (char_length(memo) between 1 and 99);
 
 alter table public.arcflow_invoices
   drop constraint if exists arcflow_invoices_amount_public_testnet_check;
 
 alter table public.arcflow_invoices
   add constraint arcflow_invoices_amount_public_testnet_check
-  check (amount > 0 and amount <= 100000);
+  check (amount >= 1 and amount <= 50000);
 
 alter table public.arcflow_invoices
   drop constraint if exists arcflow_invoices_tx_hash_format_check;
@@ -77,9 +77,9 @@ create policy "arcflow invoices public create unpaid"
   with check (
     status = 'unpaid'
     and token = 'USDC'
-    and amount > 0
-    and amount <= 100000
-    and char_length(memo) between 1 and 240
+    and amount >= 1
+    and amount <= 50000
+    and char_length(memo) between 1 and 99
     and tx_hash is null
     and paid_at is null
     and expires_at > now()
