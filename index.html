@@ -209,8 +209,8 @@ $('faucetBtn').onclick=()=>window.open('https://faucet.circle.com','_blank'); ma
 restoreScreen();
 setInterval(refreshActiveScreen,5000);window.addEventListener('focus',refreshActiveScreen);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshActiveScreen()});
 ['amount','memo','expiry'].forEach(id=>$(id).addEventListener('input',sync));
-if($('billTo'))$('billTo').addEventListener('input',()=>scheduleResolveBillTo('name'));
-if($('billToWallet'))$('billToWallet').addEventListener('input',()=>scheduleResolveBillTo('wallet'));
+function bindBillToSync(){const nameInput=$('billTo');const walletInput=$('billToWallet');if(nameInput)nameInput.oninput=()=>scheduleResolveBillTo('name');if(walletInput)walletInput.oninput=()=>scheduleResolveBillTo('wallet')}
+bindBillToSync();
 sync();
 </script>
 </body>
