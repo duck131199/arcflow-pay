@@ -113,6 +113,8 @@ function openInOkx(){const url=currentPublicUrl();navigator.clipboard&&navigator
 
 function renderMobileWalletHelp(){const box=$('mobileWalletHelp');if(box)box.style.display=(!activeEthereum())?'block':'none'}
 function validScreen(id){return !!document.getElementById(id)&&!!document.querySelector('.tab[data-screen="'+id+'"]')}
+function activeScreenId(){const el=document.querySelector('.screen.active');return el?el.id:''}
+function refreshActiveScreen(){if(!state.wallet||document.hidden)return;const screen=activeScreenId();if(screen==='create')loadCreatedInvoices();if(screen==='pay'){loadInvoiceInbox();loadPayAssets()}if(screen==='console')loadRealTransactions()}
 function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}}
 function restoreScreen(){let id=(location.hash||'').replace('#','');try{id=id||localStorage.getItem('arcflow:lastScreen')||''}catch(e){}setScreen(validScreen(id)?id:'create',false)}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));
