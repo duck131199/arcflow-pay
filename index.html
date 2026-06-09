@@ -210,7 +210,7 @@ restoreScreen();
 setInterval(refreshActiveScreen,5000);window.addEventListener('focus',refreshActiveScreen);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshActiveScreen()});
 ['amount','memo','expiry'].forEach(id=>$(id).addEventListener('input',sync));
 function bindBillToSync(){const nameInput=$('billTo');const walletInput=$('billToWallet');if(nameInput)nameInput.oninput=()=>scheduleResolveBillTo('name');if(walletInput)walletInput.oninput=()=>scheduleResolveBillTo('wallet')}
-bindBillToSync();
+bindBillToSync();setTimeout(bindBillToSync,0);setTimeout(bindBillToSync,500);
 sync();
 </script>
 </body>
