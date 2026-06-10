@@ -114,7 +114,8 @@ function openInOkx(){const url=currentPublicUrl();navigator.clipboard&&navigator
 function renderMobileWalletHelp(){const box=$('mobileWalletHelp');if(box)box.style.display=(!activeEthereum())?'block':'none'}
 function validScreen(id){return !!document.getElementById(id)&&!!document.querySelector('.tab[data-screen="'+id+'"]')}
 function activeScreenId(){const el=document.querySelector('.screen.active');return el?el.id:''}
-function refreshActiveScreen(){if(!state.wallet)return;const screen=activeScreenId();loadCreatedInvoices();loadInvoiceInbox();loadPayAssets();if(screen==='console')loadRealTransactions()}
+function refreshActiveScreen(){if(!state.wallet)return;loadCreatedInvoices();loadInvoiceInbox();loadPayAssets()}
+function refreshSellerConsole(){if(!state.wallet)return;if(activeScreenId()==='console')loadRealTransactions()}
 function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}}
 function restoreScreen(){let id=(location.hash||'').replace('#','');try{id=id||localStorage.getItem('arcflow:lastScreen')||''}catch(e){}setScreen(validScreen(id)?id:'create',false)}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));
@@ -211,7 +212,7 @@ if(activeEthereum()){activeEthereum().on&&activeEthereum().on('accountsChanged',
 setTimeout(()=>{if(!state.wallet&&walletAutoReconnectAllowed()){const wallets=detectedWallets();const preferred=preferredWalletName().toLowerCase();const picked=(preferred&&wallets.find(w=>walletName(w.info,w.provider).toLowerCase()===preferred))||wallets[0];if(picked){state.walletProvider=picked.provider;state.walletProviderName=walletName(picked.info,picked.provider);restoreWallet()}}},800);
 $('faucetBtn').onclick=()=>window.open('https://faucet.circle.com','_blank'); makeWalletQr();
 restoreScreen();
-setInterval(refreshActiveScreen,10000);window.addEventListener('focus',refreshActiveScreen);window.addEventListener('pageshow',refreshActiveScreen);document.addEventListener('visibilitychange',refreshActiveScreen);
+setInterval(refreshActiveScreen,10000);setInterval(refreshSellerConsole,15000);window.addEventListener('focus',()=>{refreshActiveScreen();refreshSellerConsole()});window.addEventListener('pageshow',()=>{refreshActiveScreen();refreshSellerConsole()});document.addEventListener('visibilitychange',()=>{refreshActiveScreen();refreshSellerConsole()});
 ['amount','memo','expiry'].forEach(id=>$(id).addEventListener('input',sync));
 function bindBillToSync(){const nameInput=$('billTo');const walletInput=$('billToWallet');if(nameInput&&!nameInput.oninput)nameInput.oninput=()=>scheduleResolveBillTo('name');if(walletInput&&!walletInput.oninput)walletInput.oninput=()=>scheduleResolveBillTo('wallet')}
 bindBillToSync();
