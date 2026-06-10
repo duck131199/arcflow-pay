@@ -211,7 +211,7 @@ if(activeEthereum()){activeEthereum().on&&activeEthereum().on('accountsChanged',
 setTimeout(()=>{if(!state.wallet&&walletAutoReconnectAllowed()){const wallets=detectedWallets();const preferred=preferredWalletName().toLowerCase();const picked=(preferred&&wallets.find(w=>walletName(w.info,w.provider).toLowerCase()===preferred))||wallets[0];if(picked){state.walletProvider=picked.provider;state.walletProviderName=walletName(picked.info,picked.provider);restoreWallet()}}},800);
 $('faucetBtn').onclick=()=>window.open('https://faucet.circle.com','_blank'); makeWalletQr();
 restoreScreen();
-setInterval(refreshActiveScreen,5000);window.addEventListener('focus',refreshActiveScreen);window.addEventListener('pageshow',refreshActiveScreen);document.addEventListener('visibilitychange',refreshActiveScreen);
+setInterval(refreshActiveScreen,10000);window.addEventListener('focus',refreshActiveScreen);window.addEventListener('pageshow',refreshActiveScreen);document.addEventListener('visibilitychange',refreshActiveScreen);
 ['amount','memo','expiry'].forEach(id=>$(id).addEventListener('input',sync));
 function bindBillToSync(){const nameInput=$('billTo');const walletInput=$('billToWallet');if(nameInput&&!nameInput.oninput)nameInput.oninput=()=>scheduleResolveBillTo('name');if(walletInput&&!walletInput.oninput)walletInput.oninput=()=>scheduleResolveBillTo('wallet')}
 bindBillToSync();
