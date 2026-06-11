@@ -142,7 +142,7 @@ $('createBtn').onclick=async()=>{sync();const amountInput=($('amount')&&$('amoun
 function effectiveInvoiceStatus(v){if(isInvoiceExpired(v))return 'expired';if(v.paid_at||v.chain_confirmed)return 'paid';if(v.status==='cancelled')return 'cancelled';if(v.tx_hash)return 'submitted';return 'pending'}
 function invoiceTimeMs(value){if(!value)return NaN;if(value instanceof Date)return value.getTime();const raw=String(value).trim();const dmy=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:,?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);if(dmy){const [,dd,mm,yyyy,hh='0',mi='0',ss='0']=dmy;return new Date(Number(yyyy),Number(mm)-1,Number(dd),Number(hh),Number(mi),Number(ss)).getTime()}const ts=Date.parse(raw);return Number.isFinite(ts)?ts:NaN}
 function isInvoiceExpired(v){const ts=invoiceTimeMs(v&&v.expires_at);return Number.isFinite(ts)&&ts<=Date.now()}
-function isInvoicePayable(v){if(!v||isInvoiceExpired(v))return false;if(v.paid_at||v.chain_confirmed)return false;if(v.status==='cancelled')return false;if(v.tx_hash)return false;return true}
+function isInvoicePayable(v){if(!v||isInvoiceExpired(v))return false;if(v.paid_at||v.chain_confirmed)return false;return true}
 function invoiceStatusLabel(status){return status==='paid'?'Paid':(status==='submitted'?'Payment submitted':(status==='cancelled'?'Cancelled':(status==='expired'?'Expired':'Pending')))}
 function invoiceStatusClass(status){return status==='paid'?'ok':(status==='cancelled'||status==='expired'?'warn':'warn')}
 function fullDateTime(value){return value?new Date(value).toLocaleString('en-GB',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}):'-'}
@@ -233,6 +233,7 @@ sync();
 </script>
 </body>
 </html>
+
 
 
 
