@@ -16,8 +16,6 @@ After creation, Arqis creates an invoice record for the payer. In this prototype
 
 Planned checkout additions:
 
-- Shareable payment link
-- Invoice QR code
 - Reference code
 
 The seller settlement wallet should be configured once in seller settings in a future version. It should not be entered every time an invoice is created.
@@ -26,7 +24,7 @@ The seller settlement wallet should be configured once in seller settings in a f
 
 Pay Invoice is for the payer.
 
-The payer opens the invoice from the Arqis invoice inbox and chooses which available asset/source to use. Shareable payment links and invoice QR codes are planned for checkout.
+The payer opens the invoice from the Arqis invoice inbox and chooses which available asset/source to use.
 
 The key product rule is payer control:
 

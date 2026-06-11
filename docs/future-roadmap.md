@@ -13,7 +13,7 @@ Core direction:
 - The payer opens Arqis, reviews the invoice, and pays from wallet
 - Seller receives USDC and both sides see the invoice lifecycle
 
-Payment links and invoice QR codes are optional future helpers, not the primary product model. Wallet QR remains useful for direct receives, but invoice tracking should live in Arqis inbox/status/receipt flows.
+Wallet QR remains useful for direct receives, but invoice tracking should live in Arqis inbox/status/receipt flows.
 
 The following features are out of scope for the first prototype but are useful future directions.
 
@@ -54,7 +54,7 @@ Future payer-side routing layer:
 - Payer must explicitly review and confirm the route before any swap, bridge, or spend happens
 - Receipt should show route transparency for the payer while keeping seller settlement simple
 
-This makes Arqis more than a payment link: it becomes a payment router for people who have enough value, but not all in the right asset or chain.
+This makes Arqis more than a simple invoice tracker: it becomes a payment router for people who have enough value, but not all in the right asset or chain.
 
 ## Dust-to-USDC / Small Balance Cleanup
 
@@ -84,15 +84,6 @@ This replaces payment-link/QR as the main next product direction after the core 
 - Optional reminders before expiry
 - In-app notification history
 
-## Optional Payment Links / Invoice QR
-
-These are not core to the current Arqis vision. Consider them only for later edge cases:
-
-- Guest payer who does not have an Arqis account
-- Merchant wants to share an invoice outside Arqis
-- Printed invoices or embedded checkout
-
-Do not let payment links or invoice QR drive the main product roadmap.
 
 ## API + Webhooks
 

@@ -15,12 +15,10 @@ Arqis then creates an invoice record for the payer. In the current prototype, th
 Planned checkout additions include:
 
 - Reference code
-- Shareable payment link
-- Invoice QR code
 
 ## 2. Payer Opens the Invoice
 
-The payer opens the invoice from the Arqis invoice inbox. Shareable payment links and invoice QR codes are planned for the checkout flow.
+The payer opens the invoice from the Arqis invoice inbox.
 
 The payer sees:
 

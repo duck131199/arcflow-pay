@@ -175,7 +175,7 @@ Check if QR library or paths changed:
 ```text
 - QR appears where expected
 - browser console does not show QRCode is not defined
-- wallet QR is still described as direct transfer only unless invoice QR checkout is implemented
+- wallet QR is still described as direct transfer only
 ```
 
 ### 9. Docs links

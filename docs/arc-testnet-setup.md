@@ -37,7 +37,6 @@ For direct Arc Testnet asset transfers, show a separate wallet receive address a
 Important distinction:
 
 - Wallet QR = direct receive address only
-- Invoice QR = invoice-specific payment request with amount, memo/order ID, reference code, and expiry
 
 Direct wallet transfers are useful for testing and receiving funds, but invoice payments should use Create Invoice so the seller can track order/payment history.
 

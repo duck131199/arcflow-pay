@@ -8,7 +8,7 @@ The current MVP focuses on a simple payment flow for individuals, freelancers, a
 
 ```text
 Seller creates an invoice
-→ Invoice appears in payer inbox; shareable link/QR planned
+→ Invoice appears in payer inbox
 → Payer opens the invoice
 → Payer chooses which asset/source to pay with
 → Payment settles on Arc
@@ -20,7 +20,7 @@ This prototype intentionally starts small. It is not trying to become a full pay
 ## MVP Sections
 
 1. **Create Invoice**  
-   A seller creates a simple USDC invoice record for the payer. In this prototype, it appears in the payer’s Arqis invoice inbox after wallet connection; shareable payment links and invoice QR codes are planned for checkout.
+   A seller creates a simple USDC invoice record for the payer. In this prototype, it appears in the payer’s Arqis invoice inbox after wallet connection.
 
 2. **Pay Invoice**  
    A payer opens the invoice, reviews available wallet assets, chooses how to pay, and confirms the payment.
