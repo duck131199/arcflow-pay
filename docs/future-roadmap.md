@@ -2,6 +2,19 @@
 
 Arqis is intentionally starting with a small invoice payment MVP.
 
+## Product Direction
+
+Arqis is **Arqis-name + invoice-inbox first**, not payment-link-first.
+
+Core direction:
+
+- Seller sends an invoice to an Arqis name, for example `@payer`
+- The invoice appears in the payer's Pay Invoice inbox
+- The payer opens Arqis, reviews the invoice, and pays from wallet
+- Seller receives USDC and both sides see the invoice lifecycle
+
+Payment links and invoice QR codes are optional future helpers, not the primary product model. Wallet QR remains useful for direct receives, but invoice tracking should live in Arqis inbox/status/receipt flows.
+
 The following features are out of scope for the first prototype but are useful future directions.
 
 ## Real Invoice Backend
@@ -58,6 +71,28 @@ Example UX:
 > You have 7 small balances under $5. Hide them, or convert eligible balances to USDC?
 
 This is inspired by the common exchange pattern of hiding small assets or converting dust, but Arqis should optimize toward USDC because the payment product settles around USDC.
+
+## Invoice Inbox Experience
+
+This replaces payment-link/QR as the main next product direction after the core invoice flow is stable.
+
+- Better Pay Invoice inbox
+- Invoice detail drawer/page
+- Receipt view
+- New/payable invoice badge
+- Due-soon and expired indicators
+- Optional reminders before expiry
+- In-app notification history
+
+## Optional Payment Links / Invoice QR
+
+These are not core to the current Arqis vision. Consider them only for later edge cases:
+
+- Guest payer who does not have an Arqis account
+- Merchant wants to share an invoice outside Arqis
+- Printed invoices or embedded checkout
+
+Do not let payment links or invoice QR drive the main product roadmap.
 
 ## API + Webhooks
 
