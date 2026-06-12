@@ -9,7 +9,7 @@
   "theme_color": "#0B1B2E",
   "icons": [
     {
-      "src": "/favicon-rounded.png?v=6",
+      "src": "/favicon-squircle.png?v=7",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
