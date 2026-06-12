@@ -1,5 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
-  <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <path d="M18 44 29 16h6l11 28h-7l-2-6H27l-2 6h-7Zm11-12h6l-3-9-3 9Z" fill="white"/>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#17385F"/>
+      <stop offset="0.52" stop-color="#0A1D34"/>
+      <stop offset="1" stop-color="#07111F"/>
+    </linearGradient>
+    <linearGradient id="arc" x1="16" y1="46" x2="48" y2="14" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#DFF7FF"/>
+      <stop offset="1" stop-color="#88D8FF"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)"/>
+  <path d="M15 46 L27 18 C29 13 35 13 37 18 L49 46 H40 L32 26 L24 46 H15Z" fill="url(#arc)" filter="url(#glow)"/>
+  <path d="M24 39 C29 34 35 34 40 39" fill="none" stroke="#071827" stroke-width="4" stroke-linecap="round" opacity=".86"/>
+  <path d="M24 39 C29 34 35 34 40 39" fill="none" stroke="#BFEFFF" stroke-width="1.35" stroke-linecap="round" opacity=".75"/>
 </svg>
