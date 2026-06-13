@@ -91,6 +91,23 @@ body>.top,body>main{position:relative;z-index:1}
 [data-theme="light"] .num{background:#e5f0f7!important;color:#237dad!important}
 [data-theme="light"] .docsFooter{border-top-color:rgba(190,207,220,.72)!important}
 
+
+/* Dim light mode: less glare, more dusk than white */
+[data-theme="light"]{--ink:#102131;--muted:#536879;--line:#b8c9d6;--soft:#d9e6ef;--blue:#1f719e;--shadow:0 14px 36px rgba(24,46,66,.12)}
+[data-theme="light"] body{background:linear-gradient(180deg,#dfeaf1 0%,#d8e5ee 48%,#d1e0ea 100%)!important;color:var(--ink)!important}
+[data-theme="light"] .arqis-wave-bg{display:none!important}
+[data-theme="light"] .top{background:rgba(224,235,242,.92)!important;border-bottom-color:rgba(160,181,196,.75)!important;backdrop-filter:blur(14px)}
+[data-theme="light"] .hero{border-bottom-color:rgba(160,181,196,.55)!important}
+[data-theme="light"] h1,[data-theme="light"] h2,[data-theme="light"] h3,[data-theme="light"] .brandName{color:#102131!important}
+[data-theme="light"] p,[data-theme="light"] li,[data-theme="light"] .lead{color:#536879!important}
+[data-theme="light"] .doc-card,[data-theme="light"] .block,[data-theme="light"] .step{background:rgba(235,242,247,.82)!important;border-color:rgba(168,188,202,.82)!important;box-shadow:0 12px 30px rgba(24,46,66,.10)!important;backdrop-filter:blur(8px)}
+[data-theme="light"] .doc-card:hover,[data-theme="light"] .block:hover{border-color:rgba(117,158,186,.72)!important;box-shadow:0 14px 34px rgba(24,46,66,.14)!important}
+[data-theme="light"] .eyebrow{background:rgba(232,241,247,.82)!important;border-color:rgba(168,188,202,.82)!important;color:#1f719e!important}
+[data-theme="light"] .num{background:#d7e6f0!important;color:#1f719e!important}
+[data-theme="light"] .callout{background:rgba(214,230,226,.58)!important;border-color:rgba(113,164,153,.34)!important;color:#102131!important}
+[data-theme="light"] .btn.secondary,[data-theme="light"] .themeToggle{background:transparent!important;color:#536879!important}
+[data-theme="light"] .docsFooter{border-top-color:rgba(160,181,196,.72)!important}
+
 @media (prefers-reduced-motion:reduce){.arqis-wave-bg .wave{animation-duration:28s!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;animation-direction:alternate!important}.arqis-wave-bg:after{animation:none!important}.doc-card,.block,.btn,.themeToggle{transition:none!important}}
 
 </style>
