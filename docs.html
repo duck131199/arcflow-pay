@@ -63,6 +63,19 @@ body>.top,body>main{position:relative;z-index:1}
 .doc-card,.block,.step{background:linear-gradient(180deg,rgba(20,37,58,.84),rgba(9,23,38,.78))!important;border-color:rgba(151,207,255,.18)!important;box-shadow:0 24px 80px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.06)!important;backdrop-filter:blur(16px)}
 .doc-card,.block,.btn,.themeToggle{transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease,color .18s ease,filter .18s ease}.doc-card:hover,.block:hover{transform:translateY(-2px);border-color:rgba(95,191,255,.30)!important;box-shadow:0 24px 70px rgba(0,0,0,.42),0 0 36px rgba(95,191,255,.10),inset 0 1px 0 rgba(255,255,255,.08)!important}.btn:hover,.themeToggle:hover{transform:translateY(-1px);filter:brightness(1.06)}
 .eyebrow{background:rgba(95,191,255,.09)!important;border-color:rgba(95,191,255,.20)!important;color:#88D8FF!important}.dot{box-shadow:0 0 18px var(--mint)}.code{background:#04101d!important;border:1px solid rgba(95,191,255,.16);color:#BEE6FF}.docsFooter{border-top-color:rgba(151,207,255,.18)!important}
+
+/* Light mode keeps docs readable: mute ambient motion */
+[data-theme="light"] body{background:radial-gradient(circle at 14% 0,rgba(0,184,255,.10),transparent 34%),radial-gradient(circle at 84% 10%,rgba(34,103,255,.07),transparent 30%),linear-gradient(180deg,#fbfdff,#f4f9fe 46%,#edf6ff)!important;color:var(--ink)!important}
+[data-theme="light"] .arqis-wave-bg{background:transparent!important;opacity:.10!important;mix-blend-mode:multiply}
+[data-theme="light"] .arqis-wave-bg svg{opacity:.28!important;filter:blur(2.4px)}
+[data-theme="light"] .arqis-wave-bg .wave{stroke-width:1.4;filter:none!important;animation-duration:26s!important}
+[data-theme="light"] .arqis-wave-bg:after{display:none!important}
+[data-theme="light"] .top{background:rgba(247,251,255,.90)!important;border-bottom-color:rgba(220,234,245,.90)!important;color:var(--ink)!important}
+[data-theme="light"] .doc-card,[data-theme="light"] .block,[data-theme="light"] .step{background:rgba(255,255,255,.92)!important;border-color:var(--line)!important;box-shadow:0 22px 65px rgba(7,24,39,.09)!important;backdrop-filter:blur(12px)}
+[data-theme="light"] .doc-card:hover,[data-theme="light"] .block:hover{border-color:#c7e4f8!important;box-shadow:0 22px 65px rgba(7,24,39,.12),0 0 24px rgba(22,142,234,.08)!important}
+[data-theme="light"] .code{background:#071827!important;color:#c7ecff!important}
+[data-theme="light"] .eyebrow{background:rgba(255,255,255,.82)!important;border-color:var(--line)!important;color:var(--blue)!important}
+
 @media (prefers-reduced-motion:reduce){.arqis-wave-bg .wave{animation-duration:28s!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;animation-direction:alternate!important}.arqis-wave-bg:after{animation:none!important}.doc-card,.block,.btn,.themeToggle{transition:none!important}}
 
 </style>
