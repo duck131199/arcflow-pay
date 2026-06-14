@@ -27,13 +27,21 @@ create table if not exists public.arcflow_invoices (
   expiry text not null check (expiry in ('6h', '12h', '24h', '3d', '7d')),
   status text not null default 'unpaid' check (status in ('unpaid', 'pending', 'paid', 'expired', 'cancelled')),
   tx_hash text,
+  paid_by_username text references public.arcflow_users(username),
+  paid_by_wallet text,
+  paid_amount numeric(38, 6),
+  paid_token text,
+  payment_recorded_at timestamptz,
   created_at timestamptz not null default now(),
   expires_at timestamptz not null,
-  paid_at timestamptz
+  paid_at timestamptz,
+  constraint arcflow_invoices_paid_by_wallet_format check (paid_by_wallet is null or paid_by_wallet ~ '^0x[0-9a-fA-F]{40}$')
 );
 
 create index if not exists arcflow_invoices_to_status_idx on public.arcflow_invoices(to_username, status, created_at desc);
 create index if not exists arcflow_invoices_from_status_idx on public.arcflow_invoices(from_username, status, created_at desc);
+create index if not exists arcflow_invoices_paid_by_username_idx on public.arcflow_invoices(paid_by_username, paid_at desc);
+create index if not exists arcflow_invoices_tx_hash_idx on public.arcflow_invoices(tx_hash) where tx_hash is not null;
 
 alter table public.arcflow_users enable row level security;
 alter table public.arcflow_invoices enable row level security;
