@@ -1,0 +1,722 @@
+[
+  {
+    "invoice_no": "AF-20260609-YC0O6O",
+    "id": "ccac28e9-5243-4484-b093-7552257799cf",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "ccac28e9-5243-4484-b093-7552257799cf",
+        "invoice_no": "AF-20260609-YC0O6O",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-09T10:21:06.889687+00:00",
+        "expires_at": "2026-06-09T16:21:05.737+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260609-7ZRHTC",
+    "id": "e823f5cf-9900-4451-b893-3ee85a19300d",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "e823f5cf-9900-4451-b893-3ee85a19300d",
+        "invoice_no": "AF-20260609-7ZRHTC",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-09T09:14:38.606021+00:00",
+        "expires_at": "2026-06-09T15:14:38.595+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260609-GAIGH2",
+    "id": "2872c66b-212f-4452-8d7c-edfc8f02b7a4",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "2872c66b-212f-4452-8d7c-edfc8f02b7a4",
+        "invoice_no": "AF-20260609-GAIGH2",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-09T09:14:08.139171+00:00",
+        "expires_at": "2026-06-09T15:14:08.092+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260608-KI0T07",
+    "id": "5c75a9b0-8318-448c-9c61-4a5b83f9193b",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "5c75a9b0-8318-448c-9c61-4a5b83f9193b",
+        "invoice_no": "AF-20260608-KI0T07",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-08T10:47:58.739158+00:00",
+        "expires_at": "2026-06-08T16:47:58.506+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260608-8RKJ6J",
+    "id": "f89bfd96-a708-4349-94eb-c0ea2871d65b",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "f89bfd96-a708-4349-94eb-c0ea2871d65b",
+        "invoice_no": "AF-20260608-8RKJ6J",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-08T10:07:58.477279+00:00",
+        "expires_at": "2026-06-08T16:07:58.319+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260608-NU7Y3G",
+    "id": "ec74eadb-99dd-4fe2-b4ab-4c653b814cf6",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "ec74eadb-99dd-4fe2-b4ab-4c653b814cf6",
+        "invoice_no": "AF-20260608-NU7Y3G",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "12h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-08T10:05:54.887052+00:00",
+        "expires_at": "2026-06-08T22:05:54.736+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260608-6QP4J3",
+    "id": "6e02ca92-a53d-4290-a209-8526b7cd5649",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "6e02ca92-a53d-4290-a209-8526b7cd5649",
+        "invoice_no": "AF-20260608-6QP4J3",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "12h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-08T10:05:46.217399+00:00",
+        "expires_at": "2026-06-08T22:05:46.07+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260608-LHMQWK",
+    "id": "d6fda772-fd87-4fcf-a471-fbc6a2b53088",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "d6fda772-fd87-4fcf-a471-fbc6a2b53088",
+        "invoice_no": "AF-20260608-LHMQWK",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-08T10:05:30.63586+00:00",
+        "expires_at": "2026-06-08T16:05:30.483+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260602-EHF78E",
+    "id": "2ca4b526-f723-4d6d-aa7b-7c9f97c39f42",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "2ca4b526-f723-4d6d-aa7b-7c9f97c39f42",
+        "invoice_no": "AF-20260602-EHF78E",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Testnet",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-02T10:24:18.451861+00:00",
+        "expires_at": "2026-06-03T10:24:18.382+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260602-DE9I3E",
+    "id": "64a71159-85b3-48ae-9a16-97427233a839",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "64a71159-85b3-48ae-9a16-97427233a839",
+        "invoice_no": "AF-20260602-DE9I3E",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Testnet",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-02T10:24:17.089714+00:00",
+        "expires_at": "2026-06-03T10:24:17.014+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260602-6XXV43",
+    "id": "bb3ea66c-8353-4697-bca0-40d2484b09ec",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "bb3ea66c-8353-4697-bca0-40d2484b09ec",
+        "invoice_no": "AF-20260602-6XXV43",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Testnet",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-02T10:24:11.068362+00:00",
+        "expires_at": "2026-06-03T10:24:10.991+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260602-7B4SQ7",
+    "id": "97dcb549-7d53-4c81-9422-e733fb387221",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "97dcb549-7d53-4c81-9422-e733fb387221",
+        "invoice_no": "AF-20260602-7B4SQ7",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Testnet",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-02T09:45:24.466202+00:00",
+        "expires_at": "2026-06-03T09:45:24.425+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260602-EY27AO",
+    "id": "61390ecf-b710-441d-862f-e780c613dbf9",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "61390ecf-b710-441d-862f-e780c613dbf9",
+        "invoice_no": "AF-20260602-EY27AO",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Testnet",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-02T09:44:41.851061+00:00",
+        "expires_at": "2026-06-03T09:44:41.812+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-LC6276",
+    "id": "09d9ce5c-68c6-4786-9335-bc98960034e6",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "09d9ce5c-68c6-4786-9335-bc98960034e6",
+        "invoice_no": "AF-20260603-LC6276",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:37:39.348193+00:00",
+        "expires_at": "2026-06-04T18:37:38.66+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-MBK5DK",
+    "id": "f1259bce-57b4-4ded-9fcf-28804ac756ae",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "f1259bce-57b4-4ded-9fcf-28804ac756ae",
+        "invoice_no": "AF-20260603-MBK5DK",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:37:20.225179+00:00",
+        "expires_at": "2026-06-04T06:37:19.536+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-K9O033",
+    "id": "5de1b6d0-d4a9-440e-8e8f-ad86fa6cff58",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "5de1b6d0-d4a9-440e-8e8f-ad86fa6cff58",
+        "invoice_no": "AF-20260603-K9O033",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:36:59.924605+00:00",
+        "expires_at": "2026-06-04T00:36:59.235+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-HHMXM0",
+    "id": "1c220286-a89c-4602-8da5-8ba1c27b02ea",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "1c220286-a89c-4602-8da5-8ba1c27b02ea",
+        "invoice_no": "AF-20260603-HHMXM0",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:36:29.153813+00:00",
+        "expires_at": "2026-06-04T00:36:28.433+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-C9R4FD",
+    "id": "f30dc308-c126-4c4f-8fce-69374b92324a",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "f30dc308-c126-4c4f-8fce-69374b92324a",
+        "invoice_no": "AF-20260603-C9R4FD",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:23:48.414569+00:00",
+        "expires_at": "2026-06-04T18:23:47.728+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-FF90UK",
+    "id": "b95599d9-e1b0-4d02-8f3e-445a30bbf341",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "b95599d9-e1b0-4d02-8f3e-445a30bbf341",
+        "invoice_no": "AF-20260603-FF90UK",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:18:42.930685+00:00",
+        "expires_at": "2026-06-04T18:18:42.231+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-P1O5W1",
+    "id": "30bdc092-2273-4ab1-be9d-361b6b3d2f82",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "30bdc092-2273-4ab1-be9d-361b6b3d2f82",
+        "invoice_no": "AF-20260603-P1O5W1",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:14:46.566295+00:00",
+        "expires_at": "2026-06-04T18:14:45.87+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-T4JFLF",
+    "id": "c6344121-56ce-4c10-ac1c-2ae6c197afec",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "c6344121-56ce-4c10-ac1c-2ae6c197afec",
+        "invoice_no": "AF-20260603-T4JFLF",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "straykat",
+        "to_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Pay your electricity bill",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T18:14:18.683688+00:00",
+        "expires_at": "2026-06-04T18:14:17.993+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260610-PSMON5",
+    "id": "694920f2-1114-4c82-8b38-5fc17d15a9f1",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "694920f2-1114-4c82-8b38-5fc17d15a9f1",
+        "invoice_no": "AF-20260610-PSMON5",
+        "from_username": "tee_crypt",
+        "from_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "3d",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-10T14:19:50.414629+00:00",
+        "expires_at": "2026-06-13T14:19:49.319+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260610-F8SGZT",
+    "id": "a297e513-cd6e-4985-b06d-d355fbb1cef5",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "a297e513-cd6e-4985-b06d-d355fbb1cef5",
+        "invoice_no": "AF-20260610-F8SGZT",
+        "from_username": "tee_crypt",
+        "from_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "duckarc",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-10T14:19:29.712068+00:00",
+        "expires_at": "2026-06-11T14:19:28.611+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260610-WWSBDQ",
+    "id": "2f622feb-6b9d-4afb-b8d1-dd90292ad96c",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "2f622feb-6b9d-4afb-b8d1-dd90292ad96c",
+        "invoice_no": "AF-20260610-WWSBDQ",
+        "from_username": "tee_crypt",
+        "from_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "2",
+        "expiry": "12h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-10T14:19:13.265479+00:00",
+        "expires_at": "2026-06-11T02:19:12.17+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260610-JBYBSI",
+    "id": "ec43f67c-c3a2-4100-aa86-691bab079588",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "ec43f67c-c3a2-4100-aa86-691bab079588",
+        "invoice_no": "AF-20260610-JBYBSI",
+        "from_username": "tee_crypt",
+        "from_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-10T14:18:57.408025+00:00",
+        "expires_at": "2026-06-10T20:18:56.308+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260614-BW4SS1",
+    "id": "d1287f92-fe4e-447c-84d6-b2f8c9aab5d9",
+    "restore": "unpaid",
+    "updated": [
+      {
+        "id": "d1287f92-fe4e-447c-84d6-b2f8c9aab5d9",
+        "invoice_no": "AF-20260614-BW4SS1",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "unpaid",
+        "tx_hash": null,
+        "created_at": "2026-06-14T07:22:52.548433+00:00",
+        "expires_at": "2026-06-14T13:22:52.581+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260614-X3QB1H",
+    "id": "f7291fdb-16aa-4af4-8b57-8d3d3c84871d",
+    "restore": "unpaid",
+    "updated": [
+      {
+        "id": "f7291fdb-16aa-4af4-8b57-8d3d3c84871d",
+        "invoice_no": "AF-20260614-X3QB1H",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 2,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "unpaid",
+        "tx_hash": null,
+        "created_at": "2026-06-14T04:56:43.816572+00:00",
+        "expires_at": "2026-06-14T10:56:43.744+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260611-S74PEH",
+    "id": "13218929-5f1b-4088-a9eb-77e030c6db56",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "13218929-5f1b-4088-a9eb-77e030c6db56",
+        "invoice_no": "AF-20260611-S74PEH",
+        "from_username": "duckarc",
+        "from_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "to_username": "tee_crypt",
+        "to_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-11T12:37:59.381271+00:00",
+        "expires_at": "2026-06-11T18:37:58.913+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260611-0NYTQD",
+    "id": "d821268b-d89b-4ff4-8282-1dc798b31c08",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "d821268b-d89b-4ff4-8282-1dc798b31c08",
+        "invoice_no": "AF-20260611-0NYTQD",
+        "from_username": "tee_crypt",
+        "from_wallet": "0xa031978fb1c444a7e1bf4578ca90d8f78e73748a",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 1,
+        "token": "USDC",
+        "memo": "Tester",
+        "expiry": "6h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-11T06:50:17.945733+00:00",
+        "expires_at": "2026-06-11T06:51:15.128+00:00",
+        "paid_at": null
+      }
+    ]
+  },
+  {
+    "invoice_no": "AF-20260603-SEWDNE",
+    "id": "9138f4df-eda7-41be-8285-dba46725b724",
+    "restore": "expired",
+    "updated": [
+      {
+        "id": "9138f4df-eda7-41be-8285-dba46725b724",
+        "invoice_no": "AF-20260603-SEWDNE",
+        "from_username": "straykat",
+        "from_wallet": "0xe82c5acf0ef18de6e58b2eed21b5d8d89c2c4c4c",
+        "to_username": "duckarc",
+        "to_wallet": "0xb1f9ee64333564050964241688899166307d446e",
+        "amount": 5,
+        "token": "USDC",
+        "memo": "dien",
+        "expiry": "24h",
+        "status": "expired",
+        "tx_hash": null,
+        "created_at": "2026-06-03T11:09:40.134408+00:00",
+        "expires_at": "2026-06-04T11:09:39.978+00:00",
+        "paid_at": null
+      }
+    ]
+  }
+]
