@@ -3,11 +3,12 @@
 // before marking the invoice paid with the Supabase service role.
 
 const ARC_RPC_URL = Deno.env.get('ARC_RPC_URL') || 'https://rpc.testnet.arc.network';
-const ARC_CHAIN_ID = (Deno.env.get('ARC_CHAIN_ID') || '0x4cedd2').toLowerCase(); // 5042002
+const ARC_CHAIN_ID = (Deno.env.get('ARC_CHAIN_ID') || '0x4cef52').toLowerCase(); // 5042002
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const USDC_TOKEN = (Deno.env.get('USDC_TOKEN') || '0x3600000000000000000000000000000000000000').toLowerCase();
 const USDC_DECIMALS = Number(Deno.env.get('USDC_DECIMALS') || '6');
+const NATIVE_USDC_DECIMALS = Number(Deno.env.get('NATIVE_USDC_DECIMALS') || '18');
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
 
 function json(body: Record<string, unknown>, status = 200) {
@@ -83,17 +84,23 @@ Deno.serve(async (req) => {
     if (!receipt) return json({ status: 'pending', invoice_id }, 202);
     if (String(receipt.status).toLowerCase() !== '0x1') return json({ error: 'Transaction failed' }, 409);
 
+    const tx = await rpc('eth_getTransactionByHash', [tx_hash]);
+    const nativeExpectedAmount = amountToUnits(invoice.amount, NATIVE_USDC_DECIMALS);
+    const nativeMatched = tx
+      && String(tx.to || '').toLowerCase() === String(invoice.from_wallet).toLowerCase()
+      && (() => { try { return BigInt(tx.value || '0x0') >= nativeExpectedAmount; } catch (_) { return false; } })();
+
     const expectedRecipientTopic = '0x' + padAddress(invoice.from_wallet);
-    const expectedAmount = amountToUnits(invoice.amount);
+    const tokenExpectedAmount = amountToUnits(invoice.amount, USDC_DECIMALS);
     const logs = Array.isArray(receipt.logs) ? receipt.logs : [];
-    const matched = logs.some((log) => {
+    const tokenMatched = logs.some((log) => {
       const topics = log.topics || [];
       if (String(log.address || '').toLowerCase() !== USDC_TOKEN) return false;
       if (String(topics[0] || '').toLowerCase() !== TRANSFER_TOPIC) return false;
       if (String(topics[2] || '').toLowerCase() !== expectedRecipientTopic) return false;
-      try { return BigInt(log.data || '0x0') >= expectedAmount; } catch (_) { return false; }
+      try { return BigInt(log.data || '0x0') >= tokenExpectedAmount; } catch (_) { return false; }
     });
-    if (!matched) return json({ error: 'No matching USDC transfer for invoice' }, 409);
+    if (!nativeMatched && !tokenMatched) return json({ error: 'No matching native or token USDC transfer for invoice' }, 409);
 
     const patch = { status: 'paid', tx_hash, paid_at: new Date().toISOString() };
     await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=in.(unpaid,pending)`, {
