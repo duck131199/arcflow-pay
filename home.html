@@ -132,7 +132,8 @@ function renderMobileWalletHelp(){const box=$('mobileWalletHelp');if(box)box.sty
 function validScreen(id){return !!document.getElementById(id)&&!!document.querySelector('.tab[data-screen="'+id+'"]')}
 function activeScreenId(){const el=document.querySelector('.screen.active');return el?el.id:''}
 function refreshActiveScreen(){if(!state.wallet)return;loadCreatedInvoices();loadInvoiceInbox();loadPayAssets()}
-function refreshSellerConsole(){if(!state.wallet)return;if(activeScreenId()==='console')loadRealTransactions()}
+function sellerDetailOpen(){return !!(state.selectedTxKey&&$('detailPanel')&&$('detailPanel').style.display!=='none')}
+function refreshSellerConsole(){if(!state.wallet)return;if(activeScreenId()==='console'&&sellerDetailOpen())return;if(activeScreenId()==='console')loadRealTransactions()}
 function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}if(location.hash!=='#'+id)history.replaceState(null,'','#'+id)}}
 function restoreScreen(){let id=(location.hash||'').replace('#','');try{id=id||localStorage.getItem('arcflow:lastScreen')||''}catch(e){}setScreen(validScreen(id)?id:'create',false)}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));
