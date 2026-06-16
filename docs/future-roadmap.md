@@ -6,6 +6,10 @@ Arqis is intentionally starting with a small invoice payment MVP.
 
 Arqis is **Arqis-name + invoice-inbox first**, not payment-link-first.
 
+Near-term positioning: **stablecoin-native invoice payments, quote-ready for Arc liquidity.**
+
+Arc's stablecoin-native direction and the arrival of deep liquidity infrastructure such as Uniswap make Arqis' invoice thesis stronger. Arqis should not try to become a swap engine. It should own the invoice, checkout, receipt, and seller settlement UX while staying ready to use Arc ecosystem liquidity when production infrastructure is available.
+
 Core direction:
 
 - Seller sends an invoice to an Arqis name, for example `@payer`
@@ -41,9 +45,21 @@ The following features are out of scope for the first prototype but are useful f
 - Configure default expiry
 
 
-## Universal Balance Pay
+## Quote-ready Invoices
 
-These are future product directions. They should not be interpreted as features available in the current testnet prototype. Multi-asset routing, bridge/swap into USDC, and Dust-to-USDC cleanup will be considered after the core USDC invoice flow is validated.
+These are future product directions. They should not be interpreted as features available in the current testnet prototype. Quote previews, multi-asset routing, bridge/swap into USDC, and Dust-to-USDC cleanup will be considered after the core USDC invoice flow is validated.
+
+A quote-ready invoice turns a static payment request into a settlement preview:
+
+- Seller creates an invoice with a preferred settlement asset, starting with USDC
+- Payer selects a funding asset/source
+- Arqis previews what the payer pays and what the seller receives
+- The route/liquidity source is shown before confirmation
+- Seller still receives clean settlement and a clear receipt
+
+Initial implementation can be a mock quote UI only. It should clearly say "Quote preview only" and avoid claiming live swaps or automated routing.
+
+## Universal Balance Pay
 
 Future payer-side routing layer:
 
@@ -55,6 +71,8 @@ Future payer-side routing layer:
 - Receipt should show route transparency for the payer while keeping seller settlement simple
 
 This makes Arqis more than a simple invoice tracker: it becomes a payment router for people who have enough value, but not all in the right asset or chain.
+
+This direction fits Arc's liquidity roadmap: Arqis can remain the invoice/settlement layer while relying on ecosystem routing infrastructure when it is available.
 
 ## Dust-to-USDC / Small Balance Cleanup
 

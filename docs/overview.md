@@ -1,8 +1,10 @@
 ﻿# Arqis
 
-Arqis is a seller-first USDC invoice payment prototype built around Arc.
+Arqis is a seller-first stablecoin invoice payment prototype built around Arc.
 
-Current MVP: validate the USDC invoice flow on Arc Testnet before adding multi-asset routing, webhooks, production APIs, or automated payment operations.
+Current MVP: validate the USDC invoice flow on Arc Testnet before adding liquidity-aware quote previews, multi-asset routing, webhooks, production APIs, or automated payment operations.
+
+Arqis is designed around a simple thesis: invoice payments should become more programmable as Arc's stablecoin-native ecosystem gains deeper onchain liquidity. The product should focus on the invoice, checkout, receipt, and seller settlement experience while staying ready for infrastructure such as Uniswap protocol/API as it becomes available on Arc.
 
 The current MVP focuses on a simple payment flow for individuals, freelancers, and small businesses:
 
@@ -16,6 +18,8 @@ Seller creates an invoice
 ```
 
 This prototype intentionally starts small. It is not trying to become a full payment infrastructure product on day one. The first goal is to make invoice payments clear, useful, and easy to test.
+
+Near-term positioning: **stablecoin-native invoice payments, quote-ready for Arc liquidity.**
 
 ## MVP Sections
 
@@ -35,4 +39,6 @@ This prototype intentionally starts small. It is not trying to become a full pay
 
 Arqis is currently an Arc Testnet prototype. Placeholder examples are used before wallet data is loaded. After wallet connection, Arqis fetches real Arc Testnet wallet activity where available.
 
-Future versions can add real wallet connection, Arc RPC reads, backend invoice generation, transaction indexing, and production settlement logic.
+Future versions can add real wallet connection, Arc RPC reads, backend invoice generation, transaction indexing, quote previews, liquidity-aware routing, and production settlement logic.
+
+Quote-ready and liquidity-aware flows are product direction notes, not claims that the current MVP performs live swaps or automated routing.

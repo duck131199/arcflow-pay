@@ -1,6 +1,12 @@
 # Arqis Prototype
 
-Arqis is a seller-first USDC invoice payment prototype built around Arc.
+Arqis is a seller-first stablecoin invoice payment prototype built around Arc.
+
+**Positioning:** stablecoin-native invoice payments, quote-ready for Arc liquidity.
+
+Arqis is built for Arc's stablecoin-native ecosystem, where deep onchain liquidity can make B2B payments more flexible. As Arc brings leading swap infrastructure like Uniswap into the ecosystem, invoices can evolve from static payment requests into quote-ready settlement flows.
+
+The current prototype focuses on validating a clear USDC invoice flow on Arc Testnet first. Future versions can add liquidity-aware quote previews, multi-asset payer routing, production APIs, and automated settlement operations.
 
 ## MVP
 
@@ -10,6 +16,31 @@ The current prototype focuses on four sections:
 2. **Pay Invoice** — payer chooses an available Arc Testnet asset/source and submits a testnet payment.
 3. **Seller Console** — seller reviews invoice payments and transaction details.
 4. **Circle Faucet / Setup** — testnet helper for getting Arc Testnet USDC.
+
+## Why Arc
+
+Arc is purpose-built for stablecoin-native applications. That makes Arqis a natural fit for invoice payments where sellers want predictable settlement and payers may eventually want more flexible funding options.
+
+Arqis should not try to become a swap engine. Instead, it can focus on the invoice, checkout, receipt, and settlement UX while staying ready to use Arc ecosystem liquidity as infrastructure becomes available.
+
+## Product Direction
+
+Arqis starts with a simple invoice lifecycle:
+
+```text
+Seller creates an invoice
+Invoice appears in the payer inbox
+Payer reviews and pays the invoice
+Payment settles on Arc
+Seller tracks status and receipt in Seller Console
+```
+
+Next product direction:
+
+- **Quote-ready invoices** — show a settlement preview before payment.
+- **Liquidity-aware checkout** — payer can understand what they pay and what the seller receives.
+- **Clean seller settlement** — seller receives the preferred settlement asset, starting with USDC.
+- **Route transparency** — future swap/route details should be visible to the payer before confirmation.
 
 ## Open Locally
 
@@ -35,4 +66,4 @@ http://127.0.0.1:8787/index.html
 
 This is a testnet prototype. Some docs/screens may use placeholder examples for product review; live wallet balances and transaction rows depend on the connected wallet, Arc Testnet, Arcscan, and Supabase availability. Do not treat the current client-side MVP as production payment verification.
 
-
+Quote-ready and liquidity-aware flows are product direction notes, not claims that the current MVP performs live swaps or automated routing.
