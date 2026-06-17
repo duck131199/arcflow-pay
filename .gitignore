@@ -1,5 +1,8 @@
-﻿.DS_Store
+.DS_Store
 Thumbs.db
 node_modules/
+.env
 artifacts/
 cache/
+coverage/
+coverage.json
