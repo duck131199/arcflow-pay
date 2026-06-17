@@ -1,0 +1,20 @@
+{
+    "contract":  "ArqisInvoiceRegistry",
+    "network":  "arcTestnet",
+    "chainId":  5042002,
+    "address":  "0xd04532EBb554ef00A166355a9c1145Ad53B85780",
+    "deployer":  "0xB1f9eE64333564050964241688899166307d446e",
+    "projectOwner":  "0xB1f9eE64333564050964241688899166307d446e",
+    "deploymentTx":  "0xb69585b7ea314ed13206b1cf75265126a69221561af225c1a4a9309c407ccecd",
+    "deployedAt":  "2026-06-17T16:05:45.434Z",
+    "purpose":  "Non-custodial invoice/payment-reference proof registry for the Arqis testnet MVP",
+    "testInvoiceProof":  {
+                             "invoiceRef":  "ARQIS-OFFICE-HOURS-001",
+                             "invoiceId":  "0x73e113d0a6a361d557d569c15159333be63b4740c6b53ed1cdd39991ad6d5f17",
+                             "createInvoiceTx":  "0x3a46fac6c204ee75fac379c9e9569eddfa8f7ff8e48b979fe52818c7f35366d0",
+                             "seller":  "0xB1f9eE64333564050964241688899166307d446e",
+                             "payer":  "0xB1f9eE64333564050964241688899166307d446e",
+                             "token":  "0x3600000000000000000000000000000000000000",
+                             "amountBaseUnits":  "1000000"
+                         }
+}
