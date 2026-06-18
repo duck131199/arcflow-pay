@@ -60,7 +60,24 @@ http://127.0.0.1:8787/index.html
 - [Product Flow](docs/product-flow.md)
 - [MVP Sections](docs/mvp-sections.md)
 - [Arc Testnet Setup](docs/arc-testnet-setup.md)
+- [Arc Testnet Registry](docs/arc-testnet-registry.html)
 - [Future Roadmap](docs/future-roadmap.md)
+
+## Arc Testnet Contract Proof
+
+Arqis has an app-owned Arc Testnet contract for provenance and lightweight invoice/payment-reference proof.
+
+```text
+Contract: ArqisInvoiceRegistry
+Address: 0xd04532EBb554ef00A166355a9c1145Ad53B85780
+Network: Arc Testnet
+Chain ID: 5042002
+Deployer / project owner: 0xB1f9eE64333564050964241688899166307d446e
+Deployment tx: 0xb69585b7ea314ed13206b1cf75265126a69221561af225c1a4a9309c407ccecd
+Example createInvoice tx: 0x3a46fac6c204ee75fac379c9e9569eddfa8f7ff8e48b979fe52818c7f35366d0
+```
+
+This contract is not a custody contract, swap engine, bridge, or replacement for USDC/CCTP infrastructure. It records app-specific Arqis invoice proof events and payment transaction references for the testnet MVP. Full production payment verification is planned separately.
 
 ## Status
 
