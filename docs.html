@@ -159,6 +159,109 @@ body>.top,body>main{position:relative;z-index:1}
 
 @media (prefers-reduced-motion:reduce){.arqis-wave-bg .wave{animation-duration:28s!important;animation-timing-function:ease-in-out!important;animation-iteration-count:infinite!important;animation-direction:alternate!important}.arqis-wave-bg:after{animation:none!important}.doc-card,.block,.btn,.themeToggle{transition:none!important}}
 
+
+/* Main app ticker under documentation footer */
+.brandTicker{overflow:hidden;border:1px solid rgba(90,208,255,.18);border-left:0;border-right:0;background:linear-gradient(90deg,rgba(7,22,35,.15),rgba(15,38,58,.32),rgba(7,22,35,.15));margin:14px 0 0;padding:11px 0;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.brandTickerTrack{display:flex;width:max-content;gap:28px;align-items:center;animation:arqisTicker 34s linear infinite}
+.brandTicker:hover .brandTickerTrack{animation-play-state:paused}
+.brandTickerSet{display:flex;gap:28px;align-items:center;padding-right:28px}
+.brandTickerText{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,237,255,.82);font-weight:800;white-space:nowrap}
+.usdcMark{width:22px;height:22px;flex:0 0 auto;filter:drop-shadow(0 0 10px rgba(39,174,255,.35));opacity:.95}
+@keyframes arqisTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.brandTickerTrack{animation:arqisTicker 58s linear infinite!important}}
+
+/* Light mode readability polish from visual review */
+[data-theme="light"] body{background:#F3F5F2!important}
+[data-theme="light"] .doc-card,[data-theme="light"] .block,[data-theme="light"] .step,[data-theme="light"] .card,[data-theme="light"] .callout{background:#F7F8F5!important;border-color:#D8DED8!important;box-shadow:0 8px 20px rgba(22,28,36,.045)!important}
+[data-theme="light"] .doc-card p,[data-theme="light"] .block p,[data-theme="light"] .step p,[data-theme="light"] .card p,[data-theme="light"] li{color:#56606A!important}
+[data-theme="light"] .docsFooterCol h4,[data-theme="light"] .footerCol h4{color:#4F5965!important;font-weight:850!important}
+[data-theme="light"] .docsFooterCol a,[data-theme="light"] .footerCol a{color:#202832!important;font-weight:760!important}
+[data-theme="light"] .docsFooterBrand,[data-theme="light"] .footerBrand,[data-theme="light"] .brandName{color:#202832!important}
+[data-theme="light"] .brandLogoImg{filter:none!important;opacity:1!important}
+[data-theme="light"] .brandSep{background:#93A0AD!important}
+[data-theme="light"] .brandTicker{display:none!important}
+
+/* Evidence screenshot fixes: docs light mode */
+html[data-theme="light"] .brandTicker, body[data-theme="light"] .brandTicker{display:none!important}
+html:not([data-theme="dark"]) .brandTicker{display:none!important}
+html[data-theme="dark"] .brandTicker{display:block!important}
+
+/* Documentation evidence polish */
+[data-theme="light"] .code,
+[data-theme="light"] pre.code{
+  background:#F6F8F5!important;
+  color:#34404A!important;
+  border:1px solid #D8DED8!important;
+  box-shadow:0 8px 20px rgba(22,28,36,.045)!important;
+}
+[data-theme="light"] .code div,
+[data-theme="light"] pre.code div{color:#34404A!important}
+
+/* Docs header cleanup from visual review */
+.top{border-bottom:0!important;box-shadow:none!important}
+.themeGlyph:before{content:"\263E"!important;font-family:Arial,Helvetica,sans-serif!important;font-size:18px!important;line-height:1!important}
+[data-theme="light"] .themeGlyph:before{content:"\2600"!important;font-size:17px!important}
+
+/* Docs header fixed dark treatment from visual review */
+.top{
+  background:rgba(6,24,38,.94)!important;
+  border-bottom:1px solid rgba(136,216,255,.12)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(16px)!important;
+}
+.top .brandName,.top .brand small,.top .brand,.top .navlinks .btn,.top .navlinks .btn.secondary,.top .themeToggle{color:#EAF6FF!important}
+.top .brand small{color:rgba(234,246,255,.72)!important}
+.top .navlinks .btn,.top .navlinks .btn.secondary{color:rgba(234,246,255,.82)!important}
+.top .navlinks .btn:hover,.top .navlinks .btn.secondary:hover,.top .themeToggle:hover{color:#FFFFFF!important}
+.top .brandSep{background:rgba(234,246,255,.24)!important}
+.top .brandLogoImg{filter:none!important;opacity:1!important}
+
+/* Soften docs header separator after visual review */
+.top{border-bottom:0!important;box-shadow:none!important}
+
+/* Remove dirty first content separator in docs */
+main>.section:first-child,
+main.wrap>.section:first-child,
+.shell>.section:first-child,
+.proofShell>.section:first-child{border-top:0!important}
+
+/* Subtle docs separators: keep line, don't over-sharpen */
+.top{border-bottom:1px solid rgba(136,216,255,.075)!important;box-shadow:none!important}
+main>.section:first-child,
+main.wrap>.section:first-child,
+.shell>.section:first-child,
+.proofShell>.section:first-child{border-top:1px solid rgba(136,216,255,.06)!important}
+[data-theme="light"] .top{border-bottom:1px solid rgba(32,40,50,.075)!important}
+[data-theme="light"] main>.section:first-child,
+[data-theme="light"] main.wrap>.section:first-child,
+[data-theme="light"] .shell>.section:first-child,
+[data-theme="light"] .proofShell>.section:first-child{border-top:1px solid rgba(32,40,50,.06)!important}
+
+/* Unified subtle separators for all docs pages */
+:root{--docs-subtle-line:rgba(136,216,255,.085);--docs-subtle-line-soft:rgba(136,216,255,.055)}
+.top{border-bottom:1px solid var(--docs-subtle-line-soft)!important;box-shadow:none!important}
+.section,
+.hero,
+main>.section:first-child,
+main.wrap>.section:first-child,
+.shell>.section:first-child,
+.proofShell>.section:first-child{
+  border-top:1px solid var(--docs-subtle-line-soft)!important;
+}
+.hero{border-top-color:transparent!important}
+.card,.block,.doc-card,.step,.callout,.docsFooter,.siteFooter,.footerBottom,.docsFooterBottom{
+  border-color:var(--docs-subtle-line)!important;
+}
+[data-theme="light"]{--docs-subtle-line:rgba(32,40,50,.105);--docs-subtle-line-soft:rgba(32,40,50,.065)}
+[data-theme="light"] .top{border-bottom:1px solid var(--docs-subtle-line-soft)!important;box-shadow:none!important}
+[data-theme="light"] .section,
+[data-theme="light"] .hero,
+[data-theme="light"] main>.section:first-child,
+[data-theme="light"] main.wrap>.section:first-child,
+[data-theme="light"] .shell>.section:first-child,
+[data-theme="light"] .proofShell>.section:first-child{
+  border-top:1px solid var(--docs-subtle-line-soft)!important;
+}
+[data-theme="light"] .hero{border-top-color:transparent!important}
 </style>
 </head>
 <body>
@@ -174,7 +277,6 @@ body>.top,body>main{position:relative;z-index:1}
 <a class="doc-card" href="docs/circle-faucet-setup.html"><div class="num">04</div><h3>Circle Faucet / Setup</h3><p>How teammates add Arc Testnet and get testnet USDC for product testing.</p><div class="arrow">Open guide →</div></a>
 <a class="doc-card" href="docs/security-verification.html"><div class="num">05</div><h3>Security &amp; Verification</h3><p>Roadmap for RLS, access control, backend payment verification, and invoice status lifecycle.</p><div class="arrow">Open guide </div></a>
 </section>
-<a class="doc-card" href="docs/arc-testnet-registry.html"><div class="num">06</div><h3>Arc Testnet Registry</h3><p>App-specific Arqis contract address, deployment transaction, and test invoice proof for Arc review.</p><div class="arrow">Open proof &rarr;</div></a></section>
 <section class="section"><div class="grid"><article class="block"><div class="kicker">Future vision</div><h2>Universal Balance Pay</h2><p>Future roadmap, not part of the current MVP. Multi-asset routing, bridge/swap into USDC, and Dust-to-USDC cleanup will be considered after the core USDC invoice flow is validated.</p><a class="btn secondary" href="docs/future-roadmap.html">Open roadmap</a></article><article class="block"><div class="kicker">Why it matters</div><h2>Enough value, wrong assets</h2><p>Future payers may have enough total value to pay an invoice, but spread across different chains, tokens, and tiny dust balances. This is roadmap context, not current MVP behavior.</p></article></div></section>
 <section class="section"><div class="kicker">Product flow</div><h2>From invoice to settlement</h2><pre class="code">Seller creates invoice
 Arqis creates an invoice record
@@ -183,7 +285,5 @@ Payer pays with Arc Testnet USDC
 Payment verification is planned for a trusted backend flow
 Seller tracks payment in Seller Console</pre></section>
 <section class="section"><div class="grid"><article class="block"><div class="kicker">MVP principle</div><h2>Small first</h2><p>Current MVP: validate the USDC invoice flow on Arc Testnet before adding multi-asset routing, webhooks, production APIs, or automated payment operations.</p></article><article class="block"><div class="kicker">Payer control</div><h2>No hidden routing</h2><p>Arqis should not automatically spend, swap, bridge, or route funds without explicit payer confirmation.</p></article></div></section>
-<footer class="docsFooter"><div class="docsFooterGrid"><div><div class="docsFooterBrand"><div class="docsFooterLogo"><img src="assets/arqis-logo.png" alt="Arqis logo" class="brandLogoImg"></div><span class="brandSep" aria-hidden="true"></span><span class="brandName">Arqis</span></div><p>Simple USDC invoice payments on Arc. Testnet prototype documentation for product review.</p></div><div class="docsFooterCol"><h4>Protocol</h4><a href="docs/create-invoice.html">Create Invoice</a><a href="docs/pay-invoice.html">Pay Invoice</a><a href="docs/seller-console.html">Seller Console</a><a href="docs/circle-faucet-setup.html">Circle Faucet / Setup</a></div><div class="docsFooterCol"><h4>Arc Network</h4><a href="https://www.arc.io/" target="_blank" rel="noopener">Arc Website</a><a href="https://docs.arc.io/" target="_blank" rel="noopener">Arc Documentation</a><a href="https://testnet.arcscan.app/" target="_blank" rel="noopener">ArcScan</a><a href="https://faucet.circle.com" target="_blank" rel="noopener">Circle Faucet</a></div><div class="docsFooterCol"><h4>Creator / Builder</h4><a href="https://x.com/DuckSentient" target="_blank" rel="noopener">Twitter / X</a><a href="https://www.linkedin.com/in/thu-ph%C6%B0%C6%A1ng-ng%C3%B4-875470412/" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/duck131199" target="_blank" rel="noopener">GitHub</a></div></div><div class="docsFooterBottom"><span>Arqis &middot; Arc Testnet Chain ID: 5042002 &middot; Not audited &middot; Testnet only</span><span>&copy; 2026</span></div></footer>
-</main>
-<script>(function(){const root=document.documentElement;const saved=localStorage.getItem('arcflow-theme')||'dark';root.setAttribute('data-theme',saved);const btn=document.getElementById('themeToggle');if(btn)btn.onclick=()=>{const next=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',next);localStorage.setItem('arcflow-theme',next);};})();</script></body>
+<footer class="docsFooter"><div class="docsFooterGrid"><div><div class="docsFooterBrand"><div class="docsFooterLogo"><img src="assets/arqis-logo.png" alt="Arqis logo" class="brandLogoImg"></div><span class="brandSep" aria-hidden="true"></span><span class="brandName">Arqis</span></div><p>Simple USDC invoice payments on Arc. Testnet prototype documentation for product review.</p></div><div class="docsFooterCol"><h4>Protocol</h4><a href="docs/create-invoice.html">Create Invoice</a><a href="docs/pay-invoice.html">Pay Invoice</a><a href="docs/seller-console.html">Seller Console</a><a href="docs/circle-faucet-setup.html">Circle Faucet / Setup</a></div><div class="docsFooterCol"><h4>Arc Network</h4><a href="https://www.arc.io/" target="_blank" rel="noopener">Arc Website</a><a href="https://docs.arc.io/" target="_blank" rel="noopener">Arc Documentation</a><a href="https://testnet.arcscan.app/" target="_blank" rel="noopener">ArcScan</a><a href="https://faucet.circle.com" target="_blank" rel="noopener">Circle Faucet</a></div><div class="docsFooterCol"><h4>Creator / Builder</h4><a href="https://x.com/DuckSentient" target="_blank" rel="noopener">Twitter / X</a><a href="https://www.linkedin.com/in/thu-ph%C6%B0%C6%A1ng-ng%C3%B4-875470412/" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/duck131199" target="_blank" rel="noopener">GitHub</a><a href="docs/arc-testnet-registry.html">Arc registry proof</a></div></div><div class="docsFooterBottom"><span>Arqis &middot; Arc Testnet Chain ID: 5042002 &middot; Not audited &middot; Testnet only</span><span>&copy; 2026</span></div></footer><script>(function(){const root=document.documentElement;const saved=localStorage.getItem('arcflow-theme')||'dark';root.setAttribute('data-theme',saved);const btn=document.getElementById('themeToggle');if(btn)btn.onclick=()=>{const next=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',next);localStorage.setItem('arcflow-theme',next);};})();</script></body>
 </html>
