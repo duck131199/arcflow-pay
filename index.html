@@ -155,13 +155,13 @@ function activeScreenId(){const el=document.querySelector('.screen.active');retu
 function refreshActiveScreen(){if(!state.wallet)return;loadCreatedInvoices();loadInvoiceInbox();loadPayAssets()}
 function sellerDetailOpen(){return !!(state.selectedTxKey&&$('detailPanel')&&$('detailPanel').style.display!=='none')}
 function refreshSellerConsole(){if(!state.wallet)return;if(activeScreenId()==='console'&&sellerDetailOpen())return;if(activeScreenId()==='console')loadRealTransactions()}
-function routeHash(id){return '#tab-'+id}
 function screenFromHash(){const h=(location.hash||'').replace('#','');return h.startsWith('tab-')?h.slice(4):h}
+function cleanTabHash(){if(location.hash&&location.hash.startsWith('#tab-'))history.replaceState(null,'',location.pathname+location.search)}
 function keepScreenAtTop(){[0,20,80,180].forEach(ms=>setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),ms))}
-function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}if(location.hash!==routeHash(id))history.replaceState(null,'',routeHash(id))}keepScreenAtTop()}
+function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}cleanTabHash()}keepScreenAtTop()}
 function restoreScreen(){let id=screenFromHash();try{id=id||localStorage.getItem('arcflow:lastScreen')||''}catch(e){}setScreen(validScreen(id)?id:'create',true);keepScreenAtTop()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));
-window.addEventListener('hashchange',()=>setScreen(screenFromHash(),true));
+window.addEventListener('hashchange',()=>{const id=screenFromHash();if(id)setScreen(id,true);else cleanTabHash()});
 // footer-screen handler
 document.querySelectorAll('[data-footer-screen]').forEach(a=>a.onclick=(e)=>{e.preventDefault();setScreen(a.dataset.footerScreen);window.scrollTo({top:0,behavior:'smooth'});});
 function qrSvg(data,label){ try{ const qr=qrcode(0,'M'); qr.addData(data||''); qr.make(); return qr.createSvgTag({cellSize:4,margin:3,scalable:true}); }catch(e){ return '<div style="font-size:11px;color:#071827;text-align:center;padding:12px">QR unavailable</div>'; }
