@@ -6,3 +6,12 @@ artifacts/
 cache/
 coverage/
 coverage.json
+
+# Arqis project brain private/local files
+brain/local.md
+brain/private.md
+brain/settings.local.json
+brain/*private*.md
+.claude/CLAUDE.local.md
+.claude/settings.local.json
+.claude/*private*.md

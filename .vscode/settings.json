@@ -1,0 +1,10 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json",
+    "index.html": "home.html, health.html, okx-test.html, favicon*.ico, favicon*.png, favicon*.svg, manifest.json, robots.txt, sitemap.xml, vercel.json",
+    "hardhat.config.js": "contracts, deployments",
+    "docs.html": "docs"
+  }
+}
