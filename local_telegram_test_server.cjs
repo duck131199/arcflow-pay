@@ -116,12 +116,11 @@ http.createServer(async (req, res) => {
         `To: @${payer}`,
         `Memo: ${invoice.memo || '-'}`,
         '',
-        `Payer wallet: ${shortAddr(invoice.to_wallet)}`,
         `Expires: ${fmtDate(invoice.expires_at)}`,
-        '',
         'Status: Pending',
-        'Open Seller Console:',
-        'http://localhost:63854?localTelegram#tab-console'
+        '',
+        'View created invoices:',
+        'http://localhost:63854?localTelegram#tab-create'
       ].join('\n');
       const payerText = [
         '📩 New invoice to pay',

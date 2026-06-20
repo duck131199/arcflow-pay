@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     const amountLine = `${clean(invoice.amount, '0.00')} ${clean(invoice.token, 'USDC')} · ${clean(invoice.invoice_no, 'INV')}`;
     const sellerUsername = clean(invoice.from_username, 'seller');
     const payerUsername = clean(invoice.to_username, 'payer');
-    const sellerText = ['🧾 Invoice sent', '', amountLine, `To: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Payer wallet: ${shortAddr(invoice.to_wallet)}`, `Expires: ${fmtDate(invoice.expires_at)}`, '', 'Status: Pending', 'Open Seller Console:', 'https://arqis-web.vercel.app/#tab-console'].join('\n');
+    const sellerText = ['🧾 Invoice sent', '', amountLine, `To: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Expires: ${fmtDate(invoice.expires_at)}`, 'Status: Pending', '', 'View created invoices:', 'https://arqis-web.vercel.app/#tab-create'].join('\n');
     const payerText = ['📩 New invoice to pay', '', amountLine, `From: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Due: ${fmtDate(invoice.expires_at)}`, 'Status: Pending', '', 'Pay invoice:', 'https://arqis-web.vercel.app/#tab-pay'].join('\n');
     const results = [];
     results.push(await sendToUser({ invoiceId: invoice_id, sellerUsername, recipientUsername: sellerUsername, alertType: 'invoice_sent', text: sellerText }));
