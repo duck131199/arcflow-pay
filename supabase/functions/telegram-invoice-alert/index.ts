@@ -8,12 +8,13 @@ const TOKEN_KEY = Deno.env.get('TELEGRAM_TOKEN_ENCRYPTION_KEY') || '';
 function json(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, x-client-info, apikey, content-type', 'access-control-allow-methods': 'POST, OPTIONS' } });
 }
-function isUuid(v: unknown) { return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i.test(v); }
+function isUuid(v: unknown) { return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v.trim()); }
+function getInvoiceId(body: Record<string, unknown>) { return String(body.invoice_id || body.invoiceId || (body.invoice && typeof body.invoice === 'object' ? (body.invoice as Record<string, unknown>).id : '') || '').trim(); }
 function bytesFromB64(v: string) { return Uint8Array.from(atob(v), c => c.charCodeAt(0)); }
 async function shaKey(secret: string) { const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret)); return crypto.subtle.importKey('raw', digest, 'AES-GCM', false, ['decrypt']); }
 async function decryptToken(cipherText: string) { if (TOKEN_KEY.length < 24) throw new Error('TELEGRAM_TOKEN_ENCRYPTION_KEY is not configured'); const [ivB64, dataB64] = String(cipherText || '').split(':'); if (!ivB64 || !dataB64) throw new Error('Stored bot token is invalid'); const key = await shaKey(TOKEN_KEY); const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytesFromB64(ivB64) }, key, bytesFromB64(dataB64)); return new TextDecoder().decode(plain); }
 async function telegram(token: string, method: string, body: Record<string, unknown> = {}) { const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); const data = await res.json().catch(() => ({})); if (!res.ok || data.ok === false) throw new Error(data.description || `Telegram ${method} failed`); return data.result; }
-async function supabase(path: string, init: RequestInit = {}) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...init, headers: { apikey: SERVICE_ROLE_KEY, authorization: `Bearer ${SERVICE_ROLE_KEY}`, 'content-type': 'application/json', ...(init.headers || {}) } }); if (!r.ok) throw new Error(await r.text()); return r.status === 204 ? null : await r.json(); }
+async function supabase(path: string, init: RequestInit = {}) { const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...init, headers: { apikey: SERVICE_ROLE_KEY, authorization: `Bearer ${SERVICE_ROLE_KEY}`, 'content-type': 'application/json', ...(init.headers || {}) } }); const text = await r.text(); if (!r.ok) throw new Error(text); return text ? JSON.parse(text) : null; }
 function clean(value: unknown, fallback = '-') { return String(value ?? fallback).replace(/[<>]/g, '').slice(0, 180); }
 function shortAddr(addr: unknown) { const s = String(addr || ''); return s.length > 12 ? `${s.slice(0, 6)}...${s.slice(-4)}` : s; }
 function fmtDate(v: unknown) { const d = new Date(String(v || '')); return Number.isFinite(d.getTime()) ? d.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'; }
@@ -38,7 +39,8 @@ Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return json({ ok: true });
     if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
     if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return json({ error: 'Function is not configured' }, 500);
-    const { invoice_id } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({}));
+    const invoice_id = getInvoiceId(body);
     if (!isUuid(invoice_id)) return json({ error: 'valid invoice_id is required' }, 400);
     const invoices = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&select=*`);
     const invoice = invoices[0];
