@@ -54,6 +54,22 @@ async function supabase(path: string, init: RequestInit = {}) {
   if (!r.ok) throw new Error(await r.text());
   return r.status === 204 ? null : await r.json();
 }
+async function sendTelegramPaymentAlert(invoiceId: string, txHash: string) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/telegram-payment-alert`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        apikey: SERVICE_ROLE_KEY,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({ invoice_id: invoiceId, tx_hash: txHash })
+    });
+    if (!res.ok) console.warn('Telegram payment alert failed', await res.text());
+  } catch (error) {
+    console.warn('Telegram payment alert unavailable', error);
+  }
+}
 
 Deno.serve(async (req) => {
   try {
@@ -108,6 +124,7 @@ Deno.serve(async (req) => {
       headers: { prefer: 'return=minimal' },
       body: JSON.stringify(patch)
     });
+    await sendTelegramPaymentAlert(invoice_id, tx_hash);
     return json({ status: 'paid', invoice_id, tx_hash });
   } catch (error) {
     console.error(error);
