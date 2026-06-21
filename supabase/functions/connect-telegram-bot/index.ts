@@ -110,6 +110,9 @@ Deno.serve(async (req) => {
       bot_username: String(me.username),
       bot_display_name: String(me.first_name || me.username),
       bot_token_cipher: cipher,
+      chat_id: null,
+      tested_at: null,
+      connected_at: new Date().toISOString(),
       disconnected_at: null,
       updated_at: new Date().toISOString()
     };
