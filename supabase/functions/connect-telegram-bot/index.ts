@@ -19,6 +19,13 @@ function json(body: Record<string, unknown>, status = 200) {
 function isWallet(v: unknown) { return typeof v === 'string' && /^0x[0-9a-fA-F]{40}$/.test(v); }
 function isName(v: unknown) { return typeof v === 'string' && /^[a-z0-9_]{3,24}$/.test(v); }
 function isToken(v: unknown) { return typeof v === 'string' && /^\d{6,}:[A-Za-z0-9_-]{20,}$/.test(v.trim()); }
+class PublicError extends Error {
+  status: number;
+  constructor(message: string, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
 function publicBot(row: Record<string, unknown>) {
   return {
     connected: true,
@@ -47,7 +54,13 @@ async function telegram(token: string, method: string, body: Record<string, unkn
     body: JSON.stringify(body)
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || data.ok === false) throw new Error(data.description || `Telegram ${method} failed`);
+  if (!res.ok || data.ok === false) {
+    const description = String(data.description || '').toLowerCase();
+    if (res.status === 401 || description.includes('unauthorized') || description.includes('not found')) {
+      throw new PublicError('BotFather token is invalid or revoked', 400);
+    }
+    throw new PublicError('Telegram rejected the bot token', 400);
+  }
   return data.result;
 }
 async function supabase(path: string, init: RequestInit = {}) {
@@ -106,6 +119,7 @@ Deno.serve(async (req) => {
     return json({ ok: true, ...publicBot(rows[0]), username_matches_recommendation, recommended_username: expected });
   } catch (error) {
     console.error(error);
+    if (error instanceof PublicError) return json({ error: error.message }, error.status);
     return json({ error: 'Telegram bot connection failed' }, 500);
   }
 });
