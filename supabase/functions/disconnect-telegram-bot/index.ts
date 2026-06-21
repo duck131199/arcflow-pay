@@ -15,6 +15,6 @@ Deno.serve(async (req) => {
     return json({ ok: true, connected: false, tested: false });
   } catch (error) {
     console.error(error);
-    return json({ error: error instanceof Error ? error.message : 'Disconnect failed' }, 500);
+    return json({ error: 'Disconnect failed' }, 500);
   }
 });

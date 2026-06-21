@@ -128,6 +128,6 @@ Deno.serve(async (req) => {
     return json({ status: 'paid', invoice_id, tx_hash });
   } catch (error) {
     console.error(error);
-    return json({ error: error instanceof Error ? error.message : 'Verification failed' }, 500);
+    return json({ error: 'Verification failed' }, 500);
   }
 });

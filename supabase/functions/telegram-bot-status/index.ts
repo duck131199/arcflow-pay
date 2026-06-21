@@ -16,6 +16,6 @@ Deno.serve(async (req) => {
     return json({ ok: true, ...publicBot(rows[0] || null) });
   } catch (error) {
     console.error(error);
-    return json({ error: error instanceof Error ? error.message : 'Telegram bot status failed' }, 500);
+    return json({ error: 'Telegram bot status failed' }, 500);
   }
 });

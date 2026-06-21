@@ -56,6 +56,6 @@ Deno.serve(async (req) => {
     return json({ ok: true, results });
   } catch (error) {
     console.error(error);
-    return json({ error: error instanceof Error ? error.message : 'Telegram invoice alert failed' }, 500);
+    return json({ error: 'Telegram invoice alert failed' }, 500);
   }
 });

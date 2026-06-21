@@ -32,6 +32,6 @@ Deno.serve(async (req) => {
     return json({ ok: true, ...publicBot(updated[0]) });
   } catch (error) {
     console.error(error);
-    return json({ error: error instanceof Error ? error.message : 'Test alert failed' }, 500);
+    return json({ error: 'Test alert failed' }, 500);
   }
 });
