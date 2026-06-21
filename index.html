@@ -243,7 +243,7 @@ async function markInvoiceSubmitted(hash){if(!supabaseClient||!state.currentInvo
 async function markInvoicePaid(hash){if(!supabaseClient||!state.currentInvoice)throw new Error('No invoice selected');const {error}=await supabaseClient.from('arcflow_invoices').update({status:'paid',tx_hash:hash,paid_at:new Date().toISOString()}).eq('id',state.currentInvoice.id);if(error)throw error}
 function schedulePostPaymentRefresh(){[800,2000,4000,8000,15000,25000].forEach(ms=>setTimeout(()=>{if(!state.wallet)return;loadPayAssets();loadInvoiceInbox();loadCreatedInvoices();loadRealTransactions();},ms))}
 
-const TELEGRAM_LOCAL_TEST=new URLSearchParams(location.search).has('localTelegram')||['localhost','127.0.0.1'].includes(location.hostname)||location.protocol==='file:';
+const TELEGRAM_LOCAL_TEST=new URLSearchParams(location.search).get('localTelegram')==='1';
 const TELEGRAM_TEST_API='http://127.0.0.1:63856';
 function localTelegramPaymentAlert(invoice,txHash){if(!TELEGRAM_LOCAL_TEST)return Promise.resolve(null);return fetch(TELEGRAM_TEST_API+'/telegram-payment-alert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({local_test_confirmed:true,invoice:{...invoice,tx_hash:txHash,status:'paid',paid_at:new Date().toISOString()},tx_hash:txHash})}).then(async res=>{const data=await res.json().catch(()=>({}));if(!res.ok||data.ok===false)throw new Error(data.error||'Telegram payment alert failed');return data})}
 function telegramBotBaseName(){const raw=(state.wallet&&state.arcUser&&state.arcUser.username)||'';const name=normalizeName(raw)||'yourname';return name.split('_').filter(Boolean).map(part=>part.charAt(0).toUpperCase()+part.slice(1).toLowerCase()).join('')}
