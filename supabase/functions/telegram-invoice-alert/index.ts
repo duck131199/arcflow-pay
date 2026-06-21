@@ -45,6 +45,9 @@ Deno.serve(async (req) => {
     const invoices = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&select=*`);
     const invoice = invoices[0];
     if (!invoice) return json({ error: 'Invoice not found' }, 404);
+    const status = String(invoice.status || '').toLowerCase();
+    if (!['unpaid', 'pending'].includes(status)) return json({ ok: true, skipped: true, reason: `Invoice is ${status || 'not payable'}` });
+    if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now()) return json({ ok: true, skipped: true, reason: 'Invoice expired' });
     const amountLine = `${clean(invoice.amount, '0.00')} ${clean(invoice.token, 'USDC')} · ${clean(invoice.invoice_no, 'INV')}`;
     const sellerUsername = clean(invoice.from_username, 'seller');
     const payerUsername = clean(invoice.to_username, 'payer');
