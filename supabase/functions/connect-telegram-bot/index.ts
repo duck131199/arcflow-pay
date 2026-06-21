@@ -21,9 +21,11 @@ function isName(v: unknown) { return typeof v === 'string' && /^[a-z0-9_]{3,24}$
 function isToken(v: unknown) { return typeof v === 'string' && /^\d{6,}:[A-Za-z0-9_-]{20,}$/.test(v.trim()); }
 class PublicError extends Error {
   status: number;
-  constructor(message: string, status = 400) {
+  code: string;
+  constructor(message: string, status = 400, code = 'telegram_connect_failed') {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 function publicBot(row: Record<string, unknown>) {
@@ -41,7 +43,7 @@ async function shaKey(secret: string) {
 }
 function b64(bytes: Uint8Array) { return btoa(String.fromCharCode(...bytes)); }
 async function encryptToken(token: string) {
-  if (TOKEN_KEY.length < 24) throw new Error('TELEGRAM_TOKEN_ENCRYPTION_KEY is not configured');
+  if (TOKEN_KEY.length < 24) throw new PublicError('Telegram bot storage is not configured', 500, 'encryption_key_missing');
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await shaKey(TOKEN_KEY);
   const cipher = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(token)));
@@ -57,9 +59,9 @@ async function telegram(token: string, method: string, body: Record<string, unkn
   if (!res.ok || data.ok === false) {
     const description = String(data.description || '').toLowerCase();
     if (res.status === 401 || description.includes('unauthorized') || description.includes('not found')) {
-      throw new PublicError('BotFather token is invalid or revoked', 400);
+      throw new PublicError('BotFather token is invalid or revoked', 400, 'telegram_invalid_token');
     }
-    throw new PublicError('Telegram rejected the bot token', 400);
+    throw new PublicError('Telegram rejected the bot token', 400, 'telegram_rejected_token');
   }
   return data.result;
 }
@@ -119,7 +121,7 @@ Deno.serve(async (req) => {
     return json({ ok: true, ...publicBot(rows[0]), username_matches_recommendation, recommended_username: expected });
   } catch (error) {
     console.error(error);
-    if (error instanceof PublicError) return json({ error: error.message }, error.status);
+    if (error instanceof PublicError) return json({ error: error.message, code: error.code }, error.status);
     return json({ error: 'Telegram bot connection failed' }, 500);
   }
 });
