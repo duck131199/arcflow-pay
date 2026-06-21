@@ -119,12 +119,12 @@ Deno.serve(async (req) => {
     if (!nativeMatched && !tokenMatched) return json({ error: 'No matching native or token USDC transfer for invoice' }, 409);
 
     const patch = { status: 'paid', tx_hash, paid_at: new Date().toISOString() };
-    await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=in.(unpaid,pending)`, {
+    const updated = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=in.(unpaid,pending)&select=id`, {
       method: 'PATCH',
-      headers: { prefer: 'return=minimal' },
+      headers: { prefer: 'return=representation' },
       body: JSON.stringify(patch)
     });
-    await sendTelegramPaymentAlert(invoice_id, tx_hash);
+    if (Array.isArray(updated) && updated.length) await sendTelegramPaymentAlert(invoice_id, tx_hash);
     return json({ status: 'paid', invoice_id, tx_hash });
   } catch (error) {
     console.error(error);

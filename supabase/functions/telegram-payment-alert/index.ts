@@ -20,20 +20,35 @@ async function supabase(path: string, init: RequestInit = {}) { const r = await 
 function clean(value: unknown, fallback = '-') { return String(value ?? fallback).replace(/[<>]/g, '').slice(0, 180); }
 function shortAddr(addr: unknown) { const s = String(addr || ''); return s.length > 12 ? `${s.slice(0, 6)}...${s.slice(-4)}` : s; }
 function fmtDate(v: unknown) { const d = new Date(String(v || '')); return Number.isFinite(d.getTime()) ? d.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '-'; }
-async function deliveryAlreadySent(invoiceId: string, alertType: string, txHash: string) { const rows = await supabase(`telegram_alert_deliveries?invoice_id=eq.${encodeURIComponent(invoiceId)}&alert_type=eq.${encodeURIComponent(alertType)}&tx_hash=eq.${encodeURIComponent(txHash)}&status=eq.sent&select=id&limit=1`); return rows.length > 0; }
+async function claimDelivery(row: Record<string, unknown>) {
+  try {
+    const rows = await supabase('telegram_alert_deliveries?select=id', { method: 'POST', headers: { prefer: 'return=representation' }, body: JSON.stringify({ ...row, status: 'sending' }) });
+    return rows && rows[0] && rows[0].id;
+  } catch (error) {
+    console.warn('Telegram delivery claim skipped', error);
+    return null;
+  }
+}
 async function recordDelivery(row: Record<string, unknown>) { await supabase('telegram_alert_deliveries', { method: 'POST', headers: { prefer: 'return=minimal' }, body: JSON.stringify(row) }); }
+async function patchDelivery(id: string, patch: Record<string, unknown>) { await supabase(`telegram_alert_deliveries?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', headers: { prefer: 'return=minimal' }, body: JSON.stringify(patch) }); }
 async function botFor(username: unknown) { const key = String(username || '').replace(/^@/, '').toLowerCase(); if (!key) return null; const rows = await supabase(`seller_telegram_bots?arqis_username=eq.${encodeURIComponent(key)}&disconnected_at=is.null&tested_at=not.is.null&select=*&limit=1`); return rows[0] || null; }
 async function sendToUser(params: { invoiceId: string; sellerUsername: string; recipientUsername: string; alertType: string; txHash: string; text: string; }) {
-  if (await deliveryAlreadySent(params.invoiceId, params.alertType, params.txHash)) return { ok: true, skipped: true, reason: 'alert already sent', alert_type: params.alertType };
-  const bot = await botFor(params.recipientUsername);
-  if (!bot || !bot.chat_id) {
-    await recordDelivery({ invoice_id: params.invoiceId, seller_username: params.sellerUsername, recipient_username: params.recipientUsername, alert_type: params.alertType, tx_hash: params.txHash, status: 'skipped', error: params.recipientUsername + ' has no tested Telegram bot' });
-    return { ok: true, skipped: true, reason: params.recipientUsername + ' has no tested Telegram bot', alert_type: params.alertType };
+  const deliveryId = await claimDelivery({ invoice_id: params.invoiceId, seller_username: params.sellerUsername, recipient_username: params.recipientUsername, alert_type: params.alertType, tx_hash: params.txHash });
+  if (!deliveryId) return { ok: true, skipped: true, reason: 'alert already claimed or sent', alert_type: params.alertType };
+  try {
+    const bot = await botFor(params.recipientUsername);
+    if (!bot || !bot.chat_id) {
+      await patchDelivery(deliveryId, { status: 'skipped', error: params.recipientUsername + ' has no tested Telegram bot' });
+      return { ok: true, skipped: true, reason: params.recipientUsername + ' has no tested Telegram bot', alert_type: params.alertType };
+    }
+    const token = await decryptToken(bot.bot_token_cipher);
+    await telegram(token, 'sendMessage', { chat_id: bot.chat_id, text: params.text, disable_web_page_preview: true });
+    await patchDelivery(deliveryId, { telegram_bot_username: bot.bot_username, telegram_chat_id: bot.chat_id, status: 'sent', sent_at: new Date().toISOString() });
+    return { ok: true, sent: true, recipient: params.recipientUsername, bot_username: bot.bot_username, alert_type: params.alertType };
+  } catch (error) {
+    await patchDelivery(deliveryId, { status: 'failed', error: String(error && error.message || error || 'Telegram send failed').slice(0, 500) });
+    throw error;
   }
-  const token = await decryptToken(bot.bot_token_cipher);
-  await telegram(token, 'sendMessage', { chat_id: bot.chat_id, text: params.text, disable_web_page_preview: true });
-  await recordDelivery({ invoice_id: params.invoiceId, seller_username: params.sellerUsername, recipient_username: params.recipientUsername, alert_type: params.alertType, tx_hash: params.txHash, telegram_bot_username: bot.bot_username, telegram_chat_id: bot.chat_id, status: 'sent', sent_at: new Date().toISOString() });
-  return { ok: true, sent: true, recipient: params.recipientUsername, bot_username: bot.bot_username, alert_type: params.alertType };
 }
 
 Deno.serve(async (req) => {
