@@ -25,8 +25,9 @@ async function claimDelivery(row: Record<string, unknown>) {
     const rows = await supabase('telegram_alert_deliveries?select=id', { method: 'POST', headers: { prefer: 'return=representation' }, body: JSON.stringify({ ...row, status: 'sending' }) });
     return rows && rows[0] && rows[0].id;
   } catch (error) {
-    console.warn('Telegram delivery claim skipped', error);
-    return null;
+    const msg = String(error && error.message || error || '');
+    if (msg.includes('telegram_alert_deliveries_payment_idempotency_idx') || msg.includes('duplicate key value')) return null;
+    throw error;
   }
 }
 async function recordDelivery(row: Record<string, unknown>) { await supabase('telegram_alert_deliveries', { method: 'POST', headers: { prefer: 'return=minimal' }, body: JSON.stringify(row) }); }

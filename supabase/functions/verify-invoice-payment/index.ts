@@ -90,7 +90,10 @@ Deno.serve(async (req) => {
     const rows = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&select=*`);
     const invoice = rows[0];
     if (!invoice) return json({ error: 'Invoice not found' }, 404);
-    if (invoice.status === 'paid') return json({ status: 'paid', invoice_id });
+    if (invoice.status === 'paid') {
+      if (String(invoice.tx_hash || '').toLowerCase() === String(tx_hash).toLowerCase()) await sendTelegramPaymentAlert(invoice_id, tx_hash);
+      return json({ status: 'paid', invoice_id, tx_hash: invoice.tx_hash || tx_hash });
+    }
     if (!['unpaid', 'pending'].includes(invoice.status)) return json({ error: `Invoice is ${invoice.status}` }, 409);
     if (!isAddress(invoice.from_wallet)) return json({ error: 'Invoice recipient wallet is invalid' }, 409);
     if (invoice.token && String(invoice.token).toUpperCase() !== 'USDC') return json({ error: 'Invoice token is not USDC' }, 409);
