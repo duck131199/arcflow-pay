@@ -95,6 +95,7 @@ Deno.serve(async (req) => {
       if (!sender) return json({ error: 'Sender wallet is not registered' }, 403);
       const recipient = await getUserByName(normalizeName(body.to_username));
       if (!recipient) return json({ error: 'Payer is not registered' }, 404);
+      if (recipient.username === sender.username || wallet(recipient.wallet_address) === wallet(sender.wallet_address)) return json({ error: 'Cannot create an invoice to yourself' }, 400);
       const memo = cleanMemo(body.memo);
       if (!memo) return json({ error: 'Memo is required' }, 400);
       const row = {
