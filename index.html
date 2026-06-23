@@ -180,7 +180,7 @@ function refreshSellerConsole(){if(!state.wallet)return;if(activeScreenId()==='c
 function screenFromHash(){const h=(location.hash||'').replace('#','');return h.startsWith('tab-')?h.slice(4):h}
 function cleanTabHash(){if(location.hash&&location.hash.startsWith('#tab-'))history.replaceState(null,'',location.pathname+location.search)}
 function keepScreenAtTop(){[0,20,80,180].forEach(ms=>setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),ms))}
-function setScreen(id,persist=true){if(!validScreen(id))id='create';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(id==='pay'){renderPayInvoice();renderAssets()}if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}cleanTabHash()}keepScreenAtTop()}
+function setScreen(id,persist=true){if(!validScreen(id))id='create';const leavingPay=!!document.querySelector('#pay.active')&&id!=='pay';if(leavingPay){state.currentInvoice=null;renderPayInvoice();renderAssets()}document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));if(id==='pay'){renderPayInvoice();renderAssets()}if(state.wallet)refreshActiveScreen();if(persist){try{localStorage.setItem('arcflow:lastScreen',id)}catch(e){}cleanTabHash()}keepScreenAtTop()}
 function restoreScreen(){let id=screenFromHash();try{id=id||localStorage.getItem('arcflow:lastScreen')||''}catch(e){}setScreen(validScreen(id)?id:'create',true);keepScreenAtTop()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));
 window.addEventListener('hashchange',()=>{const id=screenFromHash();if(id)setScreen(id,true);else cleanTabHash()});
@@ -344,6 +344,7 @@ sync();
 </script>
 </body>
 </html>
+
 
 
 
