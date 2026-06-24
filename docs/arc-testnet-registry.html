@@ -178,11 +178,14 @@ main.wrap>.section:first-child,
 
 
 
-/* Docs: visible transparent sun/moon theme switch */
-.navlinks .themeToggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;width:58px!important;height:30px!important;min-width:58px!important;flex:0 0 auto!important;padding:3px 5px!important;border-radius:999px!important;background:transparent!important;border:1px solid rgba(151,207,255,.22)!important;box-shadow:none!important;overflow:visible!important}
-.themeToggle .themeIconImg{display:block!important;width:20px!important;height:20px!important;object-fit:contain!important;background:transparent!important;opacity:.55!important;filter:none!important}
-[data-theme="light"] .themeToggle .themeSunImg{opacity:1!important}
-[data-theme="dark"] .themeToggle .themeMoonImg{opacity:1!important}
+
+/* Docs: single action icon theme switch */
+.navlinks .themeToggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 auto!important;padding:0!important;border-radius:999px!important;background:transparent!important;border:1px solid rgba(151,207,255,.22)!important;box-shadow:none!important;overflow:visible!important}
+.themeToggle .themeIconImg{display:block!important;width:21px!important;height:21px!important;object-fit:contain!important;background:transparent!important;filter:none!important}
+[data-theme="dark"] .themeToggle .themeSunImg{display:block!important;opacity:1!important}
+[data-theme="dark"] .themeToggle .themeMoonImg{display:none!important}
+[data-theme="light"] .themeToggle .themeSunImg{display:none!important}
+[data-theme="light"] .themeToggle .themeMoonImg{display:block!important;opacity:1!important}
 .themeToggle .themeGlyph{display:none!important}
 .themeGlyph:before{content:""!important;background-image:none!important;box-shadow:none!important;border:0!important}
 @media(max-width:640px){.navlinks{gap:14px!important}.navlinks .themeToggle{order:-1!important}}
