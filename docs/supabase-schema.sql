@@ -25,13 +25,21 @@ create table if not exists public.arcflow_invoices (
   token text not null default 'USDC',
   memo text not null,
   expiry text not null check (expiry in ('6h', '12h', '24h', '3d', '7d')),
-  status text not null default 'unpaid' check (status in ('unpaid', 'pending', 'paid', 'expired', 'cancelled')),
+  status text not null default 'unpaid' check (status in ('unpaid', 'pending', 'paid', 'expired', 'failed', 'cancelled')),
   tx_hash text,
   paid_by_username text references public.arcflow_users(username),
   paid_by_wallet text,
   paid_amount numeric(38, 6),
   paid_token text,
   payment_recorded_at timestamptz,
+  payment_method text not null default 'standard_arc_usdc' check (payment_method in ('standard_arc_usdc', 'swap_to_usdc', 'unified_invoice_pay', 'instant_settlement', 'direct_receive', 'unknown')),
+  payment_status text not null default 'created' check (payment_status in ('created', 'awaiting_signature', 'submitted', 'confirming', 'verifying', 'settled', 'completed', 'failed', 'manual_review')),
+  receipt_version text not null default '1.1' check (receipt_version in ('1.0', '1.1')),
+  verified_at timestamptz,
+  settlement_chain text not null default 'arc-testnet' check (settlement_chain in ('arc-testnet', 'base-sepolia', 'ethereum-sepolia', 'arbitrum-sepolia', 'polygon-amoy', 'op-sepolia', 'unknown')),
+  source_chains jsonb not null default '["arc-testnet"]'::jsonb,
+  verification_checks jsonb not null default '{}'::jsonb,
+  failure_reason text,
   created_at timestamptz not null default now(),
   expires_at timestamptz not null,
   paid_at timestamptz,
@@ -42,6 +50,9 @@ create index if not exists arcflow_invoices_to_status_idx on public.arcflow_invo
 create index if not exists arcflow_invoices_from_status_idx on public.arcflow_invoices(from_username, status, created_at desc);
 create index if not exists arcflow_invoices_paid_by_username_idx on public.arcflow_invoices(paid_by_username, paid_at desc);
 create index if not exists arcflow_invoices_tx_hash_idx on public.arcflow_invoices(tx_hash) where tx_hash is not null;
+create index if not exists arcflow_invoices_payment_method_idx on public.arcflow_invoices(payment_method, created_at desc);
+create index if not exists arcflow_invoices_payment_status_idx on public.arcflow_invoices(payment_status, created_at desc);
+create index if not exists arcflow_invoices_verified_at_idx on public.arcflow_invoices(verified_at desc) where verified_at is not null;
 
 alter table public.arcflow_users enable row level security;
 alter table public.arcflow_invoices enable row level security;
