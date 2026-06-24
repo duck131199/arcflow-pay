@@ -3,6 +3,22 @@
     {
       "source": "/home",
       "destination": "/home.html"
+    },
+    {
+      "source": "/create-invoice",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pay-invoice",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/seller-console",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/wallet-setup",
+      "destination": "/index.html"
     }
   ]
 }
