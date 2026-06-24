@@ -1,1 +1,6 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><g fill='none' stroke='%23FFE23A' stroke-linecap='round' stroke-linejoin='round'><circle cx='64' cy='64' r='28' fill='%23FFE23A' stroke-width='0'/><path stroke-width='9' d='M64 7v23M64 98v23M7 64h23M98 64h23M24 24l16 16M88 88l16 16M104 24L88 40M40 88l-16 16'/></g></svg>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g fill="none" stroke="#FFE23A" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="64" cy="64" r="28" fill="#FFE23A" stroke="none"/>
+    <path stroke-width="9" d="M64 7v23M64 98v23M7 64h23M98 64h23M24 24l16 16M88 88l16 16M104 24L88 40M40 88l-16 16"/>
+  </g>
+</svg>
