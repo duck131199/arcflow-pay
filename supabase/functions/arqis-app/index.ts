@@ -148,7 +148,16 @@ Deno.serve(async (req) => {
       await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(String(body.invoice_id))}&status=in.(unpaid,pending)`, {
         method: 'PATCH',
         headers: { prefer: 'return=minimal' },
-        body: JSON.stringify({ status: 'pending', tx_hash: body.tx_hash })
+        body: JSON.stringify({
+          status: 'pending',
+          tx_hash: body.tx_hash,
+          payment_method: 'standard_arc_usdc',
+          payment_status: 'submitted',
+          receipt_version: '1.1',
+          settlement_chain: 'arc-testnet',
+          source_chains: ['arc-testnet'],
+          verification_checks: { submitted: true }
+        })
       });
       return json({ ok: true });
     }
