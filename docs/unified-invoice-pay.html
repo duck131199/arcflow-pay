@@ -160,6 +160,33 @@ main.wrap>.section:first-child,
   border-top:1px solid var(--docs-subtle-line-soft)!important;
 }
 [data-theme="light"] .hero{border-top-color:transparent!important}
+
+/* Hotfix: readable docs header in light theme */
+[data-theme="light"] .top{
+  background:rgba(250,250,248,.96)!important;
+  border-bottom:1px solid rgba(32,40,50,.10)!important;
+}
+[data-theme="light"] .top .brand,
+[data-theme="light"] .top .brandName,
+[data-theme="light"] .top .brand small,
+[data-theme="light"] .top .navlinks .btn,
+[data-theme="light"] .top .navlinks .btn.secondary,
+[data-theme="light"] .top .themeToggle{
+  color:#20232A!important;
+}
+[data-theme="light"] .top .brand small,
+[data-theme="light"] .top .navlinks .btn,
+[data-theme="light"] .top .navlinks .btn.secondary,
+[data-theme="light"] .top .themeToggle{
+  color:#5F6672!important;
+}
+[data-theme="light"] .top .navlinks .btn:hover,
+[data-theme="light"] .top .navlinks .btn.secondary:hover,
+[data-theme="light"] .top .themeToggle:hover{
+  color:#20232A!important;
+}
+[data-theme="light"] .top .brandSep{background:rgba(32,40,50,.20)!important}
+[data-theme="light"] .top .brandLogoImg{opacity:1!important;filter:none!important}
 </style></head>
 <body>
 <div class="arqis-wave-bg" aria-hidden="true"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"><defs><linearGradient id="arqisWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="rgba(95, 191, 255, 0)"/><stop offset="45%" stop-color="rgba(95, 191, 255, 0.34)"/><stop offset="60%" stop-color="rgba(136, 216, 255, 0.46)"/><stop offset="100%" stop-color="rgba(95, 191, 255, 0)"/></linearGradient></defs><path class="wave wave-1" d="M-120 360 C 120 220, 260 520, 500 360 S 840 210, 1080 380 S 1320 560, 1560 330"/><path class="wave wave-2" d="M-120 470 C 160 300, 320 620, 560 440 S 900 280, 1140 500 S 1340 660, 1560 420"/><path class="wave wave-3" d="M-120 590 C 180 440, 340 720, 610 560 S 940 410, 1180 610 S 1390 760, 1560 520"/><path class="wave wave-4" d="M-160 310 C 80 180, 260 430, 520 300 S 880 170, 1120 340 S 1340 470, 1600 260"/><path class="wave wave-5" d="M-160 690 C 130 520, 330 790, 620 640 S 950 520, 1200 700 S 1420 830, 1600 610"/></svg></div>
