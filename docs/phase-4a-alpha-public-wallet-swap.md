@@ -74,9 +74,9 @@ Do not put private keys, Circle API keys, deployer keys, or Circle entity secret
 
 Deploy notes:
 
-- `assets/arqis-config.js` is environment-specific and gitignored locally.
-- `assets/arqis-config.example.js` is the committed template.
-- Production build generates `assets/arqis-config.js` from `ARQIS_CIRCLE_KIT_KEY` or `CIRCLE_KIT_KEY` via `scripts/write-arqis-config.cjs`.
+- `assets/arqis-config.js` is committed for the current static Vercel deploy so production always has the public Circle Kit Key.
+- `assets/arqis-config.example.js` remains the template for other environments.
+- Production build can also regenerate `assets/arqis-config.js` from `ARQIS_CIRCLE_KIT_KEY` or `CIRCLE_KIT_KEY` via `scripts/write-arqis-config.cjs`.
 - `index.html` must load `assets/arqis-config.js` before `assets/arqis-swap.js`.
 - `api/circle-stablecoin-kits.js` must be deployed with the static app so Circle App Kit browser requests can be proxied.
 - `assets/arqis-swap.js` should be committed for the current static deploy path unless the deploy pipeline runs `npm.cmd run build:swap` / `npm run build:swap` before publishing.

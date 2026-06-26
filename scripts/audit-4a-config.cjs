@@ -13,10 +13,11 @@ function check(name, pass, detail = '') {
 const gitignore = read('.gitignore');
 const html = read('index.html');
 const configExample = read(path.join('assets', 'arqis-config.example.js'));
+const configRuntime = read(path.join('assets', 'arqis-config.js'));
 const envExample = read('.env.example');
 const proxy = read(path.join('api', 'circle-stablecoin-kits.js'));
 
-check('assets/arqis-config.js is gitignored', /^assets\/arqis-config\.js$/m.test(gitignore));
+check('assets/arqis-config.js exists for static production deploy', fs.existsSync(path.join('assets', 'arqis-config.js')));
 check('.env is gitignored', /^\.env$/m.test(gitignore));
 
 const configPos = html.indexOf('assets/arqis-config.js');
@@ -27,6 +28,8 @@ check('config loads before swap bundle', configPos >= 0 && swapPos >= 0 && confi
 
 check('config example defines CIRCLE_KIT_KEY', /CIRCLE_KIT_KEY\s*:/.test(configExample));
 check('config example defines CIRCLE_PROXY_URL', /CIRCLE_PROXY_URL\s*:/.test(configExample));
+check('runtime config defines non-empty CIRCLE_KIT_KEY', /CIRCLE_KIT_KEY\s*:\s*["']KIT_KEY:[^"']+["']/.test(configRuntime));
+check('runtime config defines CIRCLE_PROXY_URL', /CIRCLE_PROXY_URL\s*:/.test(configRuntime));
 check('config example warns against private secrets', /Do not put PRIVATE_KEY, CIRCLE_API_KEY, or CIRCLE_ENTITY_SECRET here\./.test(configExample));
 
 check('env example distinguishes frontend config', /Phase 4A public-wallet swap frontend config lives in assets\/arqis-config\.js\./.test(envExample));

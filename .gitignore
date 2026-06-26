@@ -2,7 +2,6 @@
 Thumbs.db
 node_modules/
 .env
-assets/arqis-config.js
 artifacts/
 cache/
 coverage/
