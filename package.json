@@ -6,11 +6,20 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy:arc-testnet": "hardhat run scripts/deploy-arqis-registry.js --network arcTestnet"
+    "deploy:arc-testnet": "hardhat run scripts/deploy-arqis-registry.js --network arcTestnet",
+    "spike:swap:estimate": "node scripts/arc-app-kit-swap-spike.mjs",
+    "spike:swap:execute": "node scripts/arc-app-kit-swap-spike.mjs --execute",
+    "build:swap": "esbuild src/arqis-swap-browser.js --bundle --format=iife --global-name=ArqisSwapBundle --outfile=assets/arqis-swap.js",
+    "dev": "node scripts/dev-server.mjs"
   },
   "devDependencies": {
+    "@circle-fin/adapter-circle-wallets": "^1.4.1",
+    "@circle-fin/adapter-viem-v2": "^1.12.1",
+    "@circle-fin/app-kit": "^1.8.1",
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "dotenv": "^17.2.3",
-    "hardhat": "^2.27.1"
+    "esbuild": "^0.28.1",
+    "hardhat": "^2.27.1",
+    "viem": "^2.53.1"
   }
 }
