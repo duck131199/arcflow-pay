@@ -10,7 +10,6 @@
     "spike:swap:estimate": "node scripts/arc-app-kit-swap-spike.mjs",
     "spike:swap:execute": "node scripts/arc-app-kit-swap-spike.mjs --execute",
     "build:swap": "esbuild src/arqis-swap-browser.js --bundle --format=iife --global-name=ArqisSwapBundle --outfile=assets/arqis-swap.js",
-    "build": "npm run build:swap && node scripts/write-arqis-config.cjs",
     "dev": "node scripts/dev-server.mjs"
   },
   "devDependencies": {
