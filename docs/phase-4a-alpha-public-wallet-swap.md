@@ -2,6 +2,8 @@
 
 Status: scaffolded in static Arqis app.
 
+Closeout checklist: `docs/phase-4a-alpha-closeout.md`.
+
 ## Goal
 
 Let payer wallet B use their own connected EVM wallet to convert supported Arc Testnet assets to USDC, then pay an invoice separately.
