@@ -42,10 +42,1798 @@ var ArqisSwapBundle = (() => {
   ));
   var __toCommonJS = (mod3) => __copyProps(__defProp({}, "__esModule", { value: true }), mod3);
 
+  // node_modules/base64-js/index.js
+  var require_base64_js = __commonJS({
+    "node_modules/base64-js/index.js"(exports) {
+      "use strict";
+      init_browser_node_globals();
+      exports.byteLength = byteLength;
+      exports.toByteArray = toByteArray;
+      exports.fromByteArray = fromByteArray;
+      var lookup = [];
+      var revLookup = [];
+      var Arr = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
+      var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      for (i2 = 0, len = code.length; i2 < len; ++i2) {
+        lookup[i2] = code[i2];
+        revLookup[code.charCodeAt(i2)] = i2;
+      }
+      var i2;
+      var len;
+      revLookup["-".charCodeAt(0)] = 62;
+      revLookup["_".charCodeAt(0)] = 63;
+      function getLens(b64) {
+        var len2 = b64.length;
+        if (len2 % 4 > 0) {
+          throw new Error("Invalid string. Length must be a multiple of 4");
+        }
+        var validLen = b64.indexOf("=");
+        if (validLen === -1) validLen = len2;
+        var placeHoldersLen = validLen === len2 ? 0 : 4 - validLen % 4;
+        return [validLen, placeHoldersLen];
+      }
+      function byteLength(b64) {
+        var lens = getLens(b64);
+        var validLen = lens[0];
+        var placeHoldersLen = lens[1];
+        return (validLen + placeHoldersLen) * 3 / 4 - placeHoldersLen;
+      }
+      function _byteLength(b64, validLen, placeHoldersLen) {
+        return (validLen + placeHoldersLen) * 3 / 4 - placeHoldersLen;
+      }
+      function toByteArray(b64) {
+        var tmp;
+        var lens = getLens(b64);
+        var validLen = lens[0];
+        var placeHoldersLen = lens[1];
+        var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen));
+        var curByte = 0;
+        var len2 = placeHoldersLen > 0 ? validLen - 4 : validLen;
+        var i3;
+        for (i3 = 0; i3 < len2; i3 += 4) {
+          tmp = revLookup[b64.charCodeAt(i3)] << 18 | revLookup[b64.charCodeAt(i3 + 1)] << 12 | revLookup[b64.charCodeAt(i3 + 2)] << 6 | revLookup[b64.charCodeAt(i3 + 3)];
+          arr[curByte++] = tmp >> 16 & 255;
+          arr[curByte++] = tmp >> 8 & 255;
+          arr[curByte++] = tmp & 255;
+        }
+        if (placeHoldersLen === 2) {
+          tmp = revLookup[b64.charCodeAt(i3)] << 2 | revLookup[b64.charCodeAt(i3 + 1)] >> 4;
+          arr[curByte++] = tmp & 255;
+        }
+        if (placeHoldersLen === 1) {
+          tmp = revLookup[b64.charCodeAt(i3)] << 10 | revLookup[b64.charCodeAt(i3 + 1)] << 4 | revLookup[b64.charCodeAt(i3 + 2)] >> 2;
+          arr[curByte++] = tmp >> 8 & 255;
+          arr[curByte++] = tmp & 255;
+        }
+        return arr;
+      }
+      function tripletToBase64(num2) {
+        return lookup[num2 >> 18 & 63] + lookup[num2 >> 12 & 63] + lookup[num2 >> 6 & 63] + lookup[num2 & 63];
+      }
+      function encodeChunk(uint8, start, end) {
+        var tmp;
+        var output = [];
+        for (var i3 = start; i3 < end; i3 += 3) {
+          tmp = (uint8[i3] << 16 & 16711680) + (uint8[i3 + 1] << 8 & 65280) + (uint8[i3 + 2] & 255);
+          output.push(tripletToBase64(tmp));
+        }
+        return output.join("");
+      }
+      function fromByteArray(uint8) {
+        var tmp;
+        var len2 = uint8.length;
+        var extraBytes = len2 % 3;
+        var parts = [];
+        var maxChunkLength = 16383;
+        for (var i3 = 0, len22 = len2 - extraBytes; i3 < len22; i3 += maxChunkLength) {
+          parts.push(encodeChunk(uint8, i3, i3 + maxChunkLength > len22 ? len22 : i3 + maxChunkLength));
+        }
+        if (extraBytes === 1) {
+          tmp = uint8[len2 - 1];
+          parts.push(
+            lookup[tmp >> 2] + lookup[tmp << 4 & 63] + "=="
+          );
+        } else if (extraBytes === 2) {
+          tmp = (uint8[len2 - 2] << 8) + uint8[len2 - 1];
+          parts.push(
+            lookup[tmp >> 10] + lookup[tmp >> 4 & 63] + lookup[tmp << 2 & 63] + "="
+          );
+        }
+        return parts.join("");
+      }
+    }
+  });
+
+  // node_modules/ieee754/index.js
+  var require_ieee754 = __commonJS({
+    "node_modules/ieee754/index.js"(exports) {
+      init_browser_node_globals();
+      exports.read = function(buffer2, offset2, isLE3, mLen, nBytes) {
+        var e, m;
+        var eLen = nBytes * 8 - mLen - 1;
+        var eMax = (1 << eLen) - 1;
+        var eBias = eMax >> 1;
+        var nBits = -7;
+        var i2 = isLE3 ? nBytes - 1 : 0;
+        var d = isLE3 ? -1 : 1;
+        var s = buffer2[offset2 + i2];
+        i2 += d;
+        e = s & (1 << -nBits) - 1;
+        s >>= -nBits;
+        nBits += eLen;
+        for (; nBits > 0; e = e * 256 + buffer2[offset2 + i2], i2 += d, nBits -= 8) {
+        }
+        m = e & (1 << -nBits) - 1;
+        e >>= -nBits;
+        nBits += mLen;
+        for (; nBits > 0; m = m * 256 + buffer2[offset2 + i2], i2 += d, nBits -= 8) {
+        }
+        if (e === 0) {
+          e = 1 - eBias;
+        } else if (e === eMax) {
+          return m ? NaN : (s ? -1 : 1) * Infinity;
+        } else {
+          m = m + Math.pow(2, mLen);
+          e = e - eBias;
+        }
+        return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+      };
+      exports.write = function(buffer2, value, offset2, isLE3, mLen, nBytes) {
+        var e, m, c;
+        var eLen = nBytes * 8 - mLen - 1;
+        var eMax = (1 << eLen) - 1;
+        var eBias = eMax >> 1;
+        var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
+        var i2 = isLE3 ? 0 : nBytes - 1;
+        var d = isLE3 ? 1 : -1;
+        var s = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
+        value = Math.abs(value);
+        if (isNaN(value) || value === Infinity) {
+          m = isNaN(value) ? 1 : 0;
+          e = eMax;
+        } else {
+          e = Math.floor(Math.log(value) / Math.LN2);
+          if (value * (c = Math.pow(2, -e)) < 1) {
+            e--;
+            c *= 2;
+          }
+          if (e + eBias >= 1) {
+            value += rt / c;
+          } else {
+            value += rt * Math.pow(2, 1 - eBias);
+          }
+          if (value * c >= 2) {
+            e++;
+            c /= 2;
+          }
+          if (e + eBias >= eMax) {
+            m = 0;
+            e = eMax;
+          } else if (e + eBias >= 1) {
+            m = (value * c - 1) * Math.pow(2, mLen);
+            e = e + eBias;
+          } else {
+            m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+            e = 0;
+          }
+        }
+        for (; mLen >= 8; buffer2[offset2 + i2] = m & 255, i2 += d, m /= 256, mLen -= 8) {
+        }
+        e = e << mLen | m;
+        eLen += mLen;
+        for (; eLen > 0; buffer2[offset2 + i2] = e & 255, i2 += d, e /= 256, eLen -= 8) {
+        }
+        buffer2[offset2 + i2 - d] |= s * 128;
+      };
+    }
+  });
+
+  // node_modules/buffer/index.js
+  var require_buffer = __commonJS({
+    "node_modules/buffer/index.js"(exports) {
+      "use strict";
+      init_browser_node_globals();
+      var base64 = require_base64_js();
+      var ieee754 = require_ieee754();
+      var customInspectSymbol = typeof Symbol === "function" && typeof Symbol["for"] === "function" ? Symbol["for"]("nodejs.util.inspect.custom") : null;
+      exports.Buffer = Buffer3;
+      exports.SlowBuffer = SlowBuffer;
+      exports.INSPECT_MAX_BYTES = 50;
+      var K_MAX_LENGTH = 2147483647;
+      exports.kMaxLength = K_MAX_LENGTH;
+      Buffer3.TYPED_ARRAY_SUPPORT = typedArraySupport();
+      if (!Buffer3.TYPED_ARRAY_SUPPORT && typeof console !== "undefined" && typeof console.error === "function") {
+        console.error(
+          "This browser lacks typed array (Uint8Array) support which is required by `buffer` v5.x. Use `buffer` v4.x if you require old browser support."
+        );
+      }
+      function typedArraySupport() {
+        try {
+          const arr = new Uint8Array(1);
+          const proto = { foo: function() {
+            return 42;
+          } };
+          Object.setPrototypeOf(proto, Uint8Array.prototype);
+          Object.setPrototypeOf(arr, proto);
+          return arr.foo() === 42;
+        } catch (e) {
+          return false;
+        }
+      }
+      Object.defineProperty(Buffer3.prototype, "parent", {
+        enumerable: true,
+        get: function() {
+          if (!Buffer3.isBuffer(this)) return void 0;
+          return this.buffer;
+        }
+      });
+      Object.defineProperty(Buffer3.prototype, "offset", {
+        enumerable: true,
+        get: function() {
+          if (!Buffer3.isBuffer(this)) return void 0;
+          return this.byteOffset;
+        }
+      });
+      function createBuffer(length) {
+        if (length > K_MAX_LENGTH) {
+          throw new RangeError('The value "' + length + '" is invalid for option "size"');
+        }
+        const buf = new Uint8Array(length);
+        Object.setPrototypeOf(buf, Buffer3.prototype);
+        return buf;
+      }
+      function Buffer3(arg, encodingOrOffset, length) {
+        if (typeof arg === "number") {
+          if (typeof encodingOrOffset === "string") {
+            throw new TypeError(
+              'The "string" argument must be of type string. Received type number'
+            );
+          }
+          return allocUnsafe(arg);
+        }
+        return from14(arg, encodingOrOffset, length);
+      }
+      Buffer3.poolSize = 8192;
+      function from14(value, encodingOrOffset, length) {
+        if (typeof value === "string") {
+          return fromString3(value, encodingOrOffset);
+        }
+        if (ArrayBuffer.isView(value)) {
+          return fromArrayView(value);
+        }
+        if (value == null) {
+          throw new TypeError(
+            "The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value
+          );
+        }
+        if (isInstance(value, ArrayBuffer) || value && isInstance(value.buffer, ArrayBuffer)) {
+          return fromArrayBuffer(value, encodingOrOffset, length);
+        }
+        if (typeof SharedArrayBuffer !== "undefined" && (isInstance(value, SharedArrayBuffer) || value && isInstance(value.buffer, SharedArrayBuffer))) {
+          return fromArrayBuffer(value, encodingOrOffset, length);
+        }
+        if (typeof value === "number") {
+          throw new TypeError(
+            'The "value" argument must not be of type number. Received type number'
+          );
+        }
+        const valueOf = value.valueOf && value.valueOf();
+        if (valueOf != null && valueOf !== value) {
+          return Buffer3.from(valueOf, encodingOrOffset, length);
+        }
+        const b = fromObject(value);
+        if (b) return b;
+        if (typeof Symbol !== "undefined" && Symbol.toPrimitive != null && typeof value[Symbol.toPrimitive] === "function") {
+          return Buffer3.from(value[Symbol.toPrimitive]("string"), encodingOrOffset, length);
+        }
+        throw new TypeError(
+          "The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value
+        );
+      }
+      Buffer3.from = function(value, encodingOrOffset, length) {
+        return from14(value, encodingOrOffset, length);
+      };
+      Object.setPrototypeOf(Buffer3.prototype, Uint8Array.prototype);
+      Object.setPrototypeOf(Buffer3, Uint8Array);
+      function assertSize4(size5) {
+        if (typeof size5 !== "number") {
+          throw new TypeError('"size" argument must be of type number');
+        } else if (size5 < 0) {
+          throw new RangeError('The value "' + size5 + '" is invalid for option "size"');
+        }
+      }
+      function alloc(size5, fill, encoding) {
+        assertSize4(size5);
+        if (size5 <= 0) {
+          return createBuffer(size5);
+        }
+        if (fill !== void 0) {
+          return typeof encoding === "string" ? createBuffer(size5).fill(fill, encoding) : createBuffer(size5).fill(fill);
+        }
+        return createBuffer(size5);
+      }
+      Buffer3.alloc = function(size5, fill, encoding) {
+        return alloc(size5, fill, encoding);
+      };
+      function allocUnsafe(size5) {
+        assertSize4(size5);
+        return createBuffer(size5 < 0 ? 0 : checked(size5) | 0);
+      }
+      Buffer3.allocUnsafe = function(size5) {
+        return allocUnsafe(size5);
+      };
+      Buffer3.allocUnsafeSlow = function(size5) {
+        return allocUnsafe(size5);
+      };
+      function fromString3(string2, encoding) {
+        if (typeof encoding !== "string" || encoding === "") {
+          encoding = "utf8";
+        }
+        if (!Buffer3.isEncoding(encoding)) {
+          throw new TypeError("Unknown encoding: " + encoding);
+        }
+        const length = byteLength(string2, encoding) | 0;
+        let buf = createBuffer(length);
+        const actual = buf.write(string2, encoding);
+        if (actual !== length) {
+          buf = buf.slice(0, actual);
+        }
+        return buf;
+      }
+      function fromArrayLike(array3) {
+        const length = array3.length < 0 ? 0 : checked(array3.length) | 0;
+        const buf = createBuffer(length);
+        for (let i2 = 0; i2 < length; i2 += 1) {
+          buf[i2] = array3[i2] & 255;
+        }
+        return buf;
+      }
+      function fromArrayView(arrayView) {
+        if (isInstance(arrayView, Uint8Array)) {
+          const copy = new Uint8Array(arrayView);
+          return fromArrayBuffer(copy.buffer, copy.byteOffset, copy.byteLength);
+        }
+        return fromArrayLike(arrayView);
+      }
+      function fromArrayBuffer(array3, byteOffset, length) {
+        if (byteOffset < 0 || array3.byteLength < byteOffset) {
+          throw new RangeError('"offset" is outside of buffer bounds');
+        }
+        if (array3.byteLength < byteOffset + (length || 0)) {
+          throw new RangeError('"length" is outside of buffer bounds');
+        }
+        let buf;
+        if (byteOffset === void 0 && length === void 0) {
+          buf = new Uint8Array(array3);
+        } else if (length === void 0) {
+          buf = new Uint8Array(array3, byteOffset);
+        } else {
+          buf = new Uint8Array(array3, byteOffset, length);
+        }
+        Object.setPrototypeOf(buf, Buffer3.prototype);
+        return buf;
+      }
+      function fromObject(obj) {
+        if (Buffer3.isBuffer(obj)) {
+          const len = checked(obj.length) | 0;
+          const buf = createBuffer(len);
+          if (buf.length === 0) {
+            return buf;
+          }
+          obj.copy(buf, 0, 0, len);
+          return buf;
+        }
+        if (obj.length !== void 0) {
+          if (typeof obj.length !== "number" || numberIsNaN(obj.length)) {
+            return createBuffer(0);
+          }
+          return fromArrayLike(obj);
+        }
+        if (obj.type === "Buffer" && Array.isArray(obj.data)) {
+          return fromArrayLike(obj.data);
+        }
+      }
+      function checked(length) {
+        if (length >= K_MAX_LENGTH) {
+          throw new RangeError("Attempt to allocate Buffer larger than maximum size: 0x" + K_MAX_LENGTH.toString(16) + " bytes");
+        }
+        return length | 0;
+      }
+      function SlowBuffer(length) {
+        if (+length != length) {
+          length = 0;
+        }
+        return Buffer3.alloc(+length);
+      }
+      Buffer3.isBuffer = function isBuffer(b) {
+        return b != null && b._isBuffer === true && b !== Buffer3.prototype;
+      };
+      Buffer3.compare = function compare2(a, b) {
+        if (isInstance(a, Uint8Array)) a = Buffer3.from(a, a.offset, a.byteLength);
+        if (isInstance(b, Uint8Array)) b = Buffer3.from(b, b.offset, b.byteLength);
+        if (!Buffer3.isBuffer(a) || !Buffer3.isBuffer(b)) {
+          throw new TypeError(
+            'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
+          );
+        }
+        if (a === b) return 0;
+        let x = a.length;
+        let y = b.length;
+        for (let i2 = 0, len = Math.min(x, y); i2 < len; ++i2) {
+          if (a[i2] !== b[i2]) {
+            x = a[i2];
+            y = b[i2];
+            break;
+          }
+        }
+        if (x < y) return -1;
+        if (y < x) return 1;
+        return 0;
+      };
+      Buffer3.isEncoding = function isEncoding(encoding) {
+        switch (String(encoding).toLowerCase()) {
+          case "hex":
+          case "utf8":
+          case "utf-8":
+          case "ascii":
+          case "latin1":
+          case "binary":
+          case "base64":
+          case "ucs2":
+          case "ucs-2":
+          case "utf16le":
+          case "utf-16le":
+            return true;
+          default:
+            return false;
+        }
+      };
+      Buffer3.concat = function concat4(list, length) {
+        if (!Array.isArray(list)) {
+          throw new TypeError('"list" argument must be an Array of Buffers');
+        }
+        if (list.length === 0) {
+          return Buffer3.alloc(0);
+        }
+        let i2;
+        if (length === void 0) {
+          length = 0;
+          for (i2 = 0; i2 < list.length; ++i2) {
+            length += list[i2].length;
+          }
+        }
+        const buffer2 = Buffer3.allocUnsafe(length);
+        let pos = 0;
+        for (i2 = 0; i2 < list.length; ++i2) {
+          let buf = list[i2];
+          if (isInstance(buf, Uint8Array)) {
+            if (pos + buf.length > buffer2.length) {
+              if (!Buffer3.isBuffer(buf)) buf = Buffer3.from(buf);
+              buf.copy(buffer2, pos);
+            } else {
+              Uint8Array.prototype.set.call(
+                buffer2,
+                buf,
+                pos
+              );
+            }
+          } else if (!Buffer3.isBuffer(buf)) {
+            throw new TypeError('"list" argument must be an Array of Buffers');
+          } else {
+            buf.copy(buffer2, pos);
+          }
+          pos += buf.length;
+        }
+        return buffer2;
+      };
+      function byteLength(string2, encoding) {
+        if (Buffer3.isBuffer(string2)) {
+          return string2.length;
+        }
+        if (ArrayBuffer.isView(string2) || isInstance(string2, ArrayBuffer)) {
+          return string2.byteLength;
+        }
+        if (typeof string2 !== "string") {
+          throw new TypeError(
+            'The "string" argument must be one of type string, Buffer, or ArrayBuffer. Received type ' + typeof string2
+          );
+        }
+        const len = string2.length;
+        const mustMatch = arguments.length > 2 && arguments[2] === true;
+        if (!mustMatch && len === 0) return 0;
+        let loweredCase = false;
+        for (; ; ) {
+          switch (encoding) {
+            case "ascii":
+            case "latin1":
+            case "binary":
+              return len;
+            case "utf8":
+            case "utf-8":
+              return utf8ToBytes4(string2).length;
+            case "ucs2":
+            case "ucs-2":
+            case "utf16le":
+            case "utf-16le":
+              return len * 2;
+            case "hex":
+              return len >>> 1;
+            case "base64":
+              return base64ToBytes(string2).length;
+            default:
+              if (loweredCase) {
+                return mustMatch ? -1 : utf8ToBytes4(string2).length;
+              }
+              encoding = ("" + encoding).toLowerCase();
+              loweredCase = true;
+          }
+        }
+      }
+      Buffer3.byteLength = byteLength;
+      function slowToString(encoding, start, end) {
+        let loweredCase = false;
+        if (start === void 0 || start < 0) {
+          start = 0;
+        }
+        if (start > this.length) {
+          return "";
+        }
+        if (end === void 0 || end > this.length) {
+          end = this.length;
+        }
+        if (end <= 0) {
+          return "";
+        }
+        end >>>= 0;
+        start >>>= 0;
+        if (end <= start) {
+          return "";
+        }
+        if (!encoding) encoding = "utf8";
+        while (true) {
+          switch (encoding) {
+            case "hex":
+              return hexSlice(this, start, end);
+            case "utf8":
+            case "utf-8":
+              return utf8Slice(this, start, end);
+            case "ascii":
+              return asciiSlice(this, start, end);
+            case "latin1":
+            case "binary":
+              return latin1Slice(this, start, end);
+            case "base64":
+              return base64Slice(this, start, end);
+            case "ucs2":
+            case "ucs-2":
+            case "utf16le":
+            case "utf-16le":
+              return utf16leSlice(this, start, end);
+            default:
+              if (loweredCase) throw new TypeError("Unknown encoding: " + encoding);
+              encoding = (encoding + "").toLowerCase();
+              loweredCase = true;
+          }
+        }
+      }
+      Buffer3.prototype._isBuffer = true;
+      function swap2(b, n, m) {
+        const i2 = b[n];
+        b[n] = b[m];
+        b[m] = i2;
+      }
+      Buffer3.prototype.swap16 = function swap16() {
+        const len = this.length;
+        if (len % 2 !== 0) {
+          throw new RangeError("Buffer size must be a multiple of 16-bits");
+        }
+        for (let i2 = 0; i2 < len; i2 += 2) {
+          swap2(this, i2, i2 + 1);
+        }
+        return this;
+      };
+      Buffer3.prototype.swap32 = function swap32() {
+        const len = this.length;
+        if (len % 4 !== 0) {
+          throw new RangeError("Buffer size must be a multiple of 32-bits");
+        }
+        for (let i2 = 0; i2 < len; i2 += 4) {
+          swap2(this, i2, i2 + 3);
+          swap2(this, i2 + 1, i2 + 2);
+        }
+        return this;
+      };
+      Buffer3.prototype.swap64 = function swap64() {
+        const len = this.length;
+        if (len % 8 !== 0) {
+          throw new RangeError("Buffer size must be a multiple of 64-bits");
+        }
+        for (let i2 = 0; i2 < len; i2 += 8) {
+          swap2(this, i2, i2 + 7);
+          swap2(this, i2 + 1, i2 + 6);
+          swap2(this, i2 + 2, i2 + 5);
+          swap2(this, i2 + 3, i2 + 4);
+        }
+        return this;
+      };
+      Buffer3.prototype.toString = function toString4() {
+        const length = this.length;
+        if (length === 0) return "";
+        if (arguments.length === 0) return utf8Slice(this, 0, length);
+        return slowToString.apply(this, arguments);
+      };
+      Buffer3.prototype.toLocaleString = Buffer3.prototype.toString;
+      Buffer3.prototype.equals = function equals(b) {
+        if (!Buffer3.isBuffer(b)) throw new TypeError("Argument must be a Buffer");
+        if (this === b) return true;
+        return Buffer3.compare(this, b) === 0;
+      };
+      Buffer3.prototype.inspect = function inspect() {
+        let str2 = "";
+        const max = exports.INSPECT_MAX_BYTES;
+        str2 = this.toString("hex", 0, max).replace(/(.{2})/g, "$1 ").trim();
+        if (this.length > max) str2 += " ... ";
+        return "<Buffer " + str2 + ">";
+      };
+      if (customInspectSymbol) {
+        Buffer3.prototype[customInspectSymbol] = Buffer3.prototype.inspect;
+      }
+      Buffer3.prototype.compare = function compare2(target, start, end, thisStart, thisEnd) {
+        if (isInstance(target, Uint8Array)) {
+          target = Buffer3.from(target, target.offset, target.byteLength);
+        }
+        if (!Buffer3.isBuffer(target)) {
+          throw new TypeError(
+            'The "target" argument must be one of type Buffer or Uint8Array. Received type ' + typeof target
+          );
+        }
+        if (start === void 0) {
+          start = 0;
+        }
+        if (end === void 0) {
+          end = target ? target.length : 0;
+        }
+        if (thisStart === void 0) {
+          thisStart = 0;
+        }
+        if (thisEnd === void 0) {
+          thisEnd = this.length;
+        }
+        if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+          throw new RangeError("out of range index");
+        }
+        if (thisStart >= thisEnd && start >= end) {
+          return 0;
+        }
+        if (thisStart >= thisEnd) {
+          return -1;
+        }
+        if (start >= end) {
+          return 1;
+        }
+        start >>>= 0;
+        end >>>= 0;
+        thisStart >>>= 0;
+        thisEnd >>>= 0;
+        if (this === target) return 0;
+        let x = thisEnd - thisStart;
+        let y = end - start;
+        const len = Math.min(x, y);
+        const thisCopy = this.slice(thisStart, thisEnd);
+        const targetCopy = target.slice(start, end);
+        for (let i2 = 0; i2 < len; ++i2) {
+          if (thisCopy[i2] !== targetCopy[i2]) {
+            x = thisCopy[i2];
+            y = targetCopy[i2];
+            break;
+          }
+        }
+        if (x < y) return -1;
+        if (y < x) return 1;
+        return 0;
+      };
+      function bidirectionalIndexOf(buffer2, val, byteOffset, encoding, dir) {
+        if (buffer2.length === 0) return -1;
+        if (typeof byteOffset === "string") {
+          encoding = byteOffset;
+          byteOffset = 0;
+        } else if (byteOffset > 2147483647) {
+          byteOffset = 2147483647;
+        } else if (byteOffset < -2147483648) {
+          byteOffset = -2147483648;
+        }
+        byteOffset = +byteOffset;
+        if (numberIsNaN(byteOffset)) {
+          byteOffset = dir ? 0 : buffer2.length - 1;
+        }
+        if (byteOffset < 0) byteOffset = buffer2.length + byteOffset;
+        if (byteOffset >= buffer2.length) {
+          if (dir) return -1;
+          else byteOffset = buffer2.length - 1;
+        } else if (byteOffset < 0) {
+          if (dir) byteOffset = 0;
+          else return -1;
+        }
+        if (typeof val === "string") {
+          val = Buffer3.from(val, encoding);
+        }
+        if (Buffer3.isBuffer(val)) {
+          if (val.length === 0) {
+            return -1;
+          }
+          return arrayIndexOf(buffer2, val, byteOffset, encoding, dir);
+        } else if (typeof val === "number") {
+          val = val & 255;
+          if (typeof Uint8Array.prototype.indexOf === "function") {
+            if (dir) {
+              return Uint8Array.prototype.indexOf.call(buffer2, val, byteOffset);
+            } else {
+              return Uint8Array.prototype.lastIndexOf.call(buffer2, val, byteOffset);
+            }
+          }
+          return arrayIndexOf(buffer2, [val], byteOffset, encoding, dir);
+        }
+        throw new TypeError("val must be string, number or Buffer");
+      }
+      function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
+        let indexSize = 1;
+        let arrLength = arr.length;
+        let valLength = val.length;
+        if (encoding !== void 0) {
+          encoding = String(encoding).toLowerCase();
+          if (encoding === "ucs2" || encoding === "ucs-2" || encoding === "utf16le" || encoding === "utf-16le") {
+            if (arr.length < 2 || val.length < 2) {
+              return -1;
+            }
+            indexSize = 2;
+            arrLength /= 2;
+            valLength /= 2;
+            byteOffset /= 2;
+          }
+        }
+        function read(buf, i3) {
+          if (indexSize === 1) {
+            return buf[i3];
+          } else {
+            return buf.readUInt16BE(i3 * indexSize);
+          }
+        }
+        let i2;
+        if (dir) {
+          let foundIndex = -1;
+          for (i2 = byteOffset; i2 < arrLength; i2++) {
+            if (read(arr, i2) === read(val, foundIndex === -1 ? 0 : i2 - foundIndex)) {
+              if (foundIndex === -1) foundIndex = i2;
+              if (i2 - foundIndex + 1 === valLength) return foundIndex * indexSize;
+            } else {
+              if (foundIndex !== -1) i2 -= i2 - foundIndex;
+              foundIndex = -1;
+            }
+          }
+        } else {
+          if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
+          for (i2 = byteOffset; i2 >= 0; i2--) {
+            let found = true;
+            for (let j = 0; j < valLength; j++) {
+              if (read(arr, i2 + j) !== read(val, j)) {
+                found = false;
+                break;
+              }
+            }
+            if (found) return i2;
+          }
+        }
+        return -1;
+      }
+      Buffer3.prototype.includes = function includes(val, byteOffset, encoding) {
+        return this.indexOf(val, byteOffset, encoding) !== -1;
+      };
+      Buffer3.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
+        return bidirectionalIndexOf(this, val, byteOffset, encoding, true);
+      };
+      Buffer3.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
+        return bidirectionalIndexOf(this, val, byteOffset, encoding, false);
+      };
+      function hexWrite(buf, string2, offset2, length) {
+        offset2 = Number(offset2) || 0;
+        const remaining = buf.length - offset2;
+        if (!length) {
+          length = remaining;
+        } else {
+          length = Number(length);
+          if (length > remaining) {
+            length = remaining;
+          }
+        }
+        const strLen = string2.length;
+        if (length > strLen / 2) {
+          length = strLen / 2;
+        }
+        let i2;
+        for (i2 = 0; i2 < length; ++i2) {
+          const parsed = parseInt(string2.substr(i2 * 2, 2), 16);
+          if (numberIsNaN(parsed)) return i2;
+          buf[offset2 + i2] = parsed;
+        }
+        return i2;
+      }
+      function utf8Write(buf, string2, offset2, length) {
+        return blitBuffer(utf8ToBytes4(string2, buf.length - offset2), buf, offset2, length);
+      }
+      function asciiWrite(buf, string2, offset2, length) {
+        return blitBuffer(asciiToBytes(string2), buf, offset2, length);
+      }
+      function base64Write(buf, string2, offset2, length) {
+        return blitBuffer(base64ToBytes(string2), buf, offset2, length);
+      }
+      function ucs2Write(buf, string2, offset2, length) {
+        return blitBuffer(utf16leToBytes(string2, buf.length - offset2), buf, offset2, length);
+      }
+      Buffer3.prototype.write = function write(string2, offset2, length, encoding) {
+        if (offset2 === void 0) {
+          encoding = "utf8";
+          length = this.length;
+          offset2 = 0;
+        } else if (length === void 0 && typeof offset2 === "string") {
+          encoding = offset2;
+          length = this.length;
+          offset2 = 0;
+        } else if (isFinite(offset2)) {
+          offset2 = offset2 >>> 0;
+          if (isFinite(length)) {
+            length = length >>> 0;
+            if (encoding === void 0) encoding = "utf8";
+          } else {
+            encoding = length;
+            length = void 0;
+          }
+        } else {
+          throw new Error(
+            "Buffer.write(string, encoding, offset[, length]) is no longer supported"
+          );
+        }
+        const remaining = this.length - offset2;
+        if (length === void 0 || length > remaining) length = remaining;
+        if (string2.length > 0 && (length < 0 || offset2 < 0) || offset2 > this.length) {
+          throw new RangeError("Attempt to write outside buffer bounds");
+        }
+        if (!encoding) encoding = "utf8";
+        let loweredCase = false;
+        for (; ; ) {
+          switch (encoding) {
+            case "hex":
+              return hexWrite(this, string2, offset2, length);
+            case "utf8":
+            case "utf-8":
+              return utf8Write(this, string2, offset2, length);
+            case "ascii":
+            case "latin1":
+            case "binary":
+              return asciiWrite(this, string2, offset2, length);
+            case "base64":
+              return base64Write(this, string2, offset2, length);
+            case "ucs2":
+            case "ucs-2":
+            case "utf16le":
+            case "utf-16le":
+              return ucs2Write(this, string2, offset2, length);
+            default:
+              if (loweredCase) throw new TypeError("Unknown encoding: " + encoding);
+              encoding = ("" + encoding).toLowerCase();
+              loweredCase = true;
+          }
+        }
+      };
+      Buffer3.prototype.toJSON = function toJSON2() {
+        return {
+          type: "Buffer",
+          data: Array.prototype.slice.call(this._arr || this, 0)
+        };
+      };
+      function base64Slice(buf, start, end) {
+        if (start === 0 && end === buf.length) {
+          return base64.fromByteArray(buf);
+        } else {
+          return base64.fromByteArray(buf.slice(start, end));
+        }
+      }
+      function utf8Slice(buf, start, end) {
+        end = Math.min(buf.length, end);
+        const res = [];
+        let i2 = start;
+        while (i2 < end) {
+          const firstByte = buf[i2];
+          let codePoint = null;
+          let bytesPerSequence = firstByte > 239 ? 4 : firstByte > 223 ? 3 : firstByte > 191 ? 2 : 1;
+          if (i2 + bytesPerSequence <= end) {
+            let secondByte, thirdByte, fourthByte, tempCodePoint;
+            switch (bytesPerSequence) {
+              case 1:
+                if (firstByte < 128) {
+                  codePoint = firstByte;
+                }
+                break;
+              case 2:
+                secondByte = buf[i2 + 1];
+                if ((secondByte & 192) === 128) {
+                  tempCodePoint = (firstByte & 31) << 6 | secondByte & 63;
+                  if (tempCodePoint > 127) {
+                    codePoint = tempCodePoint;
+                  }
+                }
+                break;
+              case 3:
+                secondByte = buf[i2 + 1];
+                thirdByte = buf[i2 + 2];
+                if ((secondByte & 192) === 128 && (thirdByte & 192) === 128) {
+                  tempCodePoint = (firstByte & 15) << 12 | (secondByte & 63) << 6 | thirdByte & 63;
+                  if (tempCodePoint > 2047 && (tempCodePoint < 55296 || tempCodePoint > 57343)) {
+                    codePoint = tempCodePoint;
+                  }
+                }
+                break;
+              case 4:
+                secondByte = buf[i2 + 1];
+                thirdByte = buf[i2 + 2];
+                fourthByte = buf[i2 + 3];
+                if ((secondByte & 192) === 128 && (thirdByte & 192) === 128 && (fourthByte & 192) === 128) {
+                  tempCodePoint = (firstByte & 15) << 18 | (secondByte & 63) << 12 | (thirdByte & 63) << 6 | fourthByte & 63;
+                  if (tempCodePoint > 65535 && tempCodePoint < 1114112) {
+                    codePoint = tempCodePoint;
+                  }
+                }
+            }
+          }
+          if (codePoint === null) {
+            codePoint = 65533;
+            bytesPerSequence = 1;
+          } else if (codePoint > 65535) {
+            codePoint -= 65536;
+            res.push(codePoint >>> 10 & 1023 | 55296);
+            codePoint = 56320 | codePoint & 1023;
+          }
+          res.push(codePoint);
+          i2 += bytesPerSequence;
+        }
+        return decodeCodePointsArray(res);
+      }
+      var MAX_ARGUMENTS_LENGTH = 4096;
+      function decodeCodePointsArray(codePoints) {
+        const len = codePoints.length;
+        if (len <= MAX_ARGUMENTS_LENGTH) {
+          return String.fromCharCode.apply(String, codePoints);
+        }
+        let res = "";
+        let i2 = 0;
+        while (i2 < len) {
+          res += String.fromCharCode.apply(
+            String,
+            codePoints.slice(i2, i2 += MAX_ARGUMENTS_LENGTH)
+          );
+        }
+        return res;
+      }
+      function asciiSlice(buf, start, end) {
+        let ret = "";
+        end = Math.min(buf.length, end);
+        for (let i2 = start; i2 < end; ++i2) {
+          ret += String.fromCharCode(buf[i2] & 127);
+        }
+        return ret;
+      }
+      function latin1Slice(buf, start, end) {
+        let ret = "";
+        end = Math.min(buf.length, end);
+        for (let i2 = start; i2 < end; ++i2) {
+          ret += String.fromCharCode(buf[i2]);
+        }
+        return ret;
+      }
+      function hexSlice(buf, start, end) {
+        const len = buf.length;
+        if (!start || start < 0) start = 0;
+        if (!end || end < 0 || end > len) end = len;
+        let out = "";
+        for (let i2 = start; i2 < end; ++i2) {
+          out += hexSliceLookupTable[buf[i2]];
+        }
+        return out;
+      }
+      function utf16leSlice(buf, start, end) {
+        const bytes = buf.slice(start, end);
+        let res = "";
+        for (let i2 = 0; i2 < bytes.length - 1; i2 += 2) {
+          res += String.fromCharCode(bytes[i2] + bytes[i2 + 1] * 256);
+        }
+        return res;
+      }
+      Buffer3.prototype.slice = function slice4(start, end) {
+        const len = this.length;
+        start = ~~start;
+        end = end === void 0 ? len : ~~end;
+        if (start < 0) {
+          start += len;
+          if (start < 0) start = 0;
+        } else if (start > len) {
+          start = len;
+        }
+        if (end < 0) {
+          end += len;
+          if (end < 0) end = 0;
+        } else if (end > len) {
+          end = len;
+        }
+        if (end < start) end = start;
+        const newBuf = this.subarray(start, end);
+        Object.setPrototypeOf(newBuf, Buffer3.prototype);
+        return newBuf;
+      };
+      function checkOffset(offset2, ext, length) {
+        if (offset2 % 1 !== 0 || offset2 < 0) throw new RangeError("offset is not uint");
+        if (offset2 + ext > length) throw new RangeError("Trying to access beyond buffer length");
+      }
+      Buffer3.prototype.readUintLE = Buffer3.prototype.readUIntLE = function readUIntLE(offset2, byteLength2, noAssert) {
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
+        let val = this[offset2];
+        let mul2 = 1;
+        let i2 = 0;
+        while (++i2 < byteLength2 && (mul2 *= 256)) {
+          val += this[offset2 + i2] * mul2;
+        }
+        return val;
+      };
+      Buffer3.prototype.readUintBE = Buffer3.prototype.readUIntBE = function readUIntBE(offset2, byteLength2, noAssert) {
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) {
+          checkOffset(offset2, byteLength2, this.length);
+        }
+        let val = this[offset2 + --byteLength2];
+        let mul2 = 1;
+        while (byteLength2 > 0 && (mul2 *= 256)) {
+          val += this[offset2 + --byteLength2] * mul2;
+        }
+        return val;
+      };
+      Buffer3.prototype.readUint8 = Buffer3.prototype.readUInt8 = function readUInt8(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 1, this.length);
+        return this[offset2];
+      };
+      Buffer3.prototype.readUint16LE = Buffer3.prototype.readUInt16LE = function readUInt16LE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 2, this.length);
+        return this[offset2] | this[offset2 + 1] << 8;
+      };
+      Buffer3.prototype.readUint16BE = Buffer3.prototype.readUInt16BE = function readUInt16BE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 2, this.length);
+        return this[offset2] << 8 | this[offset2 + 1];
+      };
+      Buffer3.prototype.readUint32LE = Buffer3.prototype.readUInt32LE = function readUInt32LE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return (this[offset2] | this[offset2 + 1] << 8 | this[offset2 + 2] << 16) + this[offset2 + 3] * 16777216;
+      };
+      Buffer3.prototype.readUint32BE = Buffer3.prototype.readUInt32BE = function readUInt32BE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return this[offset2] * 16777216 + (this[offset2 + 1] << 16 | this[offset2 + 2] << 8 | this[offset2 + 3]);
+      };
+      Buffer3.prototype.readBigUInt64LE = defineBigIntMethod(function readBigUInt64LE(offset2) {
+        offset2 = offset2 >>> 0;
+        validateNumber(offset2, "offset");
+        const first = this[offset2];
+        const last = this[offset2 + 7];
+        if (first === void 0 || last === void 0) {
+          boundsError(offset2, this.length - 8);
+        }
+        const lo = first + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 24;
+        const hi = this[++offset2] + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + last * 2 ** 24;
+        return BigInt(lo) + (BigInt(hi) << BigInt(32));
+      });
+      Buffer3.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE(offset2) {
+        offset2 = offset2 >>> 0;
+        validateNumber(offset2, "offset");
+        const first = this[offset2];
+        const last = this[offset2 + 7];
+        if (first === void 0 || last === void 0) {
+          boundsError(offset2, this.length - 8);
+        }
+        const hi = first * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + this[++offset2];
+        const lo = this[++offset2] * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + last;
+        return (BigInt(hi) << BigInt(32)) + BigInt(lo);
+      });
+      Buffer3.prototype.readIntLE = function readIntLE(offset2, byteLength2, noAssert) {
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
+        let val = this[offset2];
+        let mul2 = 1;
+        let i2 = 0;
+        while (++i2 < byteLength2 && (mul2 *= 256)) {
+          val += this[offset2 + i2] * mul2;
+        }
+        mul2 *= 128;
+        if (val >= mul2) val -= Math.pow(2, 8 * byteLength2);
+        return val;
+      };
+      Buffer3.prototype.readIntBE = function readIntBE(offset2, byteLength2, noAssert) {
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
+        let i2 = byteLength2;
+        let mul2 = 1;
+        let val = this[offset2 + --i2];
+        while (i2 > 0 && (mul2 *= 256)) {
+          val += this[offset2 + --i2] * mul2;
+        }
+        mul2 *= 128;
+        if (val >= mul2) val -= Math.pow(2, 8 * byteLength2);
+        return val;
+      };
+      Buffer3.prototype.readInt8 = function readInt8(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 1, this.length);
+        if (!(this[offset2] & 128)) return this[offset2];
+        return (255 - this[offset2] + 1) * -1;
+      };
+      Buffer3.prototype.readInt16LE = function readInt16LE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 2, this.length);
+        const val = this[offset2] | this[offset2 + 1] << 8;
+        return val & 32768 ? val | 4294901760 : val;
+      };
+      Buffer3.prototype.readInt16BE = function readInt16BE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 2, this.length);
+        const val = this[offset2 + 1] | this[offset2] << 8;
+        return val & 32768 ? val | 4294901760 : val;
+      };
+      Buffer3.prototype.readInt32LE = function readInt32LE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return this[offset2] | this[offset2 + 1] << 8 | this[offset2 + 2] << 16 | this[offset2 + 3] << 24;
+      };
+      Buffer3.prototype.readInt32BE = function readInt32BE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return this[offset2] << 24 | this[offset2 + 1] << 16 | this[offset2 + 2] << 8 | this[offset2 + 3];
+      };
+      Buffer3.prototype.readBigInt64LE = defineBigIntMethod(function readBigInt64LE(offset2) {
+        offset2 = offset2 >>> 0;
+        validateNumber(offset2, "offset");
+        const first = this[offset2];
+        const last = this[offset2 + 7];
+        if (first === void 0 || last === void 0) {
+          boundsError(offset2, this.length - 8);
+        }
+        const val = this[offset2 + 4] + this[offset2 + 5] * 2 ** 8 + this[offset2 + 6] * 2 ** 16 + (last << 24);
+        return (BigInt(val) << BigInt(32)) + BigInt(first + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 24);
+      });
+      Buffer3.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE(offset2) {
+        offset2 = offset2 >>> 0;
+        validateNumber(offset2, "offset");
+        const first = this[offset2];
+        const last = this[offset2 + 7];
+        if (first === void 0 || last === void 0) {
+          boundsError(offset2, this.length - 8);
+        }
+        const val = (first << 24) + // Overflow
+        this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + this[++offset2];
+        return (BigInt(val) << BigInt(32)) + BigInt(this[++offset2] * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + last);
+      });
+      Buffer3.prototype.readFloatLE = function readFloatLE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return ieee754.read(this, offset2, true, 23, 4);
+      };
+      Buffer3.prototype.readFloatBE = function readFloatBE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 4, this.length);
+        return ieee754.read(this, offset2, false, 23, 4);
+      };
+      Buffer3.prototype.readDoubleLE = function readDoubleLE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 8, this.length);
+        return ieee754.read(this, offset2, true, 52, 8);
+      };
+      Buffer3.prototype.readDoubleBE = function readDoubleBE(offset2, noAssert) {
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkOffset(offset2, 8, this.length);
+        return ieee754.read(this, offset2, false, 52, 8);
+      };
+      function checkInt(buf, value, offset2, ext, max, min) {
+        if (!Buffer3.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance');
+        if (value > max || value < min) throw new RangeError('"value" argument is out of bounds');
+        if (offset2 + ext > buf.length) throw new RangeError("Index out of range");
+      }
+      Buffer3.prototype.writeUintLE = Buffer3.prototype.writeUIntLE = function writeUIntLE(value, offset2, byteLength2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) {
+          const maxBytes = Math.pow(2, 8 * byteLength2) - 1;
+          checkInt(this, value, offset2, byteLength2, maxBytes, 0);
+        }
+        let mul2 = 1;
+        let i2 = 0;
+        this[offset2] = value & 255;
+        while (++i2 < byteLength2 && (mul2 *= 256)) {
+          this[offset2 + i2] = value / mul2 & 255;
+        }
+        return offset2 + byteLength2;
+      };
+      Buffer3.prototype.writeUintBE = Buffer3.prototype.writeUIntBE = function writeUIntBE(value, offset2, byteLength2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        byteLength2 = byteLength2 >>> 0;
+        if (!noAssert) {
+          const maxBytes = Math.pow(2, 8 * byteLength2) - 1;
+          checkInt(this, value, offset2, byteLength2, maxBytes, 0);
+        }
+        let i2 = byteLength2 - 1;
+        let mul2 = 1;
+        this[offset2 + i2] = value & 255;
+        while (--i2 >= 0 && (mul2 *= 256)) {
+          this[offset2 + i2] = value / mul2 & 255;
+        }
+        return offset2 + byteLength2;
+      };
+      Buffer3.prototype.writeUint8 = Buffer3.prototype.writeUInt8 = function writeUInt8(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 1, 255, 0);
+        this[offset2] = value & 255;
+        return offset2 + 1;
+      };
+      Buffer3.prototype.writeUint16LE = Buffer3.prototype.writeUInt16LE = function writeUInt16LE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 2, 65535, 0);
+        this[offset2] = value & 255;
+        this[offset2 + 1] = value >>> 8;
+        return offset2 + 2;
+      };
+      Buffer3.prototype.writeUint16BE = Buffer3.prototype.writeUInt16BE = function writeUInt16BE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 2, 65535, 0);
+        this[offset2] = value >>> 8;
+        this[offset2 + 1] = value & 255;
+        return offset2 + 2;
+      };
+      Buffer3.prototype.writeUint32LE = Buffer3.prototype.writeUInt32LE = function writeUInt32LE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 4, 4294967295, 0);
+        this[offset2 + 3] = value >>> 24;
+        this[offset2 + 2] = value >>> 16;
+        this[offset2 + 1] = value >>> 8;
+        this[offset2] = value & 255;
+        return offset2 + 4;
+      };
+      Buffer3.prototype.writeUint32BE = Buffer3.prototype.writeUInt32BE = function writeUInt32BE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 4, 4294967295, 0);
+        this[offset2] = value >>> 24;
+        this[offset2 + 1] = value >>> 16;
+        this[offset2 + 2] = value >>> 8;
+        this[offset2 + 3] = value & 255;
+        return offset2 + 4;
+      };
+      function wrtBigUInt64LE(buf, value, offset2, min, max) {
+        checkIntBI(value, min, max, buf, offset2, 7);
+        let lo = Number(value & BigInt(4294967295));
+        buf[offset2++] = lo;
+        lo = lo >> 8;
+        buf[offset2++] = lo;
+        lo = lo >> 8;
+        buf[offset2++] = lo;
+        lo = lo >> 8;
+        buf[offset2++] = lo;
+        let hi = Number(value >> BigInt(32) & BigInt(4294967295));
+        buf[offset2++] = hi;
+        hi = hi >> 8;
+        buf[offset2++] = hi;
+        hi = hi >> 8;
+        buf[offset2++] = hi;
+        hi = hi >> 8;
+        buf[offset2++] = hi;
+        return offset2;
+      }
+      function wrtBigUInt64BE(buf, value, offset2, min, max) {
+        checkIntBI(value, min, max, buf, offset2, 7);
+        let lo = Number(value & BigInt(4294967295));
+        buf[offset2 + 7] = lo;
+        lo = lo >> 8;
+        buf[offset2 + 6] = lo;
+        lo = lo >> 8;
+        buf[offset2 + 5] = lo;
+        lo = lo >> 8;
+        buf[offset2 + 4] = lo;
+        let hi = Number(value >> BigInt(32) & BigInt(4294967295));
+        buf[offset2 + 3] = hi;
+        hi = hi >> 8;
+        buf[offset2 + 2] = hi;
+        hi = hi >> 8;
+        buf[offset2 + 1] = hi;
+        hi = hi >> 8;
+        buf[offset2] = hi;
+        return offset2 + 8;
+      }
+      Buffer3.prototype.writeBigUInt64LE = defineBigIntMethod(function writeBigUInt64LE(value, offset2 = 0) {
+        return wrtBigUInt64LE(this, value, offset2, BigInt(0), BigInt("0xffffffffffffffff"));
+      });
+      Buffer3.prototype.writeBigUInt64BE = defineBigIntMethod(function writeBigUInt64BE(value, offset2 = 0) {
+        return wrtBigUInt64BE(this, value, offset2, BigInt(0), BigInt("0xffffffffffffffff"));
+      });
+      Buffer3.prototype.writeIntLE = function writeIntLE(value, offset2, byteLength2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) {
+          const limit = Math.pow(2, 8 * byteLength2 - 1);
+          checkInt(this, value, offset2, byteLength2, limit - 1, -limit);
+        }
+        let i2 = 0;
+        let mul2 = 1;
+        let sub2 = 0;
+        this[offset2] = value & 255;
+        while (++i2 < byteLength2 && (mul2 *= 256)) {
+          if (value < 0 && sub2 === 0 && this[offset2 + i2 - 1] !== 0) {
+            sub2 = 1;
+          }
+          this[offset2 + i2] = (value / mul2 >> 0) - sub2 & 255;
+        }
+        return offset2 + byteLength2;
+      };
+      Buffer3.prototype.writeIntBE = function writeIntBE(value, offset2, byteLength2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) {
+          const limit = Math.pow(2, 8 * byteLength2 - 1);
+          checkInt(this, value, offset2, byteLength2, limit - 1, -limit);
+        }
+        let i2 = byteLength2 - 1;
+        let mul2 = 1;
+        let sub2 = 0;
+        this[offset2 + i2] = value & 255;
+        while (--i2 >= 0 && (mul2 *= 256)) {
+          if (value < 0 && sub2 === 0 && this[offset2 + i2 + 1] !== 0) {
+            sub2 = 1;
+          }
+          this[offset2 + i2] = (value / mul2 >> 0) - sub2 & 255;
+        }
+        return offset2 + byteLength2;
+      };
+      Buffer3.prototype.writeInt8 = function writeInt8(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 1, 127, -128);
+        if (value < 0) value = 255 + value + 1;
+        this[offset2] = value & 255;
+        return offset2 + 1;
+      };
+      Buffer3.prototype.writeInt16LE = function writeInt16LE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 2, 32767, -32768);
+        this[offset2] = value & 255;
+        this[offset2 + 1] = value >>> 8;
+        return offset2 + 2;
+      };
+      Buffer3.prototype.writeInt16BE = function writeInt16BE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 2, 32767, -32768);
+        this[offset2] = value >>> 8;
+        this[offset2 + 1] = value & 255;
+        return offset2 + 2;
+      };
+      Buffer3.prototype.writeInt32LE = function writeInt32LE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 4, 2147483647, -2147483648);
+        this[offset2] = value & 255;
+        this[offset2 + 1] = value >>> 8;
+        this[offset2 + 2] = value >>> 16;
+        this[offset2 + 3] = value >>> 24;
+        return offset2 + 4;
+      };
+      Buffer3.prototype.writeInt32BE = function writeInt32BE(value, offset2, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) checkInt(this, value, offset2, 4, 2147483647, -2147483648);
+        if (value < 0) value = 4294967295 + value + 1;
+        this[offset2] = value >>> 24;
+        this[offset2 + 1] = value >>> 16;
+        this[offset2 + 2] = value >>> 8;
+        this[offset2 + 3] = value & 255;
+        return offset2 + 4;
+      };
+      Buffer3.prototype.writeBigInt64LE = defineBigIntMethod(function writeBigInt64LE(value, offset2 = 0) {
+        return wrtBigUInt64LE(this, value, offset2, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
+      });
+      Buffer3.prototype.writeBigInt64BE = defineBigIntMethod(function writeBigInt64BE(value, offset2 = 0) {
+        return wrtBigUInt64BE(this, value, offset2, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
+      });
+      function checkIEEE754(buf, value, offset2, ext, max, min) {
+        if (offset2 + ext > buf.length) throw new RangeError("Index out of range");
+        if (offset2 < 0) throw new RangeError("Index out of range");
+      }
+      function writeFloat(buf, value, offset2, littleEndian, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) {
+          checkIEEE754(buf, value, offset2, 4, 34028234663852886e22, -34028234663852886e22);
+        }
+        ieee754.write(buf, value, offset2, littleEndian, 23, 4);
+        return offset2 + 4;
+      }
+      Buffer3.prototype.writeFloatLE = function writeFloatLE(value, offset2, noAssert) {
+        return writeFloat(this, value, offset2, true, noAssert);
+      };
+      Buffer3.prototype.writeFloatBE = function writeFloatBE(value, offset2, noAssert) {
+        return writeFloat(this, value, offset2, false, noAssert);
+      };
+      function writeDouble(buf, value, offset2, littleEndian, noAssert) {
+        value = +value;
+        offset2 = offset2 >>> 0;
+        if (!noAssert) {
+          checkIEEE754(buf, value, offset2, 8, 17976931348623157e292, -17976931348623157e292);
+        }
+        ieee754.write(buf, value, offset2, littleEndian, 52, 8);
+        return offset2 + 8;
+      }
+      Buffer3.prototype.writeDoubleLE = function writeDoubleLE(value, offset2, noAssert) {
+        return writeDouble(this, value, offset2, true, noAssert);
+      };
+      Buffer3.prototype.writeDoubleBE = function writeDoubleBE(value, offset2, noAssert) {
+        return writeDouble(this, value, offset2, false, noAssert);
+      };
+      Buffer3.prototype.copy = function copy(target, targetStart, start, end) {
+        if (!Buffer3.isBuffer(target)) throw new TypeError("argument should be a Buffer");
+        if (!start) start = 0;
+        if (!end && end !== 0) end = this.length;
+        if (targetStart >= target.length) targetStart = target.length;
+        if (!targetStart) targetStart = 0;
+        if (end > 0 && end < start) end = start;
+        if (end === start) return 0;
+        if (target.length === 0 || this.length === 0) return 0;
+        if (targetStart < 0) {
+          throw new RangeError("targetStart out of bounds");
+        }
+        if (start < 0 || start >= this.length) throw new RangeError("Index out of range");
+        if (end < 0) throw new RangeError("sourceEnd out of bounds");
+        if (end > this.length) end = this.length;
+        if (target.length - targetStart < end - start) {
+          end = target.length - targetStart + start;
+        }
+        const len = end - start;
+        if (this === target && typeof Uint8Array.prototype.copyWithin === "function") {
+          this.copyWithin(targetStart, start, end);
+        } else {
+          Uint8Array.prototype.set.call(
+            target,
+            this.subarray(start, end),
+            targetStart
+          );
+        }
+        return len;
+      };
+      Buffer3.prototype.fill = function fill(val, start, end, encoding) {
+        if (typeof val === "string") {
+          if (typeof start === "string") {
+            encoding = start;
+            start = 0;
+            end = this.length;
+          } else if (typeof end === "string") {
+            encoding = end;
+            end = this.length;
+          }
+          if (encoding !== void 0 && typeof encoding !== "string") {
+            throw new TypeError("encoding must be a string");
+          }
+          if (typeof encoding === "string" && !Buffer3.isEncoding(encoding)) {
+            throw new TypeError("Unknown encoding: " + encoding);
+          }
+          if (val.length === 1) {
+            const code = val.charCodeAt(0);
+            if (encoding === "utf8" && code < 128 || encoding === "latin1") {
+              val = code;
+            }
+          }
+        } else if (typeof val === "number") {
+          val = val & 255;
+        } else if (typeof val === "boolean") {
+          val = Number(val);
+        }
+        if (start < 0 || this.length < start || this.length < end) {
+          throw new RangeError("Out of range index");
+        }
+        if (end <= start) {
+          return this;
+        }
+        start = start >>> 0;
+        end = end === void 0 ? this.length : end >>> 0;
+        if (!val) val = 0;
+        let i2;
+        if (typeof val === "number") {
+          for (i2 = start; i2 < end; ++i2) {
+            this[i2] = val;
+          }
+        } else {
+          const bytes = Buffer3.isBuffer(val) ? val : Buffer3.from(val, encoding);
+          const len = bytes.length;
+          if (len === 0) {
+            throw new TypeError('The value "' + val + '" is invalid for argument "value"');
+          }
+          for (i2 = 0; i2 < end - start; ++i2) {
+            this[i2 + start] = bytes[i2 % len];
+          }
+        }
+        return this;
+      };
+      var errors = {};
+      function E(sym, getMessage, Base3) {
+        errors[sym] = class NodeError extends Base3 {
+          constructor() {
+            super();
+            Object.defineProperty(this, "message", {
+              value: getMessage.apply(this, arguments),
+              writable: true,
+              configurable: true
+            });
+            this.name = `${this.name} [${sym}]`;
+            this.stack;
+            delete this.name;
+          }
+          get code() {
+            return sym;
+          }
+          set code(value) {
+            Object.defineProperty(this, "code", {
+              configurable: true,
+              enumerable: true,
+              value,
+              writable: true
+            });
+          }
+          toString() {
+            return `${this.name} [${sym}]: ${this.message}`;
+          }
+        };
+      }
+      E(
+        "ERR_BUFFER_OUT_OF_BOUNDS",
+        function(name3) {
+          if (name3) {
+            return `${name3} is outside of buffer bounds`;
+          }
+          return "Attempt to access memory outside buffer bounds";
+        },
+        RangeError
+      );
+      E(
+        "ERR_INVALID_ARG_TYPE",
+        function(name3, actual) {
+          return `The "${name3}" argument must be of type number. Received type ${typeof actual}`;
+        },
+        TypeError
+      );
+      E(
+        "ERR_OUT_OF_RANGE",
+        function(str2, range, input) {
+          let msg = `The value of "${str2}" is out of range.`;
+          let received = input;
+          if (Number.isInteger(input) && Math.abs(input) > 2 ** 32) {
+            received = addNumericalSeparator(String(input));
+          } else if (typeof input === "bigint") {
+            received = String(input);
+            if (input > BigInt(2) ** BigInt(32) || input < -(BigInt(2) ** BigInt(32))) {
+              received = addNumericalSeparator(received);
+            }
+            received += "n";
+          }
+          msg += ` It must be ${range}. Received ${received}`;
+          return msg;
+        },
+        RangeError
+      );
+      function addNumericalSeparator(val) {
+        let res = "";
+        let i2 = val.length;
+        const start = val[0] === "-" ? 1 : 0;
+        for (; i2 >= start + 4; i2 -= 3) {
+          res = `_${val.slice(i2 - 3, i2)}${res}`;
+        }
+        return `${val.slice(0, i2)}${res}`;
+      }
+      function checkBounds(buf, offset2, byteLength2) {
+        validateNumber(offset2, "offset");
+        if (buf[offset2] === void 0 || buf[offset2 + byteLength2] === void 0) {
+          boundsError(offset2, buf.length - (byteLength2 + 1));
+        }
+      }
+      function checkIntBI(value, min, max, buf, offset2, byteLength2) {
+        if (value > max || value < min) {
+          const n = typeof min === "bigint" ? "n" : "";
+          let range;
+          if (byteLength2 > 3) {
+            if (min === 0 || min === BigInt(0)) {
+              range = `>= 0${n} and < 2${n} ** ${(byteLength2 + 1) * 8}${n}`;
+            } else {
+              range = `>= -(2${n} ** ${(byteLength2 + 1) * 8 - 1}${n}) and < 2 ** ${(byteLength2 + 1) * 8 - 1}${n}`;
+            }
+          } else {
+            range = `>= ${min}${n} and <= ${max}${n}`;
+          }
+          throw new errors.ERR_OUT_OF_RANGE("value", range, value);
+        }
+        checkBounds(buf, offset2, byteLength2);
+      }
+      function validateNumber(value, name3) {
+        if (typeof value !== "number") {
+          throw new errors.ERR_INVALID_ARG_TYPE(name3, "number", value);
+        }
+      }
+      function boundsError(value, length, type2) {
+        if (Math.floor(value) !== value) {
+          validateNumber(value, type2);
+          throw new errors.ERR_OUT_OF_RANGE(type2 || "offset", "an integer", value);
+        }
+        if (length < 0) {
+          throw new errors.ERR_BUFFER_OUT_OF_BOUNDS();
+        }
+        throw new errors.ERR_OUT_OF_RANGE(
+          type2 || "offset",
+          `>= ${type2 ? 1 : 0} and <= ${length}`,
+          value
+        );
+      }
+      var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
+      function base64clean(str2) {
+        str2 = str2.split("=")[0];
+        str2 = str2.trim().replace(INVALID_BASE64_RE, "");
+        if (str2.length < 2) return "";
+        while (str2.length % 4 !== 0) {
+          str2 = str2 + "=";
+        }
+        return str2;
+      }
+      function utf8ToBytes4(string2, units) {
+        units = units || Infinity;
+        let codePoint;
+        const length = string2.length;
+        let leadSurrogate = null;
+        const bytes = [];
+        for (let i2 = 0; i2 < length; ++i2) {
+          codePoint = string2.charCodeAt(i2);
+          if (codePoint > 55295 && codePoint < 57344) {
+            if (!leadSurrogate) {
+              if (codePoint > 56319) {
+                if ((units -= 3) > -1) bytes.push(239, 191, 189);
+                continue;
+              } else if (i2 + 1 === length) {
+                if ((units -= 3) > -1) bytes.push(239, 191, 189);
+                continue;
+              }
+              leadSurrogate = codePoint;
+              continue;
+            }
+            if (codePoint < 56320) {
+              if ((units -= 3) > -1) bytes.push(239, 191, 189);
+              leadSurrogate = codePoint;
+              continue;
+            }
+            codePoint = (leadSurrogate - 55296 << 10 | codePoint - 56320) + 65536;
+          } else if (leadSurrogate) {
+            if ((units -= 3) > -1) bytes.push(239, 191, 189);
+          }
+          leadSurrogate = null;
+          if (codePoint < 128) {
+            if ((units -= 1) < 0) break;
+            bytes.push(codePoint);
+          } else if (codePoint < 2048) {
+            if ((units -= 2) < 0) break;
+            bytes.push(
+              codePoint >> 6 | 192,
+              codePoint & 63 | 128
+            );
+          } else if (codePoint < 65536) {
+            if ((units -= 3) < 0) break;
+            bytes.push(
+              codePoint >> 12 | 224,
+              codePoint >> 6 & 63 | 128,
+              codePoint & 63 | 128
+            );
+          } else if (codePoint < 1114112) {
+            if ((units -= 4) < 0) break;
+            bytes.push(
+              codePoint >> 18 | 240,
+              codePoint >> 12 & 63 | 128,
+              codePoint >> 6 & 63 | 128,
+              codePoint & 63 | 128
+            );
+          } else {
+            throw new Error("Invalid code point");
+          }
+        }
+        return bytes;
+      }
+      function asciiToBytes(str2) {
+        const byteArray = [];
+        for (let i2 = 0; i2 < str2.length; ++i2) {
+          byteArray.push(str2.charCodeAt(i2) & 255);
+        }
+        return byteArray;
+      }
+      function utf16leToBytes(str2, units) {
+        let c, hi, lo;
+        const byteArray = [];
+        for (let i2 = 0; i2 < str2.length; ++i2) {
+          if ((units -= 2) < 0) break;
+          c = str2.charCodeAt(i2);
+          hi = c >> 8;
+          lo = c % 256;
+          byteArray.push(lo);
+          byteArray.push(hi);
+        }
+        return byteArray;
+      }
+      function base64ToBytes(str2) {
+        return base64.toByteArray(base64clean(str2));
+      }
+      function blitBuffer(src, dst, offset2, length) {
+        let i2;
+        for (i2 = 0; i2 < length; ++i2) {
+          if (i2 + offset2 >= dst.length || i2 >= src.length) break;
+          dst[i2 + offset2] = src[i2];
+        }
+        return i2;
+      }
+      function isInstance(obj, type2) {
+        return obj instanceof type2 || obj != null && obj.constructor != null && obj.constructor.name != null && obj.constructor.name === type2.name;
+      }
+      function numberIsNaN(obj) {
+        return obj !== obj;
+      }
+      var hexSliceLookupTable = (function() {
+        const alphabet = "0123456789abcdef";
+        const table = new Array(256);
+        for (let i2 = 0; i2 < 16; ++i2) {
+          const i162 = i2 * 16;
+          for (let j = 0; j < 16; ++j) {
+            table[i162 + j] = alphabet[i2] + alphabet[j];
+          }
+        }
+        return table;
+      })();
+      function defineBigIntMethod(fn) {
+        return typeof BigInt === "undefined" ? BufferBigIntNotDefined : fn;
+      }
+      function BufferBigIntNotDefined() {
+        throw new Error("BigInt not supported");
+      }
+    }
+  });
+
+  // src/browser-node-globals.js
+  var import_buffer;
+  var init_browser_node_globals = __esm({
+    "src/browser-node-globals.js"() {
+      import_buffer = __toESM(require_buffer());
+    }
+  });
+
   // node_modules/quick-format-unescaped/index.js
   var require_quick_format_unescaped = __commonJS({
     "node_modules/quick-format-unescaped/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       function tryStringify(o) {
         try {
           return JSON.stringify(o);
@@ -165,6 +1953,7 @@ var ArqisSwapBundle = (() => {
   var require_browser = __commonJS({
     "node_modules/pino/browser.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var format = require_quick_format_unescaped();
       module.exports = pino2;
       var _console = pfGlobalThisOrFallback().console || {};
@@ -597,14 +2386,16 @@ var ArqisSwapBundle = (() => {
   });
 
   // (disabled):node_modules/buffer/index.js
-  var require_buffer = __commonJS({
+  var require_buffer2 = __commonJS({
     "(disabled):node_modules/buffer/index.js"() {
+      init_browser_node_globals();
     }
   });
 
   // node_modules/bn.js/lib/bn.js
   var require_bn = __commonJS({
     "node_modules/bn.js/lib/bn.js"(exports, module) {
+      init_browser_node_globals();
       (function(module2, exports2) {
         "use strict";
         function assert9(val, msg) {
@@ -641,12 +2432,12 @@ var ArqisSwapBundle = (() => {
         }
         BN3.BN = BN3;
         BN3.wordSize = 26;
-        var Buffer2;
+        var Buffer3;
         try {
           if (typeof window !== "undefined" && typeof window.Buffer !== "undefined") {
-            Buffer2 = window.Buffer;
+            Buffer3 = window.Buffer;
           } else {
-            Buffer2 = require_buffer().Buffer;
+            Buffer3 = require_buffer2().Buffer;
           }
         } catch (e) {
         }
@@ -1103,9 +2894,9 @@ var ArqisSwapBundle = (() => {
         BN3.prototype.toJSON = function toJSON2() {
           return this.toString(16, 2);
         };
-        if (Buffer2) {
+        if (Buffer3) {
           BN3.prototype.toBuffer = function toBuffer(endian, length) {
-            return this.toArrayLike(Buffer2, endian, length);
+            return this.toArrayLike(Buffer3, endian, length);
           };
         }
         BN3.prototype.toArray = function toArray(endian, length) {
@@ -3496,6 +5287,7 @@ var ArqisSwapBundle = (() => {
   // node_modules/js-sha3/src/sha3.js
   var require_sha3 = __commonJS({
     "node_modules/js-sha3/src/sha3.js"(exports, module) {
+      init_browser_node_globals();
       (function() {
         "use strict";
         var INPUT_ERROR = "input is invalid type";
@@ -3508,7 +5300,7 @@ var ArqisSwapBundle = (() => {
         var WEB_WORKER = !WINDOW && typeof self === "object";
         var NODE_JS = !root.JS_SHA3_NO_NODE_JS && typeof process === "object" && process.versions && process.versions.node;
         if (NODE_JS) {
-          root = global;
+          root = globalThis;
         } else if (WEB_WORKER) {
           root = self;
         }
@@ -4142,1786 +5934,11 @@ var ArqisSwapBundle = (() => {
     }
   });
 
-  // node_modules/base64-js/index.js
-  var require_base64_js = __commonJS({
-    "node_modules/base64-js/index.js"(exports) {
-      "use strict";
-      exports.byteLength = byteLength;
-      exports.toByteArray = toByteArray;
-      exports.fromByteArray = fromByteArray;
-      var lookup = [];
-      var revLookup = [];
-      var Arr = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
-      var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-      for (i2 = 0, len = code.length; i2 < len; ++i2) {
-        lookup[i2] = code[i2];
-        revLookup[code.charCodeAt(i2)] = i2;
-      }
-      var i2;
-      var len;
-      revLookup["-".charCodeAt(0)] = 62;
-      revLookup["_".charCodeAt(0)] = 63;
-      function getLens(b64) {
-        var len2 = b64.length;
-        if (len2 % 4 > 0) {
-          throw new Error("Invalid string. Length must be a multiple of 4");
-        }
-        var validLen = b64.indexOf("=");
-        if (validLen === -1) validLen = len2;
-        var placeHoldersLen = validLen === len2 ? 0 : 4 - validLen % 4;
-        return [validLen, placeHoldersLen];
-      }
-      function byteLength(b64) {
-        var lens = getLens(b64);
-        var validLen = lens[0];
-        var placeHoldersLen = lens[1];
-        return (validLen + placeHoldersLen) * 3 / 4 - placeHoldersLen;
-      }
-      function _byteLength(b64, validLen, placeHoldersLen) {
-        return (validLen + placeHoldersLen) * 3 / 4 - placeHoldersLen;
-      }
-      function toByteArray(b64) {
-        var tmp;
-        var lens = getLens(b64);
-        var validLen = lens[0];
-        var placeHoldersLen = lens[1];
-        var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen));
-        var curByte = 0;
-        var len2 = placeHoldersLen > 0 ? validLen - 4 : validLen;
-        var i3;
-        for (i3 = 0; i3 < len2; i3 += 4) {
-          tmp = revLookup[b64.charCodeAt(i3)] << 18 | revLookup[b64.charCodeAt(i3 + 1)] << 12 | revLookup[b64.charCodeAt(i3 + 2)] << 6 | revLookup[b64.charCodeAt(i3 + 3)];
-          arr[curByte++] = tmp >> 16 & 255;
-          arr[curByte++] = tmp >> 8 & 255;
-          arr[curByte++] = tmp & 255;
-        }
-        if (placeHoldersLen === 2) {
-          tmp = revLookup[b64.charCodeAt(i3)] << 2 | revLookup[b64.charCodeAt(i3 + 1)] >> 4;
-          arr[curByte++] = tmp & 255;
-        }
-        if (placeHoldersLen === 1) {
-          tmp = revLookup[b64.charCodeAt(i3)] << 10 | revLookup[b64.charCodeAt(i3 + 1)] << 4 | revLookup[b64.charCodeAt(i3 + 2)] >> 2;
-          arr[curByte++] = tmp >> 8 & 255;
-          arr[curByte++] = tmp & 255;
-        }
-        return arr;
-      }
-      function tripletToBase64(num2) {
-        return lookup[num2 >> 18 & 63] + lookup[num2 >> 12 & 63] + lookup[num2 >> 6 & 63] + lookup[num2 & 63];
-      }
-      function encodeChunk(uint8, start, end) {
-        var tmp;
-        var output = [];
-        for (var i3 = start; i3 < end; i3 += 3) {
-          tmp = (uint8[i3] << 16 & 16711680) + (uint8[i3 + 1] << 8 & 65280) + (uint8[i3 + 2] & 255);
-          output.push(tripletToBase64(tmp));
-        }
-        return output.join("");
-      }
-      function fromByteArray(uint8) {
-        var tmp;
-        var len2 = uint8.length;
-        var extraBytes = len2 % 3;
-        var parts = [];
-        var maxChunkLength = 16383;
-        for (var i3 = 0, len22 = len2 - extraBytes; i3 < len22; i3 += maxChunkLength) {
-          parts.push(encodeChunk(uint8, i3, i3 + maxChunkLength > len22 ? len22 : i3 + maxChunkLength));
-        }
-        if (extraBytes === 1) {
-          tmp = uint8[len2 - 1];
-          parts.push(
-            lookup[tmp >> 2] + lookup[tmp << 4 & 63] + "=="
-          );
-        } else if (extraBytes === 2) {
-          tmp = (uint8[len2 - 2] << 8) + uint8[len2 - 1];
-          parts.push(
-            lookup[tmp >> 10] + lookup[tmp >> 4 & 63] + lookup[tmp << 2 & 63] + "="
-          );
-        }
-        return parts.join("");
-      }
-    }
-  });
-
-  // node_modules/ieee754/index.js
-  var require_ieee754 = __commonJS({
-    "node_modules/ieee754/index.js"(exports) {
-      exports.read = function(buffer2, offset2, isLE3, mLen, nBytes) {
-        var e, m;
-        var eLen = nBytes * 8 - mLen - 1;
-        var eMax = (1 << eLen) - 1;
-        var eBias = eMax >> 1;
-        var nBits = -7;
-        var i2 = isLE3 ? nBytes - 1 : 0;
-        var d = isLE3 ? -1 : 1;
-        var s = buffer2[offset2 + i2];
-        i2 += d;
-        e = s & (1 << -nBits) - 1;
-        s >>= -nBits;
-        nBits += eLen;
-        for (; nBits > 0; e = e * 256 + buffer2[offset2 + i2], i2 += d, nBits -= 8) {
-        }
-        m = e & (1 << -nBits) - 1;
-        e >>= -nBits;
-        nBits += mLen;
-        for (; nBits > 0; m = m * 256 + buffer2[offset2 + i2], i2 += d, nBits -= 8) {
-        }
-        if (e === 0) {
-          e = 1 - eBias;
-        } else if (e === eMax) {
-          return m ? NaN : (s ? -1 : 1) * Infinity;
-        } else {
-          m = m + Math.pow(2, mLen);
-          e = e - eBias;
-        }
-        return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
-      };
-      exports.write = function(buffer2, value, offset2, isLE3, mLen, nBytes) {
-        var e, m, c;
-        var eLen = nBytes * 8 - mLen - 1;
-        var eMax = (1 << eLen) - 1;
-        var eBias = eMax >> 1;
-        var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
-        var i2 = isLE3 ? 0 : nBytes - 1;
-        var d = isLE3 ? 1 : -1;
-        var s = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
-        value = Math.abs(value);
-        if (isNaN(value) || value === Infinity) {
-          m = isNaN(value) ? 1 : 0;
-          e = eMax;
-        } else {
-          e = Math.floor(Math.log(value) / Math.LN2);
-          if (value * (c = Math.pow(2, -e)) < 1) {
-            e--;
-            c *= 2;
-          }
-          if (e + eBias >= 1) {
-            value += rt / c;
-          } else {
-            value += rt * Math.pow(2, 1 - eBias);
-          }
-          if (value * c >= 2) {
-            e++;
-            c /= 2;
-          }
-          if (e + eBias >= eMax) {
-            m = 0;
-            e = eMax;
-          } else if (e + eBias >= 1) {
-            m = (value * c - 1) * Math.pow(2, mLen);
-            e = e + eBias;
-          } else {
-            m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-            e = 0;
-          }
-        }
-        for (; mLen >= 8; buffer2[offset2 + i2] = m & 255, i2 += d, m /= 256, mLen -= 8) {
-        }
-        e = e << mLen | m;
-        eLen += mLen;
-        for (; eLen > 0; buffer2[offset2 + i2] = e & 255, i2 += d, e /= 256, eLen -= 8) {
-        }
-        buffer2[offset2 + i2 - d] |= s * 128;
-      };
-    }
-  });
-
-  // node_modules/buffer/index.js
-  var require_buffer2 = __commonJS({
-    "node_modules/buffer/index.js"(exports) {
-      "use strict";
-      var base64 = require_base64_js();
-      var ieee754 = require_ieee754();
-      var customInspectSymbol = typeof Symbol === "function" && typeof Symbol["for"] === "function" ? Symbol["for"]("nodejs.util.inspect.custom") : null;
-      exports.Buffer = Buffer2;
-      exports.SlowBuffer = SlowBuffer;
-      exports.INSPECT_MAX_BYTES = 50;
-      var K_MAX_LENGTH = 2147483647;
-      exports.kMaxLength = K_MAX_LENGTH;
-      Buffer2.TYPED_ARRAY_SUPPORT = typedArraySupport();
-      if (!Buffer2.TYPED_ARRAY_SUPPORT && typeof console !== "undefined" && typeof console.error === "function") {
-        console.error(
-          "This browser lacks typed array (Uint8Array) support which is required by `buffer` v5.x. Use `buffer` v4.x if you require old browser support."
-        );
-      }
-      function typedArraySupport() {
-        try {
-          const arr = new Uint8Array(1);
-          const proto = { foo: function() {
-            return 42;
-          } };
-          Object.setPrototypeOf(proto, Uint8Array.prototype);
-          Object.setPrototypeOf(arr, proto);
-          return arr.foo() === 42;
-        } catch (e) {
-          return false;
-        }
-      }
-      Object.defineProperty(Buffer2.prototype, "parent", {
-        enumerable: true,
-        get: function() {
-          if (!Buffer2.isBuffer(this)) return void 0;
-          return this.buffer;
-        }
-      });
-      Object.defineProperty(Buffer2.prototype, "offset", {
-        enumerable: true,
-        get: function() {
-          if (!Buffer2.isBuffer(this)) return void 0;
-          return this.byteOffset;
-        }
-      });
-      function createBuffer(length) {
-        if (length > K_MAX_LENGTH) {
-          throw new RangeError('The value "' + length + '" is invalid for option "size"');
-        }
-        const buf = new Uint8Array(length);
-        Object.setPrototypeOf(buf, Buffer2.prototype);
-        return buf;
-      }
-      function Buffer2(arg, encodingOrOffset, length) {
-        if (typeof arg === "number") {
-          if (typeof encodingOrOffset === "string") {
-            throw new TypeError(
-              'The "string" argument must be of type string. Received type number'
-            );
-          }
-          return allocUnsafe(arg);
-        }
-        return from14(arg, encodingOrOffset, length);
-      }
-      Buffer2.poolSize = 8192;
-      function from14(value, encodingOrOffset, length) {
-        if (typeof value === "string") {
-          return fromString3(value, encodingOrOffset);
-        }
-        if (ArrayBuffer.isView(value)) {
-          return fromArrayView(value);
-        }
-        if (value == null) {
-          throw new TypeError(
-            "The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value
-          );
-        }
-        if (isInstance(value, ArrayBuffer) || value && isInstance(value.buffer, ArrayBuffer)) {
-          return fromArrayBuffer(value, encodingOrOffset, length);
-        }
-        if (typeof SharedArrayBuffer !== "undefined" && (isInstance(value, SharedArrayBuffer) || value && isInstance(value.buffer, SharedArrayBuffer))) {
-          return fromArrayBuffer(value, encodingOrOffset, length);
-        }
-        if (typeof value === "number") {
-          throw new TypeError(
-            'The "value" argument must not be of type number. Received type number'
-          );
-        }
-        const valueOf = value.valueOf && value.valueOf();
-        if (valueOf != null && valueOf !== value) {
-          return Buffer2.from(valueOf, encodingOrOffset, length);
-        }
-        const b = fromObject(value);
-        if (b) return b;
-        if (typeof Symbol !== "undefined" && Symbol.toPrimitive != null && typeof value[Symbol.toPrimitive] === "function") {
-          return Buffer2.from(value[Symbol.toPrimitive]("string"), encodingOrOffset, length);
-        }
-        throw new TypeError(
-          "The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value
-        );
-      }
-      Buffer2.from = function(value, encodingOrOffset, length) {
-        return from14(value, encodingOrOffset, length);
-      };
-      Object.setPrototypeOf(Buffer2.prototype, Uint8Array.prototype);
-      Object.setPrototypeOf(Buffer2, Uint8Array);
-      function assertSize4(size5) {
-        if (typeof size5 !== "number") {
-          throw new TypeError('"size" argument must be of type number');
-        } else if (size5 < 0) {
-          throw new RangeError('The value "' + size5 + '" is invalid for option "size"');
-        }
-      }
-      function alloc(size5, fill, encoding) {
-        assertSize4(size5);
-        if (size5 <= 0) {
-          return createBuffer(size5);
-        }
-        if (fill !== void 0) {
-          return typeof encoding === "string" ? createBuffer(size5).fill(fill, encoding) : createBuffer(size5).fill(fill);
-        }
-        return createBuffer(size5);
-      }
-      Buffer2.alloc = function(size5, fill, encoding) {
-        return alloc(size5, fill, encoding);
-      };
-      function allocUnsafe(size5) {
-        assertSize4(size5);
-        return createBuffer(size5 < 0 ? 0 : checked(size5) | 0);
-      }
-      Buffer2.allocUnsafe = function(size5) {
-        return allocUnsafe(size5);
-      };
-      Buffer2.allocUnsafeSlow = function(size5) {
-        return allocUnsafe(size5);
-      };
-      function fromString3(string2, encoding) {
-        if (typeof encoding !== "string" || encoding === "") {
-          encoding = "utf8";
-        }
-        if (!Buffer2.isEncoding(encoding)) {
-          throw new TypeError("Unknown encoding: " + encoding);
-        }
-        const length = byteLength(string2, encoding) | 0;
-        let buf = createBuffer(length);
-        const actual = buf.write(string2, encoding);
-        if (actual !== length) {
-          buf = buf.slice(0, actual);
-        }
-        return buf;
-      }
-      function fromArrayLike(array3) {
-        const length = array3.length < 0 ? 0 : checked(array3.length) | 0;
-        const buf = createBuffer(length);
-        for (let i2 = 0; i2 < length; i2 += 1) {
-          buf[i2] = array3[i2] & 255;
-        }
-        return buf;
-      }
-      function fromArrayView(arrayView) {
-        if (isInstance(arrayView, Uint8Array)) {
-          const copy = new Uint8Array(arrayView);
-          return fromArrayBuffer(copy.buffer, copy.byteOffset, copy.byteLength);
-        }
-        return fromArrayLike(arrayView);
-      }
-      function fromArrayBuffer(array3, byteOffset, length) {
-        if (byteOffset < 0 || array3.byteLength < byteOffset) {
-          throw new RangeError('"offset" is outside of buffer bounds');
-        }
-        if (array3.byteLength < byteOffset + (length || 0)) {
-          throw new RangeError('"length" is outside of buffer bounds');
-        }
-        let buf;
-        if (byteOffset === void 0 && length === void 0) {
-          buf = new Uint8Array(array3);
-        } else if (length === void 0) {
-          buf = new Uint8Array(array3, byteOffset);
-        } else {
-          buf = new Uint8Array(array3, byteOffset, length);
-        }
-        Object.setPrototypeOf(buf, Buffer2.prototype);
-        return buf;
-      }
-      function fromObject(obj) {
-        if (Buffer2.isBuffer(obj)) {
-          const len = checked(obj.length) | 0;
-          const buf = createBuffer(len);
-          if (buf.length === 0) {
-            return buf;
-          }
-          obj.copy(buf, 0, 0, len);
-          return buf;
-        }
-        if (obj.length !== void 0) {
-          if (typeof obj.length !== "number" || numberIsNaN(obj.length)) {
-            return createBuffer(0);
-          }
-          return fromArrayLike(obj);
-        }
-        if (obj.type === "Buffer" && Array.isArray(obj.data)) {
-          return fromArrayLike(obj.data);
-        }
-      }
-      function checked(length) {
-        if (length >= K_MAX_LENGTH) {
-          throw new RangeError("Attempt to allocate Buffer larger than maximum size: 0x" + K_MAX_LENGTH.toString(16) + " bytes");
-        }
-        return length | 0;
-      }
-      function SlowBuffer(length) {
-        if (+length != length) {
-          length = 0;
-        }
-        return Buffer2.alloc(+length);
-      }
-      Buffer2.isBuffer = function isBuffer(b) {
-        return b != null && b._isBuffer === true && b !== Buffer2.prototype;
-      };
-      Buffer2.compare = function compare2(a, b) {
-        if (isInstance(a, Uint8Array)) a = Buffer2.from(a, a.offset, a.byteLength);
-        if (isInstance(b, Uint8Array)) b = Buffer2.from(b, b.offset, b.byteLength);
-        if (!Buffer2.isBuffer(a) || !Buffer2.isBuffer(b)) {
-          throw new TypeError(
-            'The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array'
-          );
-        }
-        if (a === b) return 0;
-        let x = a.length;
-        let y = b.length;
-        for (let i2 = 0, len = Math.min(x, y); i2 < len; ++i2) {
-          if (a[i2] !== b[i2]) {
-            x = a[i2];
-            y = b[i2];
-            break;
-          }
-        }
-        if (x < y) return -1;
-        if (y < x) return 1;
-        return 0;
-      };
-      Buffer2.isEncoding = function isEncoding(encoding) {
-        switch (String(encoding).toLowerCase()) {
-          case "hex":
-          case "utf8":
-          case "utf-8":
-          case "ascii":
-          case "latin1":
-          case "binary":
-          case "base64":
-          case "ucs2":
-          case "ucs-2":
-          case "utf16le":
-          case "utf-16le":
-            return true;
-          default:
-            return false;
-        }
-      };
-      Buffer2.concat = function concat4(list, length) {
-        if (!Array.isArray(list)) {
-          throw new TypeError('"list" argument must be an Array of Buffers');
-        }
-        if (list.length === 0) {
-          return Buffer2.alloc(0);
-        }
-        let i2;
-        if (length === void 0) {
-          length = 0;
-          for (i2 = 0; i2 < list.length; ++i2) {
-            length += list[i2].length;
-          }
-        }
-        const buffer2 = Buffer2.allocUnsafe(length);
-        let pos = 0;
-        for (i2 = 0; i2 < list.length; ++i2) {
-          let buf = list[i2];
-          if (isInstance(buf, Uint8Array)) {
-            if (pos + buf.length > buffer2.length) {
-              if (!Buffer2.isBuffer(buf)) buf = Buffer2.from(buf);
-              buf.copy(buffer2, pos);
-            } else {
-              Uint8Array.prototype.set.call(
-                buffer2,
-                buf,
-                pos
-              );
-            }
-          } else if (!Buffer2.isBuffer(buf)) {
-            throw new TypeError('"list" argument must be an Array of Buffers');
-          } else {
-            buf.copy(buffer2, pos);
-          }
-          pos += buf.length;
-        }
-        return buffer2;
-      };
-      function byteLength(string2, encoding) {
-        if (Buffer2.isBuffer(string2)) {
-          return string2.length;
-        }
-        if (ArrayBuffer.isView(string2) || isInstance(string2, ArrayBuffer)) {
-          return string2.byteLength;
-        }
-        if (typeof string2 !== "string") {
-          throw new TypeError(
-            'The "string" argument must be one of type string, Buffer, or ArrayBuffer. Received type ' + typeof string2
-          );
-        }
-        const len = string2.length;
-        const mustMatch = arguments.length > 2 && arguments[2] === true;
-        if (!mustMatch && len === 0) return 0;
-        let loweredCase = false;
-        for (; ; ) {
-          switch (encoding) {
-            case "ascii":
-            case "latin1":
-            case "binary":
-              return len;
-            case "utf8":
-            case "utf-8":
-              return utf8ToBytes4(string2).length;
-            case "ucs2":
-            case "ucs-2":
-            case "utf16le":
-            case "utf-16le":
-              return len * 2;
-            case "hex":
-              return len >>> 1;
-            case "base64":
-              return base64ToBytes(string2).length;
-            default:
-              if (loweredCase) {
-                return mustMatch ? -1 : utf8ToBytes4(string2).length;
-              }
-              encoding = ("" + encoding).toLowerCase();
-              loweredCase = true;
-          }
-        }
-      }
-      Buffer2.byteLength = byteLength;
-      function slowToString(encoding, start, end) {
-        let loweredCase = false;
-        if (start === void 0 || start < 0) {
-          start = 0;
-        }
-        if (start > this.length) {
-          return "";
-        }
-        if (end === void 0 || end > this.length) {
-          end = this.length;
-        }
-        if (end <= 0) {
-          return "";
-        }
-        end >>>= 0;
-        start >>>= 0;
-        if (end <= start) {
-          return "";
-        }
-        if (!encoding) encoding = "utf8";
-        while (true) {
-          switch (encoding) {
-            case "hex":
-              return hexSlice(this, start, end);
-            case "utf8":
-            case "utf-8":
-              return utf8Slice(this, start, end);
-            case "ascii":
-              return asciiSlice(this, start, end);
-            case "latin1":
-            case "binary":
-              return latin1Slice(this, start, end);
-            case "base64":
-              return base64Slice(this, start, end);
-            case "ucs2":
-            case "ucs-2":
-            case "utf16le":
-            case "utf-16le":
-              return utf16leSlice(this, start, end);
-            default:
-              if (loweredCase) throw new TypeError("Unknown encoding: " + encoding);
-              encoding = (encoding + "").toLowerCase();
-              loweredCase = true;
-          }
-        }
-      }
-      Buffer2.prototype._isBuffer = true;
-      function swap2(b, n, m) {
-        const i2 = b[n];
-        b[n] = b[m];
-        b[m] = i2;
-      }
-      Buffer2.prototype.swap16 = function swap16() {
-        const len = this.length;
-        if (len % 2 !== 0) {
-          throw new RangeError("Buffer size must be a multiple of 16-bits");
-        }
-        for (let i2 = 0; i2 < len; i2 += 2) {
-          swap2(this, i2, i2 + 1);
-        }
-        return this;
-      };
-      Buffer2.prototype.swap32 = function swap32() {
-        const len = this.length;
-        if (len % 4 !== 0) {
-          throw new RangeError("Buffer size must be a multiple of 32-bits");
-        }
-        for (let i2 = 0; i2 < len; i2 += 4) {
-          swap2(this, i2, i2 + 3);
-          swap2(this, i2 + 1, i2 + 2);
-        }
-        return this;
-      };
-      Buffer2.prototype.swap64 = function swap64() {
-        const len = this.length;
-        if (len % 8 !== 0) {
-          throw new RangeError("Buffer size must be a multiple of 64-bits");
-        }
-        for (let i2 = 0; i2 < len; i2 += 8) {
-          swap2(this, i2, i2 + 7);
-          swap2(this, i2 + 1, i2 + 6);
-          swap2(this, i2 + 2, i2 + 5);
-          swap2(this, i2 + 3, i2 + 4);
-        }
-        return this;
-      };
-      Buffer2.prototype.toString = function toString4() {
-        const length = this.length;
-        if (length === 0) return "";
-        if (arguments.length === 0) return utf8Slice(this, 0, length);
-        return slowToString.apply(this, arguments);
-      };
-      Buffer2.prototype.toLocaleString = Buffer2.prototype.toString;
-      Buffer2.prototype.equals = function equals(b) {
-        if (!Buffer2.isBuffer(b)) throw new TypeError("Argument must be a Buffer");
-        if (this === b) return true;
-        return Buffer2.compare(this, b) === 0;
-      };
-      Buffer2.prototype.inspect = function inspect() {
-        let str2 = "";
-        const max = exports.INSPECT_MAX_BYTES;
-        str2 = this.toString("hex", 0, max).replace(/(.{2})/g, "$1 ").trim();
-        if (this.length > max) str2 += " ... ";
-        return "<Buffer " + str2 + ">";
-      };
-      if (customInspectSymbol) {
-        Buffer2.prototype[customInspectSymbol] = Buffer2.prototype.inspect;
-      }
-      Buffer2.prototype.compare = function compare2(target, start, end, thisStart, thisEnd) {
-        if (isInstance(target, Uint8Array)) {
-          target = Buffer2.from(target, target.offset, target.byteLength);
-        }
-        if (!Buffer2.isBuffer(target)) {
-          throw new TypeError(
-            'The "target" argument must be one of type Buffer or Uint8Array. Received type ' + typeof target
-          );
-        }
-        if (start === void 0) {
-          start = 0;
-        }
-        if (end === void 0) {
-          end = target ? target.length : 0;
-        }
-        if (thisStart === void 0) {
-          thisStart = 0;
-        }
-        if (thisEnd === void 0) {
-          thisEnd = this.length;
-        }
-        if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
-          throw new RangeError("out of range index");
-        }
-        if (thisStart >= thisEnd && start >= end) {
-          return 0;
-        }
-        if (thisStart >= thisEnd) {
-          return -1;
-        }
-        if (start >= end) {
-          return 1;
-        }
-        start >>>= 0;
-        end >>>= 0;
-        thisStart >>>= 0;
-        thisEnd >>>= 0;
-        if (this === target) return 0;
-        let x = thisEnd - thisStart;
-        let y = end - start;
-        const len = Math.min(x, y);
-        const thisCopy = this.slice(thisStart, thisEnd);
-        const targetCopy = target.slice(start, end);
-        for (let i2 = 0; i2 < len; ++i2) {
-          if (thisCopy[i2] !== targetCopy[i2]) {
-            x = thisCopy[i2];
-            y = targetCopy[i2];
-            break;
-          }
-        }
-        if (x < y) return -1;
-        if (y < x) return 1;
-        return 0;
-      };
-      function bidirectionalIndexOf(buffer2, val, byteOffset, encoding, dir) {
-        if (buffer2.length === 0) return -1;
-        if (typeof byteOffset === "string") {
-          encoding = byteOffset;
-          byteOffset = 0;
-        } else if (byteOffset > 2147483647) {
-          byteOffset = 2147483647;
-        } else if (byteOffset < -2147483648) {
-          byteOffset = -2147483648;
-        }
-        byteOffset = +byteOffset;
-        if (numberIsNaN(byteOffset)) {
-          byteOffset = dir ? 0 : buffer2.length - 1;
-        }
-        if (byteOffset < 0) byteOffset = buffer2.length + byteOffset;
-        if (byteOffset >= buffer2.length) {
-          if (dir) return -1;
-          else byteOffset = buffer2.length - 1;
-        } else if (byteOffset < 0) {
-          if (dir) byteOffset = 0;
-          else return -1;
-        }
-        if (typeof val === "string") {
-          val = Buffer2.from(val, encoding);
-        }
-        if (Buffer2.isBuffer(val)) {
-          if (val.length === 0) {
-            return -1;
-          }
-          return arrayIndexOf(buffer2, val, byteOffset, encoding, dir);
-        } else if (typeof val === "number") {
-          val = val & 255;
-          if (typeof Uint8Array.prototype.indexOf === "function") {
-            if (dir) {
-              return Uint8Array.prototype.indexOf.call(buffer2, val, byteOffset);
-            } else {
-              return Uint8Array.prototype.lastIndexOf.call(buffer2, val, byteOffset);
-            }
-          }
-          return arrayIndexOf(buffer2, [val], byteOffset, encoding, dir);
-        }
-        throw new TypeError("val must be string, number or Buffer");
-      }
-      function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
-        let indexSize = 1;
-        let arrLength = arr.length;
-        let valLength = val.length;
-        if (encoding !== void 0) {
-          encoding = String(encoding).toLowerCase();
-          if (encoding === "ucs2" || encoding === "ucs-2" || encoding === "utf16le" || encoding === "utf-16le") {
-            if (arr.length < 2 || val.length < 2) {
-              return -1;
-            }
-            indexSize = 2;
-            arrLength /= 2;
-            valLength /= 2;
-            byteOffset /= 2;
-          }
-        }
-        function read(buf, i3) {
-          if (indexSize === 1) {
-            return buf[i3];
-          } else {
-            return buf.readUInt16BE(i3 * indexSize);
-          }
-        }
-        let i2;
-        if (dir) {
-          let foundIndex = -1;
-          for (i2 = byteOffset; i2 < arrLength; i2++) {
-            if (read(arr, i2) === read(val, foundIndex === -1 ? 0 : i2 - foundIndex)) {
-              if (foundIndex === -1) foundIndex = i2;
-              if (i2 - foundIndex + 1 === valLength) return foundIndex * indexSize;
-            } else {
-              if (foundIndex !== -1) i2 -= i2 - foundIndex;
-              foundIndex = -1;
-            }
-          }
-        } else {
-          if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
-          for (i2 = byteOffset; i2 >= 0; i2--) {
-            let found = true;
-            for (let j = 0; j < valLength; j++) {
-              if (read(arr, i2 + j) !== read(val, j)) {
-                found = false;
-                break;
-              }
-            }
-            if (found) return i2;
-          }
-        }
-        return -1;
-      }
-      Buffer2.prototype.includes = function includes(val, byteOffset, encoding) {
-        return this.indexOf(val, byteOffset, encoding) !== -1;
-      };
-      Buffer2.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
-        return bidirectionalIndexOf(this, val, byteOffset, encoding, true);
-      };
-      Buffer2.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
-        return bidirectionalIndexOf(this, val, byteOffset, encoding, false);
-      };
-      function hexWrite(buf, string2, offset2, length) {
-        offset2 = Number(offset2) || 0;
-        const remaining = buf.length - offset2;
-        if (!length) {
-          length = remaining;
-        } else {
-          length = Number(length);
-          if (length > remaining) {
-            length = remaining;
-          }
-        }
-        const strLen = string2.length;
-        if (length > strLen / 2) {
-          length = strLen / 2;
-        }
-        let i2;
-        for (i2 = 0; i2 < length; ++i2) {
-          const parsed = parseInt(string2.substr(i2 * 2, 2), 16);
-          if (numberIsNaN(parsed)) return i2;
-          buf[offset2 + i2] = parsed;
-        }
-        return i2;
-      }
-      function utf8Write(buf, string2, offset2, length) {
-        return blitBuffer(utf8ToBytes4(string2, buf.length - offset2), buf, offset2, length);
-      }
-      function asciiWrite(buf, string2, offset2, length) {
-        return blitBuffer(asciiToBytes(string2), buf, offset2, length);
-      }
-      function base64Write(buf, string2, offset2, length) {
-        return blitBuffer(base64ToBytes(string2), buf, offset2, length);
-      }
-      function ucs2Write(buf, string2, offset2, length) {
-        return blitBuffer(utf16leToBytes(string2, buf.length - offset2), buf, offset2, length);
-      }
-      Buffer2.prototype.write = function write(string2, offset2, length, encoding) {
-        if (offset2 === void 0) {
-          encoding = "utf8";
-          length = this.length;
-          offset2 = 0;
-        } else if (length === void 0 && typeof offset2 === "string") {
-          encoding = offset2;
-          length = this.length;
-          offset2 = 0;
-        } else if (isFinite(offset2)) {
-          offset2 = offset2 >>> 0;
-          if (isFinite(length)) {
-            length = length >>> 0;
-            if (encoding === void 0) encoding = "utf8";
-          } else {
-            encoding = length;
-            length = void 0;
-          }
-        } else {
-          throw new Error(
-            "Buffer.write(string, encoding, offset[, length]) is no longer supported"
-          );
-        }
-        const remaining = this.length - offset2;
-        if (length === void 0 || length > remaining) length = remaining;
-        if (string2.length > 0 && (length < 0 || offset2 < 0) || offset2 > this.length) {
-          throw new RangeError("Attempt to write outside buffer bounds");
-        }
-        if (!encoding) encoding = "utf8";
-        let loweredCase = false;
-        for (; ; ) {
-          switch (encoding) {
-            case "hex":
-              return hexWrite(this, string2, offset2, length);
-            case "utf8":
-            case "utf-8":
-              return utf8Write(this, string2, offset2, length);
-            case "ascii":
-            case "latin1":
-            case "binary":
-              return asciiWrite(this, string2, offset2, length);
-            case "base64":
-              return base64Write(this, string2, offset2, length);
-            case "ucs2":
-            case "ucs-2":
-            case "utf16le":
-            case "utf-16le":
-              return ucs2Write(this, string2, offset2, length);
-            default:
-              if (loweredCase) throw new TypeError("Unknown encoding: " + encoding);
-              encoding = ("" + encoding).toLowerCase();
-              loweredCase = true;
-          }
-        }
-      };
-      Buffer2.prototype.toJSON = function toJSON2() {
-        return {
-          type: "Buffer",
-          data: Array.prototype.slice.call(this._arr || this, 0)
-        };
-      };
-      function base64Slice(buf, start, end) {
-        if (start === 0 && end === buf.length) {
-          return base64.fromByteArray(buf);
-        } else {
-          return base64.fromByteArray(buf.slice(start, end));
-        }
-      }
-      function utf8Slice(buf, start, end) {
-        end = Math.min(buf.length, end);
-        const res = [];
-        let i2 = start;
-        while (i2 < end) {
-          const firstByte = buf[i2];
-          let codePoint = null;
-          let bytesPerSequence = firstByte > 239 ? 4 : firstByte > 223 ? 3 : firstByte > 191 ? 2 : 1;
-          if (i2 + bytesPerSequence <= end) {
-            let secondByte, thirdByte, fourthByte, tempCodePoint;
-            switch (bytesPerSequence) {
-              case 1:
-                if (firstByte < 128) {
-                  codePoint = firstByte;
-                }
-                break;
-              case 2:
-                secondByte = buf[i2 + 1];
-                if ((secondByte & 192) === 128) {
-                  tempCodePoint = (firstByte & 31) << 6 | secondByte & 63;
-                  if (tempCodePoint > 127) {
-                    codePoint = tempCodePoint;
-                  }
-                }
-                break;
-              case 3:
-                secondByte = buf[i2 + 1];
-                thirdByte = buf[i2 + 2];
-                if ((secondByte & 192) === 128 && (thirdByte & 192) === 128) {
-                  tempCodePoint = (firstByte & 15) << 12 | (secondByte & 63) << 6 | thirdByte & 63;
-                  if (tempCodePoint > 2047 && (tempCodePoint < 55296 || tempCodePoint > 57343)) {
-                    codePoint = tempCodePoint;
-                  }
-                }
-                break;
-              case 4:
-                secondByte = buf[i2 + 1];
-                thirdByte = buf[i2 + 2];
-                fourthByte = buf[i2 + 3];
-                if ((secondByte & 192) === 128 && (thirdByte & 192) === 128 && (fourthByte & 192) === 128) {
-                  tempCodePoint = (firstByte & 15) << 18 | (secondByte & 63) << 12 | (thirdByte & 63) << 6 | fourthByte & 63;
-                  if (tempCodePoint > 65535 && tempCodePoint < 1114112) {
-                    codePoint = tempCodePoint;
-                  }
-                }
-            }
-          }
-          if (codePoint === null) {
-            codePoint = 65533;
-            bytesPerSequence = 1;
-          } else if (codePoint > 65535) {
-            codePoint -= 65536;
-            res.push(codePoint >>> 10 & 1023 | 55296);
-            codePoint = 56320 | codePoint & 1023;
-          }
-          res.push(codePoint);
-          i2 += bytesPerSequence;
-        }
-        return decodeCodePointsArray(res);
-      }
-      var MAX_ARGUMENTS_LENGTH = 4096;
-      function decodeCodePointsArray(codePoints) {
-        const len = codePoints.length;
-        if (len <= MAX_ARGUMENTS_LENGTH) {
-          return String.fromCharCode.apply(String, codePoints);
-        }
-        let res = "";
-        let i2 = 0;
-        while (i2 < len) {
-          res += String.fromCharCode.apply(
-            String,
-            codePoints.slice(i2, i2 += MAX_ARGUMENTS_LENGTH)
-          );
-        }
-        return res;
-      }
-      function asciiSlice(buf, start, end) {
-        let ret = "";
-        end = Math.min(buf.length, end);
-        for (let i2 = start; i2 < end; ++i2) {
-          ret += String.fromCharCode(buf[i2] & 127);
-        }
-        return ret;
-      }
-      function latin1Slice(buf, start, end) {
-        let ret = "";
-        end = Math.min(buf.length, end);
-        for (let i2 = start; i2 < end; ++i2) {
-          ret += String.fromCharCode(buf[i2]);
-        }
-        return ret;
-      }
-      function hexSlice(buf, start, end) {
-        const len = buf.length;
-        if (!start || start < 0) start = 0;
-        if (!end || end < 0 || end > len) end = len;
-        let out = "";
-        for (let i2 = start; i2 < end; ++i2) {
-          out += hexSliceLookupTable[buf[i2]];
-        }
-        return out;
-      }
-      function utf16leSlice(buf, start, end) {
-        const bytes = buf.slice(start, end);
-        let res = "";
-        for (let i2 = 0; i2 < bytes.length - 1; i2 += 2) {
-          res += String.fromCharCode(bytes[i2] + bytes[i2 + 1] * 256);
-        }
-        return res;
-      }
-      Buffer2.prototype.slice = function slice4(start, end) {
-        const len = this.length;
-        start = ~~start;
-        end = end === void 0 ? len : ~~end;
-        if (start < 0) {
-          start += len;
-          if (start < 0) start = 0;
-        } else if (start > len) {
-          start = len;
-        }
-        if (end < 0) {
-          end += len;
-          if (end < 0) end = 0;
-        } else if (end > len) {
-          end = len;
-        }
-        if (end < start) end = start;
-        const newBuf = this.subarray(start, end);
-        Object.setPrototypeOf(newBuf, Buffer2.prototype);
-        return newBuf;
-      };
-      function checkOffset(offset2, ext, length) {
-        if (offset2 % 1 !== 0 || offset2 < 0) throw new RangeError("offset is not uint");
-        if (offset2 + ext > length) throw new RangeError("Trying to access beyond buffer length");
-      }
-      Buffer2.prototype.readUintLE = Buffer2.prototype.readUIntLE = function readUIntLE(offset2, byteLength2, noAssert) {
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
-        let val = this[offset2];
-        let mul2 = 1;
-        let i2 = 0;
-        while (++i2 < byteLength2 && (mul2 *= 256)) {
-          val += this[offset2 + i2] * mul2;
-        }
-        return val;
-      };
-      Buffer2.prototype.readUintBE = Buffer2.prototype.readUIntBE = function readUIntBE(offset2, byteLength2, noAssert) {
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) {
-          checkOffset(offset2, byteLength2, this.length);
-        }
-        let val = this[offset2 + --byteLength2];
-        let mul2 = 1;
-        while (byteLength2 > 0 && (mul2 *= 256)) {
-          val += this[offset2 + --byteLength2] * mul2;
-        }
-        return val;
-      };
-      Buffer2.prototype.readUint8 = Buffer2.prototype.readUInt8 = function readUInt8(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 1, this.length);
-        return this[offset2];
-      };
-      Buffer2.prototype.readUint16LE = Buffer2.prototype.readUInt16LE = function readUInt16LE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 2, this.length);
-        return this[offset2] | this[offset2 + 1] << 8;
-      };
-      Buffer2.prototype.readUint16BE = Buffer2.prototype.readUInt16BE = function readUInt16BE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 2, this.length);
-        return this[offset2] << 8 | this[offset2 + 1];
-      };
-      Buffer2.prototype.readUint32LE = Buffer2.prototype.readUInt32LE = function readUInt32LE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return (this[offset2] | this[offset2 + 1] << 8 | this[offset2 + 2] << 16) + this[offset2 + 3] * 16777216;
-      };
-      Buffer2.prototype.readUint32BE = Buffer2.prototype.readUInt32BE = function readUInt32BE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return this[offset2] * 16777216 + (this[offset2 + 1] << 16 | this[offset2 + 2] << 8 | this[offset2 + 3]);
-      };
-      Buffer2.prototype.readBigUInt64LE = defineBigIntMethod(function readBigUInt64LE(offset2) {
-        offset2 = offset2 >>> 0;
-        validateNumber(offset2, "offset");
-        const first = this[offset2];
-        const last = this[offset2 + 7];
-        if (first === void 0 || last === void 0) {
-          boundsError(offset2, this.length - 8);
-        }
-        const lo = first + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 24;
-        const hi = this[++offset2] + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + last * 2 ** 24;
-        return BigInt(lo) + (BigInt(hi) << BigInt(32));
-      });
-      Buffer2.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE(offset2) {
-        offset2 = offset2 >>> 0;
-        validateNumber(offset2, "offset");
-        const first = this[offset2];
-        const last = this[offset2 + 7];
-        if (first === void 0 || last === void 0) {
-          boundsError(offset2, this.length - 8);
-        }
-        const hi = first * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + this[++offset2];
-        const lo = this[++offset2] * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + last;
-        return (BigInt(hi) << BigInt(32)) + BigInt(lo);
-      });
-      Buffer2.prototype.readIntLE = function readIntLE(offset2, byteLength2, noAssert) {
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
-        let val = this[offset2];
-        let mul2 = 1;
-        let i2 = 0;
-        while (++i2 < byteLength2 && (mul2 *= 256)) {
-          val += this[offset2 + i2] * mul2;
-        }
-        mul2 *= 128;
-        if (val >= mul2) val -= Math.pow(2, 8 * byteLength2);
-        return val;
-      };
-      Buffer2.prototype.readIntBE = function readIntBE(offset2, byteLength2, noAssert) {
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) checkOffset(offset2, byteLength2, this.length);
-        let i2 = byteLength2;
-        let mul2 = 1;
-        let val = this[offset2 + --i2];
-        while (i2 > 0 && (mul2 *= 256)) {
-          val += this[offset2 + --i2] * mul2;
-        }
-        mul2 *= 128;
-        if (val >= mul2) val -= Math.pow(2, 8 * byteLength2);
-        return val;
-      };
-      Buffer2.prototype.readInt8 = function readInt8(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 1, this.length);
-        if (!(this[offset2] & 128)) return this[offset2];
-        return (255 - this[offset2] + 1) * -1;
-      };
-      Buffer2.prototype.readInt16LE = function readInt16LE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 2, this.length);
-        const val = this[offset2] | this[offset2 + 1] << 8;
-        return val & 32768 ? val | 4294901760 : val;
-      };
-      Buffer2.prototype.readInt16BE = function readInt16BE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 2, this.length);
-        const val = this[offset2 + 1] | this[offset2] << 8;
-        return val & 32768 ? val | 4294901760 : val;
-      };
-      Buffer2.prototype.readInt32LE = function readInt32LE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return this[offset2] | this[offset2 + 1] << 8 | this[offset2 + 2] << 16 | this[offset2 + 3] << 24;
-      };
-      Buffer2.prototype.readInt32BE = function readInt32BE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return this[offset2] << 24 | this[offset2 + 1] << 16 | this[offset2 + 2] << 8 | this[offset2 + 3];
-      };
-      Buffer2.prototype.readBigInt64LE = defineBigIntMethod(function readBigInt64LE(offset2) {
-        offset2 = offset2 >>> 0;
-        validateNumber(offset2, "offset");
-        const first = this[offset2];
-        const last = this[offset2 + 7];
-        if (first === void 0 || last === void 0) {
-          boundsError(offset2, this.length - 8);
-        }
-        const val = this[offset2 + 4] + this[offset2 + 5] * 2 ** 8 + this[offset2 + 6] * 2 ** 16 + (last << 24);
-        return (BigInt(val) << BigInt(32)) + BigInt(first + this[++offset2] * 2 ** 8 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 24);
-      });
-      Buffer2.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE(offset2) {
-        offset2 = offset2 >>> 0;
-        validateNumber(offset2, "offset");
-        const first = this[offset2];
-        const last = this[offset2 + 7];
-        if (first === void 0 || last === void 0) {
-          boundsError(offset2, this.length - 8);
-        }
-        const val = (first << 24) + // Overflow
-        this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + this[++offset2];
-        return (BigInt(val) << BigInt(32)) + BigInt(this[++offset2] * 2 ** 24 + this[++offset2] * 2 ** 16 + this[++offset2] * 2 ** 8 + last);
-      });
-      Buffer2.prototype.readFloatLE = function readFloatLE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return ieee754.read(this, offset2, true, 23, 4);
-      };
-      Buffer2.prototype.readFloatBE = function readFloatBE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 4, this.length);
-        return ieee754.read(this, offset2, false, 23, 4);
-      };
-      Buffer2.prototype.readDoubleLE = function readDoubleLE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 8, this.length);
-        return ieee754.read(this, offset2, true, 52, 8);
-      };
-      Buffer2.prototype.readDoubleBE = function readDoubleBE(offset2, noAssert) {
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkOffset(offset2, 8, this.length);
-        return ieee754.read(this, offset2, false, 52, 8);
-      };
-      function checkInt(buf, value, offset2, ext, max, min) {
-        if (!Buffer2.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance');
-        if (value > max || value < min) throw new RangeError('"value" argument is out of bounds');
-        if (offset2 + ext > buf.length) throw new RangeError("Index out of range");
-      }
-      Buffer2.prototype.writeUintLE = Buffer2.prototype.writeUIntLE = function writeUIntLE(value, offset2, byteLength2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) {
-          const maxBytes = Math.pow(2, 8 * byteLength2) - 1;
-          checkInt(this, value, offset2, byteLength2, maxBytes, 0);
-        }
-        let mul2 = 1;
-        let i2 = 0;
-        this[offset2] = value & 255;
-        while (++i2 < byteLength2 && (mul2 *= 256)) {
-          this[offset2 + i2] = value / mul2 & 255;
-        }
-        return offset2 + byteLength2;
-      };
-      Buffer2.prototype.writeUintBE = Buffer2.prototype.writeUIntBE = function writeUIntBE(value, offset2, byteLength2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        byteLength2 = byteLength2 >>> 0;
-        if (!noAssert) {
-          const maxBytes = Math.pow(2, 8 * byteLength2) - 1;
-          checkInt(this, value, offset2, byteLength2, maxBytes, 0);
-        }
-        let i2 = byteLength2 - 1;
-        let mul2 = 1;
-        this[offset2 + i2] = value & 255;
-        while (--i2 >= 0 && (mul2 *= 256)) {
-          this[offset2 + i2] = value / mul2 & 255;
-        }
-        return offset2 + byteLength2;
-      };
-      Buffer2.prototype.writeUint8 = Buffer2.prototype.writeUInt8 = function writeUInt8(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 1, 255, 0);
-        this[offset2] = value & 255;
-        return offset2 + 1;
-      };
-      Buffer2.prototype.writeUint16LE = Buffer2.prototype.writeUInt16LE = function writeUInt16LE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 2, 65535, 0);
-        this[offset2] = value & 255;
-        this[offset2 + 1] = value >>> 8;
-        return offset2 + 2;
-      };
-      Buffer2.prototype.writeUint16BE = Buffer2.prototype.writeUInt16BE = function writeUInt16BE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 2, 65535, 0);
-        this[offset2] = value >>> 8;
-        this[offset2 + 1] = value & 255;
-        return offset2 + 2;
-      };
-      Buffer2.prototype.writeUint32LE = Buffer2.prototype.writeUInt32LE = function writeUInt32LE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 4, 4294967295, 0);
-        this[offset2 + 3] = value >>> 24;
-        this[offset2 + 2] = value >>> 16;
-        this[offset2 + 1] = value >>> 8;
-        this[offset2] = value & 255;
-        return offset2 + 4;
-      };
-      Buffer2.prototype.writeUint32BE = Buffer2.prototype.writeUInt32BE = function writeUInt32BE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 4, 4294967295, 0);
-        this[offset2] = value >>> 24;
-        this[offset2 + 1] = value >>> 16;
-        this[offset2 + 2] = value >>> 8;
-        this[offset2 + 3] = value & 255;
-        return offset2 + 4;
-      };
-      function wrtBigUInt64LE(buf, value, offset2, min, max) {
-        checkIntBI(value, min, max, buf, offset2, 7);
-        let lo = Number(value & BigInt(4294967295));
-        buf[offset2++] = lo;
-        lo = lo >> 8;
-        buf[offset2++] = lo;
-        lo = lo >> 8;
-        buf[offset2++] = lo;
-        lo = lo >> 8;
-        buf[offset2++] = lo;
-        let hi = Number(value >> BigInt(32) & BigInt(4294967295));
-        buf[offset2++] = hi;
-        hi = hi >> 8;
-        buf[offset2++] = hi;
-        hi = hi >> 8;
-        buf[offset2++] = hi;
-        hi = hi >> 8;
-        buf[offset2++] = hi;
-        return offset2;
-      }
-      function wrtBigUInt64BE(buf, value, offset2, min, max) {
-        checkIntBI(value, min, max, buf, offset2, 7);
-        let lo = Number(value & BigInt(4294967295));
-        buf[offset2 + 7] = lo;
-        lo = lo >> 8;
-        buf[offset2 + 6] = lo;
-        lo = lo >> 8;
-        buf[offset2 + 5] = lo;
-        lo = lo >> 8;
-        buf[offset2 + 4] = lo;
-        let hi = Number(value >> BigInt(32) & BigInt(4294967295));
-        buf[offset2 + 3] = hi;
-        hi = hi >> 8;
-        buf[offset2 + 2] = hi;
-        hi = hi >> 8;
-        buf[offset2 + 1] = hi;
-        hi = hi >> 8;
-        buf[offset2] = hi;
-        return offset2 + 8;
-      }
-      Buffer2.prototype.writeBigUInt64LE = defineBigIntMethod(function writeBigUInt64LE(value, offset2 = 0) {
-        return wrtBigUInt64LE(this, value, offset2, BigInt(0), BigInt("0xffffffffffffffff"));
-      });
-      Buffer2.prototype.writeBigUInt64BE = defineBigIntMethod(function writeBigUInt64BE(value, offset2 = 0) {
-        return wrtBigUInt64BE(this, value, offset2, BigInt(0), BigInt("0xffffffffffffffff"));
-      });
-      Buffer2.prototype.writeIntLE = function writeIntLE(value, offset2, byteLength2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) {
-          const limit = Math.pow(2, 8 * byteLength2 - 1);
-          checkInt(this, value, offset2, byteLength2, limit - 1, -limit);
-        }
-        let i2 = 0;
-        let mul2 = 1;
-        let sub2 = 0;
-        this[offset2] = value & 255;
-        while (++i2 < byteLength2 && (mul2 *= 256)) {
-          if (value < 0 && sub2 === 0 && this[offset2 + i2 - 1] !== 0) {
-            sub2 = 1;
-          }
-          this[offset2 + i2] = (value / mul2 >> 0) - sub2 & 255;
-        }
-        return offset2 + byteLength2;
-      };
-      Buffer2.prototype.writeIntBE = function writeIntBE(value, offset2, byteLength2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) {
-          const limit = Math.pow(2, 8 * byteLength2 - 1);
-          checkInt(this, value, offset2, byteLength2, limit - 1, -limit);
-        }
-        let i2 = byteLength2 - 1;
-        let mul2 = 1;
-        let sub2 = 0;
-        this[offset2 + i2] = value & 255;
-        while (--i2 >= 0 && (mul2 *= 256)) {
-          if (value < 0 && sub2 === 0 && this[offset2 + i2 + 1] !== 0) {
-            sub2 = 1;
-          }
-          this[offset2 + i2] = (value / mul2 >> 0) - sub2 & 255;
-        }
-        return offset2 + byteLength2;
-      };
-      Buffer2.prototype.writeInt8 = function writeInt8(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 1, 127, -128);
-        if (value < 0) value = 255 + value + 1;
-        this[offset2] = value & 255;
-        return offset2 + 1;
-      };
-      Buffer2.prototype.writeInt16LE = function writeInt16LE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 2, 32767, -32768);
-        this[offset2] = value & 255;
-        this[offset2 + 1] = value >>> 8;
-        return offset2 + 2;
-      };
-      Buffer2.prototype.writeInt16BE = function writeInt16BE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 2, 32767, -32768);
-        this[offset2] = value >>> 8;
-        this[offset2 + 1] = value & 255;
-        return offset2 + 2;
-      };
-      Buffer2.prototype.writeInt32LE = function writeInt32LE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 4, 2147483647, -2147483648);
-        this[offset2] = value & 255;
-        this[offset2 + 1] = value >>> 8;
-        this[offset2 + 2] = value >>> 16;
-        this[offset2 + 3] = value >>> 24;
-        return offset2 + 4;
-      };
-      Buffer2.prototype.writeInt32BE = function writeInt32BE(value, offset2, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) checkInt(this, value, offset2, 4, 2147483647, -2147483648);
-        if (value < 0) value = 4294967295 + value + 1;
-        this[offset2] = value >>> 24;
-        this[offset2 + 1] = value >>> 16;
-        this[offset2 + 2] = value >>> 8;
-        this[offset2 + 3] = value & 255;
-        return offset2 + 4;
-      };
-      Buffer2.prototype.writeBigInt64LE = defineBigIntMethod(function writeBigInt64LE(value, offset2 = 0) {
-        return wrtBigUInt64LE(this, value, offset2, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
-      });
-      Buffer2.prototype.writeBigInt64BE = defineBigIntMethod(function writeBigInt64BE(value, offset2 = 0) {
-        return wrtBigUInt64BE(this, value, offset2, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
-      });
-      function checkIEEE754(buf, value, offset2, ext, max, min) {
-        if (offset2 + ext > buf.length) throw new RangeError("Index out of range");
-        if (offset2 < 0) throw new RangeError("Index out of range");
-      }
-      function writeFloat(buf, value, offset2, littleEndian, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) {
-          checkIEEE754(buf, value, offset2, 4, 34028234663852886e22, -34028234663852886e22);
-        }
-        ieee754.write(buf, value, offset2, littleEndian, 23, 4);
-        return offset2 + 4;
-      }
-      Buffer2.prototype.writeFloatLE = function writeFloatLE(value, offset2, noAssert) {
-        return writeFloat(this, value, offset2, true, noAssert);
-      };
-      Buffer2.prototype.writeFloatBE = function writeFloatBE(value, offset2, noAssert) {
-        return writeFloat(this, value, offset2, false, noAssert);
-      };
-      function writeDouble(buf, value, offset2, littleEndian, noAssert) {
-        value = +value;
-        offset2 = offset2 >>> 0;
-        if (!noAssert) {
-          checkIEEE754(buf, value, offset2, 8, 17976931348623157e292, -17976931348623157e292);
-        }
-        ieee754.write(buf, value, offset2, littleEndian, 52, 8);
-        return offset2 + 8;
-      }
-      Buffer2.prototype.writeDoubleLE = function writeDoubleLE(value, offset2, noAssert) {
-        return writeDouble(this, value, offset2, true, noAssert);
-      };
-      Buffer2.prototype.writeDoubleBE = function writeDoubleBE(value, offset2, noAssert) {
-        return writeDouble(this, value, offset2, false, noAssert);
-      };
-      Buffer2.prototype.copy = function copy(target, targetStart, start, end) {
-        if (!Buffer2.isBuffer(target)) throw new TypeError("argument should be a Buffer");
-        if (!start) start = 0;
-        if (!end && end !== 0) end = this.length;
-        if (targetStart >= target.length) targetStart = target.length;
-        if (!targetStart) targetStart = 0;
-        if (end > 0 && end < start) end = start;
-        if (end === start) return 0;
-        if (target.length === 0 || this.length === 0) return 0;
-        if (targetStart < 0) {
-          throw new RangeError("targetStart out of bounds");
-        }
-        if (start < 0 || start >= this.length) throw new RangeError("Index out of range");
-        if (end < 0) throw new RangeError("sourceEnd out of bounds");
-        if (end > this.length) end = this.length;
-        if (target.length - targetStart < end - start) {
-          end = target.length - targetStart + start;
-        }
-        const len = end - start;
-        if (this === target && typeof Uint8Array.prototype.copyWithin === "function") {
-          this.copyWithin(targetStart, start, end);
-        } else {
-          Uint8Array.prototype.set.call(
-            target,
-            this.subarray(start, end),
-            targetStart
-          );
-        }
-        return len;
-      };
-      Buffer2.prototype.fill = function fill(val, start, end, encoding) {
-        if (typeof val === "string") {
-          if (typeof start === "string") {
-            encoding = start;
-            start = 0;
-            end = this.length;
-          } else if (typeof end === "string") {
-            encoding = end;
-            end = this.length;
-          }
-          if (encoding !== void 0 && typeof encoding !== "string") {
-            throw new TypeError("encoding must be a string");
-          }
-          if (typeof encoding === "string" && !Buffer2.isEncoding(encoding)) {
-            throw new TypeError("Unknown encoding: " + encoding);
-          }
-          if (val.length === 1) {
-            const code = val.charCodeAt(0);
-            if (encoding === "utf8" && code < 128 || encoding === "latin1") {
-              val = code;
-            }
-          }
-        } else if (typeof val === "number") {
-          val = val & 255;
-        } else if (typeof val === "boolean") {
-          val = Number(val);
-        }
-        if (start < 0 || this.length < start || this.length < end) {
-          throw new RangeError("Out of range index");
-        }
-        if (end <= start) {
-          return this;
-        }
-        start = start >>> 0;
-        end = end === void 0 ? this.length : end >>> 0;
-        if (!val) val = 0;
-        let i2;
-        if (typeof val === "number") {
-          for (i2 = start; i2 < end; ++i2) {
-            this[i2] = val;
-          }
-        } else {
-          const bytes = Buffer2.isBuffer(val) ? val : Buffer2.from(val, encoding);
-          const len = bytes.length;
-          if (len === 0) {
-            throw new TypeError('The value "' + val + '" is invalid for argument "value"');
-          }
-          for (i2 = 0; i2 < end - start; ++i2) {
-            this[i2 + start] = bytes[i2 % len];
-          }
-        }
-        return this;
-      };
-      var errors = {};
-      function E(sym, getMessage, Base3) {
-        errors[sym] = class NodeError extends Base3 {
-          constructor() {
-            super();
-            Object.defineProperty(this, "message", {
-              value: getMessage.apply(this, arguments),
-              writable: true,
-              configurable: true
-            });
-            this.name = `${this.name} [${sym}]`;
-            this.stack;
-            delete this.name;
-          }
-          get code() {
-            return sym;
-          }
-          set code(value) {
-            Object.defineProperty(this, "code", {
-              configurable: true,
-              enumerable: true,
-              value,
-              writable: true
-            });
-          }
-          toString() {
-            return `${this.name} [${sym}]: ${this.message}`;
-          }
-        };
-      }
-      E(
-        "ERR_BUFFER_OUT_OF_BOUNDS",
-        function(name3) {
-          if (name3) {
-            return `${name3} is outside of buffer bounds`;
-          }
-          return "Attempt to access memory outside buffer bounds";
-        },
-        RangeError
-      );
-      E(
-        "ERR_INVALID_ARG_TYPE",
-        function(name3, actual) {
-          return `The "${name3}" argument must be of type number. Received type ${typeof actual}`;
-        },
-        TypeError
-      );
-      E(
-        "ERR_OUT_OF_RANGE",
-        function(str2, range, input) {
-          let msg = `The value of "${str2}" is out of range.`;
-          let received = input;
-          if (Number.isInteger(input) && Math.abs(input) > 2 ** 32) {
-            received = addNumericalSeparator(String(input));
-          } else if (typeof input === "bigint") {
-            received = String(input);
-            if (input > BigInt(2) ** BigInt(32) || input < -(BigInt(2) ** BigInt(32))) {
-              received = addNumericalSeparator(received);
-            }
-            received += "n";
-          }
-          msg += ` It must be ${range}. Received ${received}`;
-          return msg;
-        },
-        RangeError
-      );
-      function addNumericalSeparator(val) {
-        let res = "";
-        let i2 = val.length;
-        const start = val[0] === "-" ? 1 : 0;
-        for (; i2 >= start + 4; i2 -= 3) {
-          res = `_${val.slice(i2 - 3, i2)}${res}`;
-        }
-        return `${val.slice(0, i2)}${res}`;
-      }
-      function checkBounds(buf, offset2, byteLength2) {
-        validateNumber(offset2, "offset");
-        if (buf[offset2] === void 0 || buf[offset2 + byteLength2] === void 0) {
-          boundsError(offset2, buf.length - (byteLength2 + 1));
-        }
-      }
-      function checkIntBI(value, min, max, buf, offset2, byteLength2) {
-        if (value > max || value < min) {
-          const n = typeof min === "bigint" ? "n" : "";
-          let range;
-          if (byteLength2 > 3) {
-            if (min === 0 || min === BigInt(0)) {
-              range = `>= 0${n} and < 2${n} ** ${(byteLength2 + 1) * 8}${n}`;
-            } else {
-              range = `>= -(2${n} ** ${(byteLength2 + 1) * 8 - 1}${n}) and < 2 ** ${(byteLength2 + 1) * 8 - 1}${n}`;
-            }
-          } else {
-            range = `>= ${min}${n} and <= ${max}${n}`;
-          }
-          throw new errors.ERR_OUT_OF_RANGE("value", range, value);
-        }
-        checkBounds(buf, offset2, byteLength2);
-      }
-      function validateNumber(value, name3) {
-        if (typeof value !== "number") {
-          throw new errors.ERR_INVALID_ARG_TYPE(name3, "number", value);
-        }
-      }
-      function boundsError(value, length, type2) {
-        if (Math.floor(value) !== value) {
-          validateNumber(value, type2);
-          throw new errors.ERR_OUT_OF_RANGE(type2 || "offset", "an integer", value);
-        }
-        if (length < 0) {
-          throw new errors.ERR_BUFFER_OUT_OF_BOUNDS();
-        }
-        throw new errors.ERR_OUT_OF_RANGE(
-          type2 || "offset",
-          `>= ${type2 ? 1 : 0} and <= ${length}`,
-          value
-        );
-      }
-      var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
-      function base64clean(str2) {
-        str2 = str2.split("=")[0];
-        str2 = str2.trim().replace(INVALID_BASE64_RE, "");
-        if (str2.length < 2) return "";
-        while (str2.length % 4 !== 0) {
-          str2 = str2 + "=";
-        }
-        return str2;
-      }
-      function utf8ToBytes4(string2, units) {
-        units = units || Infinity;
-        let codePoint;
-        const length = string2.length;
-        let leadSurrogate = null;
-        const bytes = [];
-        for (let i2 = 0; i2 < length; ++i2) {
-          codePoint = string2.charCodeAt(i2);
-          if (codePoint > 55295 && codePoint < 57344) {
-            if (!leadSurrogate) {
-              if (codePoint > 56319) {
-                if ((units -= 3) > -1) bytes.push(239, 191, 189);
-                continue;
-              } else if (i2 + 1 === length) {
-                if ((units -= 3) > -1) bytes.push(239, 191, 189);
-                continue;
-              }
-              leadSurrogate = codePoint;
-              continue;
-            }
-            if (codePoint < 56320) {
-              if ((units -= 3) > -1) bytes.push(239, 191, 189);
-              leadSurrogate = codePoint;
-              continue;
-            }
-            codePoint = (leadSurrogate - 55296 << 10 | codePoint - 56320) + 65536;
-          } else if (leadSurrogate) {
-            if ((units -= 3) > -1) bytes.push(239, 191, 189);
-          }
-          leadSurrogate = null;
-          if (codePoint < 128) {
-            if ((units -= 1) < 0) break;
-            bytes.push(codePoint);
-          } else if (codePoint < 2048) {
-            if ((units -= 2) < 0) break;
-            bytes.push(
-              codePoint >> 6 | 192,
-              codePoint & 63 | 128
-            );
-          } else if (codePoint < 65536) {
-            if ((units -= 3) < 0) break;
-            bytes.push(
-              codePoint >> 12 | 224,
-              codePoint >> 6 & 63 | 128,
-              codePoint & 63 | 128
-            );
-          } else if (codePoint < 1114112) {
-            if ((units -= 4) < 0) break;
-            bytes.push(
-              codePoint >> 18 | 240,
-              codePoint >> 12 & 63 | 128,
-              codePoint >> 6 & 63 | 128,
-              codePoint & 63 | 128
-            );
-          } else {
-            throw new Error("Invalid code point");
-          }
-        }
-        return bytes;
-      }
-      function asciiToBytes(str2) {
-        const byteArray = [];
-        for (let i2 = 0; i2 < str2.length; ++i2) {
-          byteArray.push(str2.charCodeAt(i2) & 255);
-        }
-        return byteArray;
-      }
-      function utf16leToBytes(str2, units) {
-        let c, hi, lo;
-        const byteArray = [];
-        for (let i2 = 0; i2 < str2.length; ++i2) {
-          if ((units -= 2) < 0) break;
-          c = str2.charCodeAt(i2);
-          hi = c >> 8;
-          lo = c % 256;
-          byteArray.push(lo);
-          byteArray.push(hi);
-        }
-        return byteArray;
-      }
-      function base64ToBytes(str2) {
-        return base64.toByteArray(base64clean(str2));
-      }
-      function blitBuffer(src, dst, offset2, length) {
-        let i2;
-        for (i2 = 0; i2 < length; ++i2) {
-          if (i2 + offset2 >= dst.length || i2 >= src.length) break;
-          dst[i2 + offset2] = src[i2];
-        }
-        return i2;
-      }
-      function isInstance(obj, type2) {
-        return obj instanceof type2 || obj != null && obj.constructor != null && obj.constructor.name != null && obj.constructor.name === type2.name;
-      }
-      function numberIsNaN(obj) {
-        return obj !== obj;
-      }
-      var hexSliceLookupTable = (function() {
-        const alphabet = "0123456789abcdef";
-        const table = new Array(256);
-        for (let i2 = 0; i2 < 16; ++i2) {
-          const i162 = i2 * 16;
-          for (let j = 0; j < 16; ++j) {
-            table[i162 + j] = alphabet[i2] + alphabet[j];
-          }
-        }
-        return table;
-      })();
-      function defineBigIntMethod(fn) {
-        return typeof BigInt === "undefined" ? BufferBigIntNotDefined : fn;
-      }
-      function BufferBigIntNotDefined() {
-        throw new Error("BigInt not supported");
-      }
-    }
-  });
-
   // node_modules/@solana/web3.js/node_modules/@noble/hashes/crypto.js
   var require_crypto = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/crypto.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.crypto = void 0;
       exports.crypto = typeof globalThis === "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
@@ -5932,6 +5949,7 @@ var ArqisSwapBundle = (() => {
   var require_utils = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/utils.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.wrapXOFConstructorWithOpts = exports.wrapConstructorWithOpts = exports.wrapConstructor = exports.Hash = exports.nextTick = exports.swap32IfBE = exports.byteSwapIfBE = exports.swap8IfBE = exports.isLE = void 0;
       exports.isBytes = isBytes6;
@@ -6174,6 +6192,7 @@ var ArqisSwapBundle = (() => {
   var require_md = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/_md.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.SHA512_IV = exports.SHA384_IV = exports.SHA224_IV = exports.SHA256_IV = exports.HashMD = void 0;
       exports.setBigUint64 = setBigUint643;
@@ -6352,6 +6371,7 @@ var ArqisSwapBundle = (() => {
   var require_u64 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/_u64.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.toBig = exports.shrSL = exports.shrSH = exports.rotrSL = exports.rotrSH = exports.rotrBL = exports.rotrBH = exports.rotr32L = exports.rotr32H = exports.rotlSL = exports.rotlSH = exports.rotlBL = exports.rotlBH = exports.add5L = exports.add5H = exports.add4L = exports.add4H = exports.add3L = exports.add3H = void 0;
       exports.add = add2;
@@ -6448,6 +6468,7 @@ var ArqisSwapBundle = (() => {
   var require_sha2 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/sha2.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.sha512_224 = exports.sha512_256 = exports.sha384 = exports.sha512 = exports.sha224 = exports.sha256 = exports.SHA512_256 = exports.SHA512_224 = exports.SHA384 = exports.SHA512 = exports.SHA224 = exports.SHA256 = void 0;
       var _md_ts_1 = require_md();
@@ -6918,6 +6939,7 @@ var ArqisSwapBundle = (() => {
   var require_utils2 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/utils.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.notImplemented = exports.bitMask = exports.utf8ToBytes = exports.randomBytes = exports.isBytes = exports.hexToBytes = exports.concatBytes = exports.bytesToUtf8 = exports.bytesToHex = exports.anumber = exports.abytes = void 0;
       exports.abool = abool3;
@@ -7201,6 +7223,7 @@ var ArqisSwapBundle = (() => {
   var require_modular = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/modular.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.isNegativeLE = void 0;
       exports.mod = mod3;
@@ -7607,6 +7630,7 @@ var ArqisSwapBundle = (() => {
   var require_curve = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/curve.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.wNAF = void 0;
       exports.negateCt = negateCt;
@@ -7955,6 +7979,7 @@ var ArqisSwapBundle = (() => {
   var require_edwards = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/edwards.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.PrimeEdwardsPoint = void 0;
       exports.edwards = edwards;
@@ -8520,6 +8545,7 @@ var ArqisSwapBundle = (() => {
   var require_hash_to_curve = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/hash-to-curve.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports._DST_scalar = void 0;
       exports.expand_message_xmd = expand_message_xmd2;
@@ -8695,6 +8721,7 @@ var ArqisSwapBundle = (() => {
   var require_montgomery = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/montgomery.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.montgomery = montgomery;
       var utils_ts_1 = require_utils2();
@@ -8824,6 +8851,7 @@ var ArqisSwapBundle = (() => {
   var require_ed25519 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/ed25519.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.hash_to_ristretto255 = exports.hashToRistretto255 = exports.encodeToCurve = exports.hashToCurve = exports.RistrettoPoint = exports.edwardsToMontgomery = exports.ED25519_TORSION_SUBGROUP = exports.ristretto255_hasher = exports.ristretto255 = exports.ed25519_hasher = exports.x25519 = exports.ed25519ph = exports.ed25519ctx = exports.ed25519 = void 0;
       exports.edwardsToMontgomeryPub = edwardsToMontgomeryPub;
@@ -9194,35 +9222,36 @@ var ArqisSwapBundle = (() => {
   // node_modules/safe-buffer/index.js
   var require_safe_buffer = __commonJS({
     "node_modules/safe-buffer/index.js"(exports, module) {
-      var buffer2 = require_buffer2();
-      var Buffer2 = buffer2.Buffer;
+      init_browser_node_globals();
+      var buffer2 = require_buffer();
+      var Buffer3 = buffer2.Buffer;
       function copyProps(src, dst) {
         for (var key in src) {
           dst[key] = src[key];
         }
       }
-      if (Buffer2.from && Buffer2.alloc && Buffer2.allocUnsafe && Buffer2.allocUnsafeSlow) {
+      if (Buffer3.from && Buffer3.alloc && Buffer3.allocUnsafe && Buffer3.allocUnsafeSlow) {
         module.exports = buffer2;
       } else {
         copyProps(buffer2, exports);
         exports.Buffer = SafeBuffer;
       }
       function SafeBuffer(arg, encodingOrOffset, length) {
-        return Buffer2(arg, encodingOrOffset, length);
+        return Buffer3(arg, encodingOrOffset, length);
       }
-      SafeBuffer.prototype = Object.create(Buffer2.prototype);
-      copyProps(Buffer2, SafeBuffer);
+      SafeBuffer.prototype = Object.create(Buffer3.prototype);
+      copyProps(Buffer3, SafeBuffer);
       SafeBuffer.from = function(arg, encodingOrOffset, length) {
         if (typeof arg === "number") {
           throw new TypeError("Argument must not be a number");
         }
-        return Buffer2(arg, encodingOrOffset, length);
+        return Buffer3(arg, encodingOrOffset, length);
       };
       SafeBuffer.alloc = function(size5, fill, encoding) {
         if (typeof size5 !== "number") {
           throw new TypeError("Argument must be a number");
         }
-        var buf = Buffer2(size5);
+        var buf = Buffer3(size5);
         if (fill !== void 0) {
           if (typeof encoding === "string") {
             buf.fill(fill, encoding);
@@ -9238,7 +9267,7 @@ var ArqisSwapBundle = (() => {
         if (typeof size5 !== "number") {
           throw new TypeError("Argument must be a number");
         }
-        return Buffer2(size5);
+        return Buffer3(size5);
       };
       SafeBuffer.allocUnsafeSlow = function(size5) {
         if (typeof size5 !== "number") {
@@ -9253,6 +9282,7 @@ var ArqisSwapBundle = (() => {
   var require_src = __commonJS({
     "node_modules/base-x/src/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var _Buffer = require_safe_buffer().Buffer;
       function base4(ALPHABET3) {
         if (ALPHABET3.length >= 255) {
@@ -9387,6 +9417,7 @@ var ArqisSwapBundle = (() => {
   // node_modules/bs58/index.js
   var require_bs58 = __commonJS({
     "node_modules/bs58/index.js"(exports, module) {
+      init_browser_node_globals();
       var basex = require_src();
       var ALPHABET3 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
       module.exports = basex(ALPHABET3);
@@ -9397,6 +9428,7 @@ var ArqisSwapBundle = (() => {
   var require_sha256 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/sha256.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.sha224 = exports.SHA224 = exports.sha256 = exports.SHA256 = void 0;
       var sha2_ts_1 = require_sha2();
@@ -9411,6 +9443,7 @@ var ArqisSwapBundle = (() => {
   var require_encoding_lib = __commonJS({
     "node_modules/text-encoding-utf-8/lib/encoding.lib.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       function inRange3(a, min, max) {
         return min <= a && a <= max;
       }
@@ -9778,6 +9811,7 @@ var ArqisSwapBundle = (() => {
   var require_lib = __commonJS({
     "node_modules/borsh/lib/index.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
         if (k2 === void 0) k2 = k;
         Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -9819,13 +9853,13 @@ var ArqisSwapBundle = (() => {
       var textDecoder = new ResolvedTextDecoder("utf-8", { fatal: true });
       function baseEncode(value) {
         if (typeof value === "string") {
-          value = Buffer.from(value, "utf8");
+          value = import_buffer.Buffer.from(value, "utf8");
         }
-        return bs58_1.default.encode(Buffer.from(value));
+        return bs58_1.default.encode(import_buffer.Buffer.from(value));
       }
       exports.baseEncode = baseEncode;
       function baseDecode(value) {
-        return Buffer.from(bs58_1.default.decode(value));
+        return import_buffer.Buffer.from(bs58_1.default.decode(value));
       }
       exports.baseDecode = baseDecode;
       var INITIAL_LENGTH = 1024;
@@ -9843,12 +9877,12 @@ var ArqisSwapBundle = (() => {
       exports.BorshError = BorshError;
       var BinaryWriter = class {
         constructor() {
-          this.buf = Buffer.alloc(INITIAL_LENGTH);
+          this.buf = import_buffer.Buffer.alloc(INITIAL_LENGTH);
           this.length = 0;
         }
         maybeResize() {
           if (this.buf.length < 16 + this.length) {
-            this.buf = Buffer.concat([this.buf, Buffer.alloc(INITIAL_LENGTH)]);
+            this.buf = import_buffer.Buffer.concat([this.buf, import_buffer.Buffer.alloc(INITIAL_LENGTH)]);
           }
         }
         writeU8(value) {
@@ -9868,36 +9902,36 @@ var ArqisSwapBundle = (() => {
         }
         writeU64(value) {
           this.maybeResize();
-          this.writeBuffer(Buffer.from(new bn_js_1.default(value).toArray("le", 8)));
+          this.writeBuffer(import_buffer.Buffer.from(new bn_js_1.default(value).toArray("le", 8)));
         }
         writeU128(value) {
           this.maybeResize();
-          this.writeBuffer(Buffer.from(new bn_js_1.default(value).toArray("le", 16)));
+          this.writeBuffer(import_buffer.Buffer.from(new bn_js_1.default(value).toArray("le", 16)));
         }
         writeU256(value) {
           this.maybeResize();
-          this.writeBuffer(Buffer.from(new bn_js_1.default(value).toArray("le", 32)));
+          this.writeBuffer(import_buffer.Buffer.from(new bn_js_1.default(value).toArray("le", 32)));
         }
         writeU512(value) {
           this.maybeResize();
-          this.writeBuffer(Buffer.from(new bn_js_1.default(value).toArray("le", 64)));
+          this.writeBuffer(import_buffer.Buffer.from(new bn_js_1.default(value).toArray("le", 64)));
         }
         writeBuffer(buffer2) {
-          this.buf = Buffer.concat([
-            Buffer.from(this.buf.subarray(0, this.length)),
+          this.buf = import_buffer.Buffer.concat([
+            import_buffer.Buffer.from(this.buf.subarray(0, this.length)),
             buffer2,
-            Buffer.alloc(INITIAL_LENGTH)
+            import_buffer.Buffer.alloc(INITIAL_LENGTH)
           ]);
           this.length += buffer2.length;
         }
         writeString(str2) {
           this.maybeResize();
-          const b = Buffer.from(str2, "utf8");
+          const b = import_buffer.Buffer.from(str2, "utf8");
           this.writeU32(b.length);
           this.writeBuffer(b);
         }
         writeFixedArray(array3) {
-          this.writeBuffer(Buffer.from(array3));
+          this.writeBuffer(import_buffer.Buffer.from(array3));
         }
         writeArray(array3, fn) {
           this.maybeResize();
@@ -10204,10 +10238,11 @@ var ArqisSwapBundle = (() => {
   var require_Layout = __commonJS({
     "node_modules/@solana/buffer-layout/lib/Layout.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.s16 = exports.s8 = exports.nu64be = exports.u48be = exports.u40be = exports.u32be = exports.u24be = exports.u16be = exports.nu64 = exports.u48 = exports.u40 = exports.u32 = exports.u24 = exports.u16 = exports.u8 = exports.offset = exports.greedy = exports.Constant = exports.UTF8 = exports.CString = exports.Blob = exports.Boolean = exports.BitField = exports.BitStructure = exports.VariantLayout = exports.Union = exports.UnionLayoutDiscriminator = exports.UnionDiscriminator = exports.Structure = exports.Sequence = exports.DoubleBE = exports.Double = exports.FloatBE = exports.Float = exports.NearInt64BE = exports.NearInt64 = exports.NearUInt64BE = exports.NearUInt64 = exports.IntBE = exports.Int = exports.UIntBE = exports.UInt = exports.OffsetLayout = exports.GreedyCount = exports.ExternalLayout = exports.bindConstructorLayout = exports.nameWithProperty = exports.Layout = exports.uint8ArrayToBuffer = exports.checkUint8Array = void 0;
       exports.constant = exports.utf8 = exports.cstr = exports.blob = exports.unionLayoutDiscriminator = exports.union = exports.seq = exports.bits = exports.struct = exports.f64be = exports.f64 = exports.f32be = exports.f32 = exports.ns64be = exports.s48be = exports.s40be = exports.s32be = exports.s24be = exports.s16be = exports.ns64 = exports.s48 = exports.s40 = exports.s32 = exports.s24 = void 0;
-      var buffer_1 = require_buffer2();
+      var buffer_1 = require_buffer();
       function checkUint8Array(b) {
         if (!(b instanceof Uint8Array)) {
           throw new TypeError("b must be a Uint8Array");
@@ -11561,6 +11596,7 @@ var ArqisSwapBundle = (() => {
   var require_index_browser = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@solana/errors/dist/index.browser.cjs"(exports) {
       "use strict";
+      init_browser_node_globals();
       var SOLANA_ERROR__BLOCK_HEIGHT_EXCEEDED = 1;
       var SOLANA_ERROR__INVALID_NONCE = 2;
       var SOLANA_ERROR__NONCE_ACCOUNT_NOT_FOUND = 3;
@@ -12630,6 +12666,7 @@ var ArqisSwapBundle = (() => {
   var require_index_browser2 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@solana/codecs-core/dist/index.browser.cjs"(exports) {
       "use strict";
+      init_browser_node_globals();
       var errors = require_index_browser();
       var mergeBytes = (byteArrays) => {
         const nonEmptyByteArrays = byteArrays.filter((arr) => arr.length);
@@ -13118,6 +13155,7 @@ var ArqisSwapBundle = (() => {
   var require_index_browser3 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@solana/codecs-numbers/dist/index.browser.cjs"(exports) {
       "use strict";
+      init_browser_node_globals();
       var errors = require_index_browser();
       var codecsCore = require_index_browser2();
       function assertNumberIsBetweenForCodec(codecDescription, min, max, value) {
@@ -13444,6 +13482,7 @@ var ArqisSwapBundle = (() => {
   // node_modules/@solana/web3.js/node_modules/superstruct/dist/index.cjs
   var require_dist = __commonJS({
     "node_modules/@solana/web3.js/node_modules/superstruct/dist/index.cjs"(exports, module) {
+      init_browser_node_globals();
       (function(global2, factory) {
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.Superstruct = {}));
       })(exports, (function(exports2) {
@@ -14264,6 +14303,7 @@ var ArqisSwapBundle = (() => {
   var getRandomValues, rnds8;
   var init_rng = __esm({
     "node_modules/uuid/dist/esm-browser/rng.js"() {
+      init_browser_node_globals();
       rnds8 = new Uint8Array(16);
     }
   });
@@ -14272,6 +14312,7 @@ var ArqisSwapBundle = (() => {
   var regex_default;
   var init_regex = __esm({
     "node_modules/uuid/dist/esm-browser/regex.js"() {
+      init_browser_node_globals();
       regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
     }
   });
@@ -14283,6 +14324,7 @@ var ArqisSwapBundle = (() => {
   var validate_default;
   var init_validate = __esm({
     "node_modules/uuid/dist/esm-browser/validate.js"() {
+      init_browser_node_globals();
       init_regex();
       validate_default = validate;
     }
@@ -14300,6 +14342,7 @@ var ArqisSwapBundle = (() => {
   var byteToHex, i, stringify_default;
   var init_stringify = __esm({
     "node_modules/uuid/dist/esm-browser/stringify.js"() {
+      init_browser_node_globals();
       init_validate();
       byteToHex = [];
       for (i = 0; i < 256; ++i) {
@@ -14361,6 +14404,7 @@ var ArqisSwapBundle = (() => {
   var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
   var init_v1 = __esm({
     "node_modules/uuid/dist/esm-browser/v1.js"() {
+      init_browser_node_globals();
       init_rng();
       init_stringify();
       _lastMSecs = 0;
@@ -14397,6 +14441,7 @@ var ArqisSwapBundle = (() => {
   var parse_default;
   var init_parse = __esm({
     "node_modules/uuid/dist/esm-browser/parse.js"() {
+      init_browser_node_globals();
       init_validate();
       parse_default = parse;
     }
@@ -14448,6 +14493,7 @@ var ArqisSwapBundle = (() => {
   var DNS, URL2;
   var init_v35 = __esm({
     "node_modules/uuid/dist/esm-browser/v35.js"() {
+      init_browser_node_globals();
       init_stringify();
       init_parse();
       DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -14600,6 +14646,7 @@ var ArqisSwapBundle = (() => {
   var md5_default;
   var init_md5 = __esm({
     "node_modules/uuid/dist/esm-browser/md5.js"() {
+      init_browser_node_globals();
       md5_default = md5;
     }
   });
@@ -14608,6 +14655,7 @@ var ArqisSwapBundle = (() => {
   var v3, v3_default2;
   var init_v3 = __esm({
     "node_modules/uuid/dist/esm-browser/v3.js"() {
+      init_browser_node_globals();
       init_v35();
       init_md5();
       v3 = v35_default("v3", 48, md5_default);
@@ -14633,6 +14681,7 @@ var ArqisSwapBundle = (() => {
   var v4_default;
   var init_v4 = __esm({
     "node_modules/uuid/dist/esm-browser/v4.js"() {
+      init_browser_node_globals();
       init_rng();
       init_stringify();
       v4_default = v4;
@@ -14714,6 +14763,7 @@ var ArqisSwapBundle = (() => {
   var sha1_default;
   var init_sha1 = __esm({
     "node_modules/uuid/dist/esm-browser/sha1.js"() {
+      init_browser_node_globals();
       sha1_default = sha1;
     }
   });
@@ -14722,6 +14772,7 @@ var ArqisSwapBundle = (() => {
   var v5, v5_default;
   var init_v5 = __esm({
     "node_modules/uuid/dist/esm-browser/v5.js"() {
+      init_browser_node_globals();
       init_v35();
       init_sha1();
       v5 = v35_default("v5", 80, sha1_default);
@@ -14733,6 +14784,7 @@ var ArqisSwapBundle = (() => {
   var nil_default;
   var init_nil = __esm({
     "node_modules/uuid/dist/esm-browser/nil.js"() {
+      init_browser_node_globals();
       nil_default = "00000000-0000-0000-0000-000000000000";
     }
   });
@@ -14747,6 +14799,7 @@ var ArqisSwapBundle = (() => {
   var version_default;
   var init_version = __esm({
     "node_modules/uuid/dist/esm-browser/version.js"() {
+      init_browser_node_globals();
       init_validate();
       version_default = version6;
     }
@@ -14767,6 +14820,7 @@ var ArqisSwapBundle = (() => {
   });
   var init_esm_browser = __esm({
     "node_modules/uuid/dist/esm-browser/index.js"() {
+      init_browser_node_globals();
       init_v1();
       init_v3();
       init_v4();
@@ -14783,6 +14837,7 @@ var ArqisSwapBundle = (() => {
   var require_generateRequest = __commonJS({
     "node_modules/jayson/lib/generateRequest.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var uuid = (init_esm_browser(), __toCommonJS(esm_browser_exports)).v4;
       var generateRequest = function(method, params, id, options) {
         if (typeof method !== "string") {
@@ -14827,6 +14882,7 @@ var ArqisSwapBundle = (() => {
   var require_browser2 = __commonJS({
     "node_modules/jayson/lib/client/browser/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var uuid = (init_esm_browser(), __toCommonJS(esm_browser_exports)).v4;
       var generateRequest = require_generateRequest();
       var ClientBrowser = function(callServer, options) {
@@ -14934,6 +14990,7 @@ var ArqisSwapBundle = (() => {
   var require_eventemitter3 = __commonJS({
     "node_modules/eventemitter3/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var has = Object.prototype.hasOwnProperty;
       var prefix = "~";
       function Events() {
@@ -15096,7 +15153,8 @@ var ArqisSwapBundle = (() => {
   var require_index_browser4 = __commonJS({
     "node_modules/rpc-websockets/dist/index.browser.cjs"(exports) {
       "use strict";
-      var buffer2 = require_buffer2();
+      init_browser_node_globals();
+      var buffer2 = require_buffer();
       var eventemitter3 = require_eventemitter3();
       var WebSocketBrowserImpl = class extends eventemitter3.EventEmitter {
         socket;
@@ -15515,6 +15573,7 @@ var ArqisSwapBundle = (() => {
   var require_sha32 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/sha3.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.shake256 = exports.shake128 = exports.keccak_512 = exports.keccak_384 = exports.keccak_256 = exports.keccak_224 = exports.sha3_512 = exports.sha3_384 = exports.sha3_256 = exports.sha3_224 = exports.Keccak = void 0;
       exports.keccakP = keccakP3;
@@ -15717,6 +15776,7 @@ var ArqisSwapBundle = (() => {
   var require_hmac = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/hashes/hmac.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.hmac = exports.HMAC = void 0;
       var utils_ts_1 = require_utils();
@@ -15795,6 +15855,7 @@ var ArqisSwapBundle = (() => {
   var require_weierstrass = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/abstract/weierstrass.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.DER = exports.DERErr = void 0;
       exports._splitEndoScalar = _splitEndoScalar;
@@ -16961,6 +17022,7 @@ var ArqisSwapBundle = (() => {
   var require_shortw_utils = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/_shortw_utils.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.getHash = getHash3;
       exports.createCurve = createCurve3;
@@ -16979,6 +17041,7 @@ var ArqisSwapBundle = (() => {
   var require_secp256k1 = __commonJS({
     "node_modules/@solana/web3.js/node_modules/@noble/curves/secp256k1.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       Object.defineProperty(exports, "__esModule", { value: true });
       exports.encodeToCurve = exports.hashToCurve = exports.secp256k1_hasher = exports.schnorr = exports.secp256k1 = void 0;
       var sha2_js_1 = require_sha2();
@@ -17204,7 +17267,8 @@ var ArqisSwapBundle = (() => {
   var require_index_browser_cjs = __commonJS({
     "node_modules/@solana/web3.js/lib/index.browser.cjs.js"(exports) {
       "use strict";
-      var buffer2 = require_buffer2();
+      init_browser_node_globals();
+      var buffer2 = require_buffer();
       var ed25519 = require_ed25519();
       var BN3 = require_bn();
       var bs58 = require_bs58();
@@ -25796,6 +25860,7 @@ Message: ${transactionMessage}.
   var require_camelcase = __commonJS({
     "node_modules/camelcase/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var UPPERCASE = /[\p{Lu}]/u;
       var LOWERCASE = /[\p{Ll}]/u;
       var LEADING_CAPITAL = /^[\p{Lu}](?![\p{Lu}])/gu;
@@ -25884,6 +25949,7 @@ Message: ${transactionMessage}.
   var require_Layout2 = __commonJS({
     "node_modules/buffer-layout/lib/Layout.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       var Layout2 = class {
         constructor(span, property) {
           if (!Number.isInteger(span)) {
@@ -26868,7 +26934,7 @@ Message: ${transactionMessage}.
          */
         getVariant(vb, offset2) {
           let variant = vb;
-          if (Buffer.isBuffer(vb)) {
+          if (import_buffer.Buffer.isBuffer(vb)) {
             if (void 0 === offset2) {
               offset2 = 0;
             }
@@ -27198,7 +27264,7 @@ Message: ${transactionMessage}.
           if (this.length instanceof ExternalLayout2) {
             span = src.length;
           }
-          if (!(Buffer.isBuffer(src) && span === src.length)) {
+          if (!(import_buffer.Buffer.isBuffer(src) && span === src.length)) {
             throw new TypeError(nameWithProperty2("Blob.encode", this) + " requires (length " + span + ") Buffer as src");
           }
           if (offset2 + span > b.length) {
@@ -27217,7 +27283,7 @@ Message: ${transactionMessage}.
         }
         /** @override */
         getSpan(b, offset2) {
-          if (!Buffer.isBuffer(b)) {
+          if (!import_buffer.Buffer.isBuffer(b)) {
             throw new TypeError("b must be a Buffer");
           }
           if (void 0 === offset2) {
@@ -27245,7 +27311,7 @@ Message: ${transactionMessage}.
           if ("string" !== typeof src) {
             src = src.toString();
           }
-          const srcb = new Buffer(src, "utf8");
+          const srcb = new import_buffer.Buffer(src, "utf8");
           const span = srcb.length;
           if (offset2 + span > b.length) {
             throw new RangeError("encoding overruns Buffer");
@@ -27271,7 +27337,7 @@ Message: ${transactionMessage}.
         }
         /** @override */
         getSpan(b, offset2) {
-          if (!Buffer.isBuffer(b)) {
+          if (!import_buffer.Buffer.isBuffer(b)) {
             throw new TypeError("b must be a Buffer");
           }
           if (void 0 === offset2) {
@@ -27298,7 +27364,7 @@ Message: ${transactionMessage}.
           if ("string" !== typeof src) {
             src = src.toString();
           }
-          const srcb = new Buffer(src, "utf8");
+          const srcb = new import_buffer.Buffer(src, "utf8");
           const span = srcb.length;
           if (0 <= this.maxSpan && this.maxSpan < span) {
             throw new RangeError("text length exceeds maxSpan");
@@ -27396,6 +27462,7 @@ Message: ${transactionMessage}.
   var require_dist2 = __commonJS({
     "node_modules/@coral-xyz/borsh/dist/index.js"(exports) {
       "use strict";
+      init_browser_node_globals();
       var __importDefault = exports && exports.__importDefault || function(mod3) {
         return mod3 && mod3.__esModule ? mod3 : { "default": mod3 };
       };
@@ -27465,7 +27532,7 @@ Message: ${transactionMessage}.
           if (this.signed) {
             src = src.toTwos(this.span * 8);
           }
-          return this.blob.encode(src.toArrayLike(Buffer, "le", this.span), b, offset2);
+          return this.blob.encode(src.toArrayLike(import_buffer.Buffer, "le", this.span), b, offset2);
         }
       };
       function u643(property) {
@@ -27585,7 +27652,7 @@ Message: ${transactionMessage}.
         return new WrappedLayout2(layout, ({ data }) => data, (data) => ({ data }), property);
       }
       function str2(property) {
-        return new WrappedLayout2(vecU82(), (data) => data.toString("utf-8"), (s) => Buffer.from(s, "utf-8"), property);
+        return new WrappedLayout2(vecU82(), (data) => data.toString("utf-8"), (s) => import_buffer.Buffer.from(s, "utf-8"), property);
       }
       function rustEnum2(variants, property, discriminant) {
         const unionLayout = (0, buffer_layout_1.union)(discriminant !== null && discriminant !== void 0 ? discriminant : (0, buffer_layout_1.u8)(), property);
@@ -27635,6 +27702,7 @@ Message: ${transactionMessage}.
   var require_eventemitter32 = __commonJS({
     "node_modules/@coral-xyz/anchor/node_modules/eventemitter3/index.js"(exports, module) {
       "use strict";
+      init_browser_node_globals();
       var has = Object.prototype.hasOwnProperty;
       var prefix = "~";
       function Events() {
@@ -27797,6 +27865,7 @@ Message: ${transactionMessage}.
   var version8;
   var init_version2 = __esm({
     "node_modules/abitype/dist/esm/version.js"() {
+      init_browser_node_globals();
       version8 = "1.2.3";
     }
   });
@@ -27805,6 +27874,7 @@ Message: ${transactionMessage}.
   var BaseError;
   var init_errors = __esm({
     "node_modules/abitype/dist/esm/errors.js"() {
+      init_browser_node_globals();
       init_version2();
       BaseError = class _BaseError extends Error {
         constructor(shortMessage, args = {}) {
@@ -27868,6 +27938,7 @@ Message: ${transactionMessage}.
   var bytesRegex, integerRegex, isTupleRegex;
   var init_regex2 = __esm({
     "node_modules/abitype/dist/esm/regex.js"() {
+      init_browser_node_globals();
       bytesRegex = /^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/;
       integerRegex = /^u?int(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?$/;
       isTupleRegex = /^\(.+?\).*?$/;
@@ -27902,6 +27973,7 @@ Message: ${transactionMessage}.
   var tupleRegex;
   var init_formatAbiParameter = __esm({
     "node_modules/abitype/dist/esm/human-readable/formatAbiParameter.js"() {
+      init_browser_node_globals();
       init_regex2();
       tupleRegex = /^tuple(?<array>(\[(\d*)\])*)$/;
     }
@@ -27921,6 +27993,7 @@ Message: ${transactionMessage}.
   }
   var init_formatAbiParameters = __esm({
     "node_modules/abitype/dist/esm/human-readable/formatAbiParameters.js"() {
+      init_browser_node_globals();
       init_formatAbiParameter();
     }
   });
@@ -27941,6 +28014,7 @@ Message: ${transactionMessage}.
   }
   var init_formatAbiItem = __esm({
     "node_modules/abitype/dist/esm/human-readable/formatAbiItem.js"() {
+      init_browser_node_globals();
       init_formatAbiParameters();
     }
   });
@@ -27988,6 +28062,7 @@ Message: ${transactionMessage}.
   var errorSignatureRegex, eventSignatureRegex, functionSignatureRegex, structSignatureRegex, constructorSignatureRegex, fallbackSignatureRegex, receiveSignatureRegex, modifiers, eventModifiers, functionModifiers;
   var init_signatures = __esm({
     "node_modules/abitype/dist/esm/human-readable/runtime/signatures.js"() {
+      init_browser_node_globals();
       init_regex2();
       errorSignatureRegex = /^error (?<name>[a-zA-Z$_][a-zA-Z0-9$_]*)\((?<parameters>.*?)\)$/;
       eventSignatureRegex = /^event (?<name>[a-zA-Z$_][a-zA-Z0-9$_]*)\((?<parameters>.*?)\)$/;
@@ -28015,6 +28090,7 @@ Message: ${transactionMessage}.
   var InvalidAbiItemError, UnknownTypeError, UnknownSolidityTypeError;
   var init_abiItem = __esm({
     "node_modules/abitype/dist/esm/human-readable/errors/abiItem.js"() {
+      init_browser_node_globals();
       init_errors();
       InvalidAbiItemError = class extends BaseError {
         constructor({ signature }) {
@@ -28065,6 +28141,7 @@ Message: ${transactionMessage}.
   var InvalidAbiParametersError, InvalidParameterError, SolidityProtectedKeywordError, InvalidModifierError, InvalidFunctionModifierError, InvalidAbiTypeParameterError;
   var init_abiParameter = __esm({
     "node_modules/abitype/dist/esm/human-readable/errors/abiParameter.js"() {
+      init_browser_node_globals();
       init_errors();
       InvalidAbiParametersError = class extends BaseError {
         constructor({ params }) {
@@ -28163,6 +28240,7 @@ Message: ${transactionMessage}.
   var InvalidSignatureError, UnknownSignatureError, InvalidStructSignatureError;
   var init_signature = __esm({
     "node_modules/abitype/dist/esm/human-readable/errors/signature.js"() {
+      init_browser_node_globals();
       init_errors();
       InvalidSignatureError = class extends BaseError {
         constructor({ signature, type: type2 }) {
@@ -28211,6 +28289,7 @@ Message: ${transactionMessage}.
   var CircularReferenceError;
   var init_struct = __esm({
     "node_modules/abitype/dist/esm/human-readable/errors/struct.js"() {
+      init_browser_node_globals();
       init_errors();
       CircularReferenceError = class extends BaseError {
         constructor({ type: type2 }) {
@@ -28232,6 +28311,7 @@ Message: ${transactionMessage}.
   var InvalidParenthesisError;
   var init_splitParameters = __esm({
     "node_modules/abitype/dist/esm/human-readable/errors/splitParameters.js"() {
+      init_browser_node_globals();
       init_errors();
       InvalidParenthesisError = class extends BaseError {
         constructor({ current, depth }) {
@@ -28272,6 +28352,7 @@ Message: ${transactionMessage}.
   var parameterCache;
   var init_cache = __esm({
     "node_modules/abitype/dist/esm/human-readable/runtime/cache.js"() {
+      init_browser_node_globals();
       parameterCache = /* @__PURE__ */ new Map([
         // Unnamed
         ["address", { type: "address" }],
@@ -28526,6 +28607,7 @@ Message: ${transactionMessage}.
   var abiParameterWithoutTupleRegex, abiParameterWithTupleRegex, dynamicIntegerRegex, protectedKeywordsRegex;
   var init_utils = __esm({
     "node_modules/abitype/dist/esm/human-readable/runtime/utils.js"() {
+      init_browser_node_globals();
       init_regex2();
       init_abiItem();
       init_abiParameter();
@@ -28611,6 +28693,7 @@ Message: ${transactionMessage}.
   var typeWithoutTupleRegex;
   var init_structs = __esm({
     "node_modules/abitype/dist/esm/human-readable/runtime/structs.js"() {
+      init_browser_node_globals();
       init_regex2();
       init_abiItem();
       init_abiParameter();
@@ -28637,6 +28720,7 @@ Message: ${transactionMessage}.
   }
   var init_parseAbi = __esm({
     "node_modules/abitype/dist/esm/human-readable/parseAbi.js"() {
+      init_browser_node_globals();
       init_signatures();
       init_structs();
       init_utils();
@@ -28665,6 +28749,7 @@ Message: ${transactionMessage}.
   }
   var init_parseAbiItem = __esm({
     "node_modules/abitype/dist/esm/human-readable/parseAbiItem.js"() {
+      init_browser_node_globals();
       init_abiItem();
       init_signatures();
       init_structs();
@@ -28701,6 +28786,7 @@ Message: ${transactionMessage}.
   }
   var init_parseAbiParameters = __esm({
     "node_modules/abitype/dist/esm/human-readable/parseAbiParameters.js"() {
+      init_browser_node_globals();
       init_abiParameter();
       init_signatures();
       init_structs();
@@ -28712,6 +28798,7 @@ Message: ${transactionMessage}.
   // node_modules/abitype/dist/esm/exports/index.js
   var init_exports = __esm({
     "node_modules/abitype/dist/esm/exports/index.js"() {
+      init_browser_node_globals();
       init_formatAbiItem();
       init_formatAbiParameters();
       init_parseAbi();
@@ -28739,6 +28826,7 @@ Message: ${transactionMessage}.
   }
   var init_formatAbiItem2 = __esm({
     "node_modules/viem/_esm/utils/abi/formatAbiItem.js"() {
+      init_browser_node_globals();
       init_abi();
     }
   });
@@ -28753,6 +28841,7 @@ Message: ${transactionMessage}.
   }
   var init_isHex = __esm({
     "node_modules/viem/_esm/utils/data/isHex.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -28764,6 +28853,7 @@ Message: ${transactionMessage}.
   }
   var init_size = __esm({
     "node_modules/viem/_esm/utils/data/size.js"() {
+      init_browser_node_globals();
       init_isHex();
     }
   });
@@ -28772,6 +28862,7 @@ Message: ${transactionMessage}.
   var version9;
   var init_version3 = __esm({
     "node_modules/viem/_esm/errors/version.js"() {
+      init_browser_node_globals();
       version9 = "2.53.1";
     }
   });
@@ -28787,6 +28878,7 @@ Message: ${transactionMessage}.
   var errorConfig, BaseError2;
   var init_base = __esm({
     "node_modules/viem/_esm/errors/base.js"() {
+      init_browser_node_globals();
       init_version3();
       errorConfig = {
         getDocsUrl: ({ docsBaseUrl, docsPath: docsPath8 = "", docsSlug }) => docsPath8 ? `${docsBaseUrl ?? "https://viem.sh"}${docsPath8}${docsSlug ? `#${docsSlug}` : ""}` : void 0,
@@ -28870,6 +28962,7 @@ Message: ${transactionMessage}.
   var AbiConstructorNotFoundError, AbiConstructorParamsNotFoundError, AbiDecodingDataSizeTooSmallError, AbiDecodingZeroDataError, AbiEncodingArrayLengthMismatchError, AbiEncodingBytesSizeMismatchError, AbiEncodingLengthMismatchError, AbiErrorInputsNotFoundError, AbiErrorNotFoundError, AbiErrorSignatureNotFoundError, AbiEventSignatureEmptyTopicsError, AbiEventSignatureNotFoundError, AbiEventNotFoundError, AbiFunctionNotFoundError, AbiFunctionOutputsNotFoundError, AbiFunctionSignatureNotFoundError, AbiItemAmbiguityError, BytesSizeMismatchError, DecodeLogDataMismatch, DecodeLogTopicsMismatch, InvalidAbiEncodingTypeError, InvalidAbiDecodingTypeError, InvalidArrayError, InvalidDefinitionTypeError;
   var init_abi = __esm({
     "node_modules/viem/_esm/errors/abi.js"() {
+      init_browser_node_globals();
       init_formatAbiItem2();
       init_size();
       init_base();
@@ -29181,6 +29274,7 @@ Message: ${transactionMessage}.
   var SliceOffsetOutOfBoundsError, SizeExceedsPaddingSizeError, InvalidBytesLengthError;
   var init_data = __esm({
     "node_modules/viem/_esm/errors/data.js"() {
+      init_browser_node_globals();
       init_base();
       SliceOffsetOutOfBoundsError = class extends BaseError2 {
         constructor({ offset: offset2, position, size: size5 }) {
@@ -29236,6 +29330,7 @@ Message: ${transactionMessage}.
   }
   var init_pad = __esm({
     "node_modules/viem/_esm/utils/data/pad.js"() {
+      init_browser_node_globals();
       init_data();
     }
   });
@@ -29244,6 +29339,7 @@ Message: ${transactionMessage}.
   var IntegerOutOfRangeError, InvalidBytesBooleanError, InvalidHexBooleanError, SizeOverflowError;
   var init_encoding = __esm({
     "node_modules/viem/_esm/errors/encoding.js"() {
+      init_browser_node_globals();
       init_base();
       IntegerOutOfRangeError = class extends BaseError2 {
         constructor({ max, min, signed, size: size5, value }) {
@@ -29290,6 +29386,7 @@ Message: ${transactionMessage}.
   }
   var init_trim = __esm({
     "node_modules/viem/_esm/utils/data/trim.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -29341,6 +29438,7 @@ Message: ${transactionMessage}.
   }
   var init_fromHex = __esm({
     "node_modules/viem/_esm/utils/encoding/fromHex.js"() {
+      init_browser_node_globals();
       init_encoding();
       init_size();
       init_trim();
@@ -29413,6 +29511,7 @@ Message: ${transactionMessage}.
   var hexes, encoder;
   var init_toHex = __esm({
     "node_modules/viem/_esm/utils/encoding/toHex.js"() {
+      init_browser_node_globals();
       init_encoding();
       init_pad();
       init_fromHex();
@@ -29485,6 +29584,7 @@ Message: ${transactionMessage}.
   var encoder2, charCodeMap;
   var init_toBytes = __esm({
     "node_modules/viem/_esm/utils/encoding/toBytes.js"() {
+      init_browser_node_globals();
       init_base();
       init_isHex();
       init_pad();
@@ -29521,6 +29621,7 @@ Message: ${transactionMessage}.
   var U32_MASK64, _32n, rotlSH, rotlSL, rotlBH, rotlBL;
   var init_u64 = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/_u64.js"() {
+      init_browser_node_globals();
       U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
       _32n = /* @__PURE__ */ BigInt(32);
       rotlSH = (h, l, s) => h << s | l >>> 32 - s;
@@ -29534,6 +29635,7 @@ Message: ${transactionMessage}.
   var crypto2;
   var init_crypto = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/crypto.js"() {
+      init_browser_node_globals();
       crypto2 = typeof globalThis === "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
     }
   });
@@ -29640,6 +29742,7 @@ Message: ${transactionMessage}.
   var isLE, swap32IfBE, Hash;
   var init_utils2 = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/utils.js"() {
+      init_browser_node_globals();
       init_crypto();
       isLE = /* @__PURE__ */ (() => new Uint8Array(new Uint32Array([287454020]).buffer)[0] === 68)();
       swap32IfBE = isLE ? (u) => u : byteSwap32;
@@ -29692,6 +29795,7 @@ Message: ${transactionMessage}.
   var _0n, _1n, _2n, _7n, _256n, _0x71n, SHA3_PI, SHA3_ROTL, _SHA3_IOTA, IOTAS, SHA3_IOTA_H, SHA3_IOTA_L, rotlH, rotlL, Keccak, gen, keccak_256;
   var init_sha3 = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/sha3.js"() {
+      init_browser_node_globals();
       init_u64();
       init_utils2();
       _0n = BigInt(0);
@@ -29846,6 +29950,7 @@ Message: ${transactionMessage}.
   }
   var init_keccak256 = __esm({
     "node_modules/viem/_esm/utils/hash/keccak256.js"() {
+      init_browser_node_globals();
       init_sha3();
       init_isHex();
       init_toBytes();
@@ -29860,6 +29965,7 @@ Message: ${transactionMessage}.
   var hash;
   var init_hashSignature = __esm({
     "node_modules/viem/_esm/utils/hash/hashSignature.js"() {
+      init_browser_node_globals();
       init_toBytes();
       init_keccak256();
       hash = (value) => keccak2562(toBytes(value));
@@ -29911,6 +30017,7 @@ Message: ${transactionMessage}.
   }
   var init_normalizeSignature = __esm({
     "node_modules/viem/_esm/utils/hash/normalizeSignature.js"() {
+      init_browser_node_globals();
       init_base();
     }
   });
@@ -29919,6 +30026,7 @@ Message: ${transactionMessage}.
   var toSignature;
   var init_toSignature = __esm({
     "node_modules/viem/_esm/utils/hash/toSignature.js"() {
+      init_browser_node_globals();
       init_exports();
       init_normalizeSignature();
       toSignature = (def) => {
@@ -29938,6 +30046,7 @@ Message: ${transactionMessage}.
   }
   var init_toSignatureHash = __esm({
     "node_modules/viem/_esm/utils/hash/toSignatureHash.js"() {
+      init_browser_node_globals();
       init_hashSignature();
       init_toSignature();
     }
@@ -29947,6 +30056,7 @@ Message: ${transactionMessage}.
   var toEventSelector;
   var init_toEventSelector = __esm({
     "node_modules/viem/_esm/utils/hash/toEventSelector.js"() {
+      init_browser_node_globals();
       init_toSignatureHash();
       toEventSelector = toSignatureHash;
     }
@@ -29956,6 +30066,7 @@ Message: ${transactionMessage}.
   var InvalidAddressError;
   var init_address = __esm({
     "node_modules/viem/_esm/errors/address.js"() {
+      init_browser_node_globals();
       init_base();
       InvalidAddressError = class extends BaseError2 {
         constructor({ address }) {
@@ -29975,6 +30086,7 @@ Message: ${transactionMessage}.
   var LruMap;
   var init_lru = __esm({
     "node_modules/viem/_esm/utils/lru.js"() {
+      init_browser_node_globals();
       LruMap = class extends Map {
         constructor(size5) {
           super();
@@ -30036,6 +30148,7 @@ Message: ${transactionMessage}.
   var checksumAddressCache;
   var init_getAddress = __esm({
     "node_modules/viem/_esm/utils/address/getAddress.js"() {
+      init_browser_node_globals();
       init_address();
       init_toBytes();
       init_keccak256();
@@ -30066,6 +30179,7 @@ Message: ${transactionMessage}.
   var addressRegex, isAddressCache;
   var init_isAddress = __esm({
     "node_modules/viem/_esm/utils/address/isAddress.js"() {
+      init_browser_node_globals();
       init_lru();
       init_getAddress();
       addressRegex = /^0x[a-fA-F0-9]{40}$/;
@@ -30097,6 +30211,7 @@ Message: ${transactionMessage}.
   }
   var init_concat = __esm({
     "node_modules/viem/_esm/utils/data/concat.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -30143,6 +30258,7 @@ Message: ${transactionMessage}.
   }
   var init_slice = __esm({
     "node_modules/viem/_esm/utils/data/slice.js"() {
+      init_browser_node_globals();
       init_data();
       init_isHex();
       init_size();
@@ -30153,6 +30269,7 @@ Message: ${transactionMessage}.
   var bytesRegex2, integerRegex2;
   var init_regex3 = __esm({
     "node_modules/viem/_esm/utils/regex.js"() {
+      init_browser_node_globals();
       bytesRegex2 = /^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/;
       integerRegex2 = /^(u?int)(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?$/;
     }
@@ -30373,6 +30490,7 @@ Message: ${transactionMessage}.
   }
   var init_encodeAbiParameters = __esm({
     "node_modules/viem/_esm/utils/abi/encodeAbiParameters.js"() {
+      init_browser_node_globals();
       init_abi();
       init_address();
       init_base();
@@ -30391,6 +30509,7 @@ Message: ${transactionMessage}.
   var toFunctionSelector;
   var init_toFunctionSelector = __esm({
     "node_modules/viem/_esm/utils/hash/toFunctionSelector.js"() {
+      init_browser_node_globals();
       init_slice();
       init_toSignatureHash();
       toFunctionSelector = (fn) => slice(toSignatureHash(fn), 0, 4);
@@ -30510,6 +30629,7 @@ Message: ${transactionMessage}.
   }
   var init_getAbiItem = __esm({
     "node_modules/viem/_esm/utils/abi/getAbiItem.js"() {
+      init_browser_node_globals();
       init_abi();
       init_isHex();
       init_isAddress();
@@ -30526,6 +30646,7 @@ Message: ${transactionMessage}.
   }
   var init_parseAccount = __esm({
     "node_modules/viem/_esm/accounts/utils/parseAccount.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -30553,6 +30674,7 @@ Message: ${transactionMessage}.
   var docsPath2;
   var init_prepareEncodeFunctionData = __esm({
     "node_modules/viem/_esm/utils/abi/prepareEncodeFunctionData.js"() {
+      init_browser_node_globals();
       init_abi();
       init_toFunctionSelector();
       init_formatAbiItem2();
@@ -30576,6 +30698,7 @@ Message: ${transactionMessage}.
   }
   var init_encodeFunctionData = __esm({
     "node_modules/viem/_esm/utils/abi/encodeFunctionData.js"() {
+      init_browser_node_globals();
       init_concat();
       init_encodeAbiParameters();
       init_prepareEncodeFunctionData();
@@ -30586,6 +30709,7 @@ Message: ${transactionMessage}.
   var panicReasons, solidityError, solidityPanic;
   var init_solidity = __esm({
     "node_modules/viem/_esm/constants/solidity.js"() {
+      init_browser_node_globals();
       panicReasons = {
         1: "An `assert` condition failed.",
         17: "Arithmetic operation resulted in underflow or overflow.",
@@ -30624,6 +30748,7 @@ Message: ${transactionMessage}.
   var NegativeOffsetError, PositionOutOfBoundsError, RecursiveReadLimitExceededError;
   var init_cursor = __esm({
     "node_modules/viem/_esm/errors/cursor.js"() {
+      init_browser_node_globals();
       init_base();
       NegativeOffsetError = class extends BaseError2 {
         constructor({ offset: offset2 }) {
@@ -30657,6 +30782,7 @@ Message: ${transactionMessage}.
   var staticCursor;
   var init_cursor2 = __esm({
     "node_modules/viem/_esm/utils/cursor.js"() {
+      init_browser_node_globals();
       init_cursor();
       staticCursor = {
         bytes: new Uint8Array(),
@@ -30853,6 +30979,7 @@ Message: ${transactionMessage}.
   }
   var init_fromBytes = __esm({
     "node_modules/viem/_esm/utils/encoding/fromBytes.js"() {
+      init_browser_node_globals();
       init_encoding();
       init_trim();
       init_fromHex();
@@ -31047,6 +31174,7 @@ Message: ${transactionMessage}.
   var sizeOfLength, sizeOfOffset;
   var init_decodeAbiParameters = __esm({
     "node_modules/viem/_esm/utils/abi/decodeAbiParameters.js"() {
+      init_browser_node_globals();
       init_abi();
       init_getAddress();
       init_cursor2();
@@ -31083,6 +31211,7 @@ Message: ${transactionMessage}.
   }
   var init_decodeErrorResult = __esm({
     "node_modules/viem/_esm/utils/abi/decodeErrorResult.js"() {
+      init_browser_node_globals();
       init_solidity();
       init_abi();
       init_slice();
@@ -31096,6 +31225,7 @@ Message: ${transactionMessage}.
   var stringify2;
   var init_stringify2 = __esm({
     "node_modules/viem/_esm/utils/stringify.js"() {
+      init_browser_node_globals();
       stringify2 = (value, replacer, space) => JSON.stringify(value, (key, value_) => {
         const value2 = typeof value_ === "bigint" ? value_.toString() : value_;
         return typeof replacer === "function" ? replacer(key, value2) : value2;
@@ -31115,6 +31245,7 @@ Message: ${transactionMessage}.
   }
   var init_formatAbiItemWithArgs = __esm({
     "node_modules/viem/_esm/utils/abi/formatAbiItemWithArgs.js"() {
+      init_browser_node_globals();
       init_stringify2();
     }
   });
@@ -31123,6 +31254,7 @@ Message: ${transactionMessage}.
   var etherUnits, gweiUnits;
   var init_unit = __esm({
     "node_modules/viem/_esm/constants/unit.js"() {
+      init_browser_node_globals();
       etherUnits = {
         gwei: 9,
         wei: 18
@@ -31150,6 +31282,7 @@ Message: ${transactionMessage}.
   }
   var init_formatUnits = __esm({
     "node_modules/viem/_esm/utils/unit/formatUnits.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -31159,6 +31292,7 @@ Message: ${transactionMessage}.
   }
   var init_formatEther = __esm({
     "node_modules/viem/_esm/utils/unit/formatEther.js"() {
+      init_browser_node_globals();
       init_unit();
       init_formatUnits();
     }
@@ -31170,6 +31304,7 @@ Message: ${transactionMessage}.
   }
   var init_formatGwei = __esm({
     "node_modules/viem/_esm/utils/unit/formatGwei.js"() {
+      init_browser_node_globals();
       init_unit();
       init_formatUnits();
     }
@@ -31209,6 +31344,7 @@ Message: ${transactionMessage}.
   var AccountStateConflictError, StateAssignmentConflictError;
   var init_stateOverride = __esm({
     "node_modules/viem/_esm/errors/stateOverride.js"() {
+      init_browser_node_globals();
       init_base();
       AccountStateConflictError = class extends BaseError2 {
         constructor({ address }) {
@@ -31240,6 +31376,7 @@ Message: ${transactionMessage}.
   var InvalidLegacyVError, InvalidSerializableTransactionError, InvalidStorageKeySizeError, TransactionExecutionError, TransactionNotFoundError, TransactionReceiptNotFoundError, TransactionReceiptRevertedError, WaitForTransactionReceiptTimeoutError;
   var init_transaction = __esm({
     "node_modules/viem/_esm/errors/transaction.js"() {
+      init_browser_node_globals();
       init_formatEther();
       init_formatGwei();
       init_base();
@@ -31377,6 +31514,7 @@ Message: ${transactionMessage}.
   var getContractAddress, getUrl;
   var init_utils3 = __esm({
     "node_modules/viem/_esm/errors/utils.js"() {
+      init_browser_node_globals();
       getContractAddress = (address) => address;
       getUrl = (url) => {
         try {
@@ -31397,6 +31535,7 @@ Message: ${transactionMessage}.
   var CallExecutionError, ContractFunctionExecutionError, ContractFunctionRevertedError, ContractFunctionZeroDataError, CounterfactualDeploymentFailedError, RawContractError;
   var init_contract = __esm({
     "node_modules/viem/_esm/errors/contract.js"() {
+      init_browser_node_globals();
       init_parseAccount();
       init_solidity();
       init_decodeErrorResult();
@@ -31654,6 +31793,7 @@ ${prettyStateOverride(stateOverride)}`;
   var HttpRequestError, RpcRequestError, TimeoutError;
   var init_request = __esm({
     "node_modules/viem/_esm/errors/request.js"() {
+      init_browser_node_globals();
       init_stringify2();
       init_base();
       init_utils3();
@@ -31753,6 +31893,7 @@ ${prettyStateOverride(stateOverride)}`;
   var unknownErrorCode, RpcError2, ProviderRpcError, ParseRpcError, InvalidRequestRpcError, MethodNotFoundRpcError, InvalidParamsRpcError, InternalRpcError, InvalidInputRpcError, ResourceNotFoundRpcError, ResourceUnavailableRpcError, TransactionRejectedRpcError, MethodNotSupportedRpcError, LimitExceededRpcError, JsonRpcVersionUnsupportedError, UserRejectedRequestError, UnauthorizedProviderError, UnsupportedProviderMethodError, ProviderDisconnectedError, ChainDisconnectedError, SwitchChainError, UnsupportedNonOptionalCapabilityError, UnsupportedChainIdError, DuplicateIdError, UnknownBundleIdError, BundleTooLargeError, AtomicReadyWalletRejectedUpgradeError, AtomicityNotSupportedError, WalletConnectSessionSettlementError, UnknownRpcError;
   var init_rpc = __esm({
     "node_modules/viem/_esm/errors/rpc.js"() {
+      init_browser_node_globals();
       init_base();
       init_request();
       unknownErrorCode = -1;
@@ -32221,6 +32362,7 @@ ${prettyStateOverride(stateOverride)}`;
   var HashMD, SHA256_IV;
   var init_md = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/_md.js"() {
+      init_browser_node_globals();
       init_utils2();
       HashMD = class extends Hash {
         constructor(blockLen, outputLen, padOffset, isLE3) {
@@ -32329,6 +32471,7 @@ ${prettyStateOverride(stateOverride)}`;
   var SHA256_K, SHA256_W, SHA256, sha256;
   var init_sha2 = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/sha2.js"() {
+      init_browser_node_globals();
       init_md();
       init_utils2();
       SHA256_K = /* @__PURE__ */ Uint32Array.from([
@@ -32476,6 +32619,7 @@ ${prettyStateOverride(stateOverride)}`;
   var HMAC, hmac;
   var init_hmac = __esm({
     "node_modules/viem/node_modules/@noble/hashes/esm/hmac.js"() {
+      init_browser_node_globals();
       init_utils2();
       HMAC = class extends Hash {
         constructor(hash3, _key) {
@@ -32751,6 +32895,7 @@ ${prettyStateOverride(stateOverride)}`;
   var _0n2, _1n2, hasHexBuiltin, hexes2, asciis, isPosBig, bitMask, u8n, u8fr, validatorFns;
   var init_utils4 = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/abstract/utils.js"() {
+      init_browser_node_globals();
       _0n2 = /* @__PURE__ */ BigInt(0);
       _1n2 = /* @__PURE__ */ BigInt(1);
       hasHexBuiltin = // @ts-ignore
@@ -33025,6 +33170,7 @@ ${prettyStateOverride(stateOverride)}`;
   var _0n3, _1n3, _2n2, _3n, _4n, _5n, _8n, FIELD_FIELDS;
   var init_modular = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/abstract/modular.js"() {
+      init_browser_node_globals();
       init_utils2();
       init_utils4();
       _0n3 = BigInt(0);
@@ -33288,6 +33434,7 @@ ${prettyStateOverride(stateOverride)}`;
   var _0n4, _1n4, pointPrecomputes, pointWindowSizes;
   var init_curve = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/abstract/curve.js"() {
+      init_browser_node_globals();
       init_modular();
       init_utils4();
       _0n4 = BigInt(0);
@@ -34175,6 +34322,7 @@ ${prettyStateOverride(stateOverride)}`;
   var DERErr, DER, _0n5, _1n5, _2n3, _3n2, _4n2;
   var init_weierstrass = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/abstract/weierstrass.js"() {
+      init_browser_node_globals();
       init_curve();
       init_modular();
       init_utils4();
@@ -34305,6 +34453,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_shortw_utils = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/_shortw_utils.js"() {
+      init_browser_node_globals();
       init_hmac();
       init_utils2();
       init_weierstrass();
@@ -34460,6 +34609,7 @@ ${prettyStateOverride(stateOverride)}`;
   var os2ip;
   var init_hash_to_curve = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/abstract/hash-to-curve.js"() {
+      init_browser_node_globals();
       init_modular();
       init_utils4();
       os2ip = bytesToNumberBE;
@@ -34571,6 +34721,7 @@ ${prettyStateOverride(stateOverride)}`;
   var secp256k1P, secp256k1N, _0n6, _1n6, _2n4, divNearest, Fpk1, secp256k1, TAGGED_HASH_PREFIXES, pointToBytes, numTo32b, modP, modN, Point, GmulAdd, num, schnorr, isoMap, mapSWU, secp256k1_hasher, hashToCurve, encodeToCurve;
   var init_secp256k1 = __esm({
     "node_modules/viem/node_modules/@noble/curves/esm/secp256k1.js"() {
+      init_browser_node_globals();
       init_sha2();
       init_utils2();
       init_shortw_utils();
@@ -34701,6 +34852,7 @@ ${prettyStateOverride(stateOverride)}`;
   var ExecutionRevertedError, FeeCapTooHighError, FeeCapTooLowError, NonceTooHighError, NonceTooLowError, NonceMaxValueError, InsufficientFundsError, IntrinsicGasTooHighError, IntrinsicGasTooLowError, TransactionTypeNotSupportedError, TipAboveFeeCapError, UnknownNodeError;
   var init_node = __esm({
     "node_modules/viem/_esm/errors/node.js"() {
+      init_browser_node_globals();
       init_formatGwei();
       init_base();
       ExecutionRevertedError = class extends BaseError2 {
@@ -34933,6 +35085,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_getNodeError = __esm({
     "node_modules/viem/_esm/utils/errors/getNodeError.js"() {
+      init_browser_node_globals();
       init_base();
       init_node();
     }
@@ -34958,6 +35111,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_extract = __esm({
     "node_modules/viem/_esm/utils/formatters/extract.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -34984,6 +35138,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_formatter = __esm({
     "node_modules/viem/_esm/utils/formatters/formatter.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -35042,6 +35197,7 @@ ${prettyStateOverride(stateOverride)}`;
   var rpcTransactionType, defineTransactionRequest;
   var init_transactionRequest = __esm({
     "node_modules/viem/_esm/utils/formatters/transactionRequest.js"() {
+      init_browser_node_globals();
       init_toHex();
       init_formatter();
       rpcTransactionType = {
@@ -35109,6 +35265,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_stateOverride2 = __esm({
     "node_modules/viem/_esm/utils/stateOverride.js"() {
+      init_browser_node_globals();
       init_address();
       init_data();
       init_stateOverride();
@@ -35121,6 +35278,7 @@ ${prettyStateOverride(stateOverride)}`;
   var maxInt8, maxInt16, maxInt24, maxInt32, maxInt40, maxInt48, maxInt56, maxInt64, maxInt72, maxInt80, maxInt88, maxInt96, maxInt104, maxInt112, maxInt120, maxInt128, maxInt136, maxInt144, maxInt152, maxInt160, maxInt168, maxInt176, maxInt184, maxInt192, maxInt200, maxInt208, maxInt216, maxInt224, maxInt232, maxInt240, maxInt248, maxInt256, minInt8, minInt16, minInt24, minInt32, minInt40, minInt48, minInt56, minInt64, minInt72, minInt80, minInt88, minInt96, minInt104, minInt112, minInt120, minInt128, minInt136, minInt144, minInt152, minInt160, minInt168, minInt176, minInt184, minInt192, minInt200, minInt208, minInt216, minInt224, minInt232, minInt240, minInt248, minInt256, maxUint8, maxUint16, maxUint24, maxUint32, maxUint40, maxUint48, maxUint56, maxUint64, maxUint72, maxUint80, maxUint88, maxUint96, maxUint104, maxUint112, maxUint120, maxUint128, maxUint136, maxUint144, maxUint152, maxUint160, maxUint168, maxUint176, maxUint184, maxUint192, maxUint200, maxUint208, maxUint216, maxUint224, maxUint232, maxUint240, maxUint248, maxUint256;
   var init_number = __esm({
     "node_modules/viem/_esm/constants/number.js"() {
+      init_browser_node_globals();
       maxInt8 = 2n ** (8n - 1n) - 1n;
       maxInt16 = 2n ** (16n - 1n) - 1n;
       maxInt24 = 2n ** (24n - 1n) - 1n;
@@ -35235,6 +35393,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_assertRequest = __esm({
     "node_modules/viem/_esm/utils/transaction/assertRequest.js"() {
+      init_browser_node_globals();
       init_parseAccount();
       init_number();
       init_address();
@@ -35256,6 +35415,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_formatBlockParameter = __esm({
     "node_modules/viem/_esm/utils/block/formatBlockParameter.js"() {
+      init_browser_node_globals();
       init_base();
       init_toHex();
     }
@@ -35271,6 +35431,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_isAddressEqual = __esm({
     "node_modules/viem/_esm/utils/address/isAddressEqual.js"() {
+      init_browser_node_globals();
       init_address();
       init_isAddress();
     }
@@ -35300,6 +35461,7 @@ ${prettyStateOverride(stateOverride)}`;
   var docsPath4;
   var init_decodeFunctionResult = __esm({
     "node_modules/viem/_esm/utils/abi/decodeFunctionResult.js"() {
+      init_browser_node_globals();
       init_abi();
       init_decodeAbiParameters();
       init_getAbiItem();
@@ -35507,6 +35669,7 @@ ${prettyStateOverride(stateOverride)}`;
   var _0n7, _1n7, hasHexBuiltin2, hexes3, asciis2, isPosBig2, bitMask2, u8n2, u8fr2, validatorFns2;
   var init_utils5 = __esm({
     "node_modules/ox/node_modules/@noble/curves/esm/abstract/utils.js"() {
+      init_browser_node_globals();
       _0n7 = /* @__PURE__ */ BigInt(0);
       _1n7 = /* @__PURE__ */ BigInt(1);
       hasHexBuiltin2 = // @ts-ignore
@@ -35535,6 +35698,7 @@ ${prettyStateOverride(stateOverride)}`;
   var version10;
   var init_version4 = __esm({
     "node_modules/ox/_esm/core/version.js"() {
+      init_browser_node_globals();
       version10 = "0.1.1";
     }
   });
@@ -35545,6 +35709,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_errors2 = __esm({
     "node_modules/ox/_esm/core/internal/errors.js"() {
+      init_browser_node_globals();
       init_version4();
     }
   });
@@ -35560,6 +35725,7 @@ ${prettyStateOverride(stateOverride)}`;
   var BaseError3;
   var init_Errors = __esm({
     "node_modules/ox/_esm/core/Errors.js"() {
+      init_browser_node_globals();
       init_errors2();
       BaseError3 = class _BaseError extends Error {
         static setStaticOptions(options) {
@@ -35751,6 +35917,7 @@ ${prettyStateOverride(stateOverride)}`;
   var charCodeMap2;
   var init_bytes = __esm({
     "node_modules/ox/_esm/core/internal/bytes.js"() {
+      init_browser_node_globals();
       init_Bytes();
       charCodeMap2 = {
         zero: 48,
@@ -35820,6 +35987,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_hex = __esm({
     "node_modules/ox/_esm/core/internal/hex.js"() {
+      init_browser_node_globals();
       init_Hex();
     }
   });
@@ -35837,6 +36005,7 @@ ${prettyStateOverride(stateOverride)}`;
   var bigIntSuffix;
   var init_Json = __esm({
     "node_modules/ox/_esm/core/Json.js"() {
+      init_browser_node_globals();
       bigIntSuffix = "#__bigint";
     }
   });
@@ -35960,6 +36129,7 @@ ${prettyStateOverride(stateOverride)}`;
   var decoder, encoder3, InvalidBytesBooleanError2, InvalidBytesTypeError, SizeOverflowError2, SliceOffsetOutOfBoundsError2, SizeExceedsPaddingSizeError2;
   var init_Bytes = __esm({
     "node_modules/ox/_esm/core/Bytes.js"() {
+      init_browser_node_globals();
       init_Errors();
       init_Hex();
       init_bytes();
@@ -36158,6 +36328,7 @@ ${prettyStateOverride(stateOverride)}`;
   var encoder4, hexes4, IntegerOutOfRangeError2, InvalidHexTypeError, InvalidHexValueError, SizeOverflowError3, SliceOffsetOutOfBoundsError3, SizeExceedsPaddingSizeError3;
   var init_Hex = __esm({
     "node_modules/ox/_esm/core/Hex.js"() {
+      init_browser_node_globals();
       init_Errors();
       init_hex();
       init_Json();
@@ -36249,6 +36420,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_Withdrawal = __esm({
     "node_modules/ox/_esm/core/Withdrawal.js"() {
+      init_browser_node_globals();
       init_Hex();
     }
   });
@@ -36284,6 +36456,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_BlockOverrides = __esm({
     "node_modules/ox/_esm/core/BlockOverrides.js"() {
+      init_browser_node_globals();
       init_Hex();
       init_Withdrawal();
     }
@@ -36293,6 +36466,7 @@ ${prettyStateOverride(stateOverride)}`;
   var multicall3Abi, batchGatewayAbi, universalResolverErrors, universalResolverResolveAbi, universalResolverReverseAbi, textResolverAbi, addressResolverAbi, erc1271Abi, erc6492SignatureValidatorAbi;
   var init_abis = __esm({
     "node_modules/viem/_esm/constants/abis.js"() {
+      init_browser_node_globals();
       multicall3Abi = [
         {
           inputs: [
@@ -36651,6 +36825,7 @@ ${prettyStateOverride(stateOverride)}`;
   var aggregate3Signature;
   var init_contract2 = __esm({
     "node_modules/viem/_esm/constants/contract.js"() {
+      init_browser_node_globals();
       aggregate3Signature = "0x82ad56cb";
     }
   });
@@ -36659,6 +36834,7 @@ ${prettyStateOverride(stateOverride)}`;
   var deploylessCallViaBytecodeBytecode, deploylessCallViaFactoryBytecode, erc6492SignatureValidatorByteCode, multicall3Bytecode;
   var init_contracts = __esm({
     "node_modules/viem/_esm/constants/contracts.js"() {
+      init_browser_node_globals();
       deploylessCallViaBytecodeBytecode = "0x608060405234801561001057600080fd5b5060405161018e38038061018e83398101604081905261002f91610124565b6000808351602085016000f59050803b61004857600080fd5b6000808351602085016000855af16040513d6000823e81610067573d81fd5b3d81f35b634e487b7160e01b600052604160045260246000fd5b600082601f83011261009257600080fd5b81516001600160401b038111156100ab576100ab61006b565b604051601f8201601f19908116603f011681016001600160401b03811182821017156100d9576100d961006b565b6040528181528382016020018510156100f157600080fd5b60005b82811015610110576020818601810151838301820152016100f4565b506000918101602001919091529392505050565b6000806040838503121561013757600080fd5b82516001600160401b0381111561014d57600080fd5b61015985828601610081565b602085015190935090506001600160401b0381111561017757600080fd5b61018385828601610081565b915050925092905056fe";
       deploylessCallViaFactoryBytecode = "0x608060405234801561001057600080fd5b506040516102c03803806102c083398101604081905261002f916101e6565b836001600160a01b03163b6000036100e457600080836001600160a01b03168360405161005c9190610270565b6000604051808303816000865af19150503d8060008114610099576040519150601f19603f3d011682016040523d82523d6000602084013e61009e565b606091505b50915091508115806100b857506001600160a01b0386163b155b156100e1578060405163101bb98d60e01b81526004016100d8919061028c565b60405180910390fd5b50505b6000808451602086016000885af16040513d6000823e81610103573d81fd5b3d81f35b80516001600160a01b038116811461011e57600080fd5b919050565b634e487b7160e01b600052604160045260246000fd5b60005b8381101561015457818101518382015260200161013c565b50506000910152565b600082601f83011261016e57600080fd5b81516001600160401b0381111561018757610187610123565b604051601f8201601f19908116603f011681016001600160401b03811182821017156101b5576101b5610123565b6040528181528382016020018510156101cd57600080fd5b6101de826020830160208701610139565b949350505050565b600080600080608085870312156101fc57600080fd5b61020585610107565b60208601519094506001600160401b0381111561022157600080fd5b61022d8782880161015d565b93505061023c60408601610107565b60608601519092506001600160401b0381111561025857600080fd5b6102648782880161015d565b91505092959194509250565b60008251610282818460208701610139565b9190910192915050565b60208152600082518060208401526102ab816040850160208701610139565b601f01601f1916919091016040019291505056fe";
       erc6492SignatureValidatorByteCode = "0x608060405234801561001057600080fd5b5060405161069438038061069483398101604081905261002f9161051e565b600061003c848484610048565b9050806000526001601ff35b60007f64926492649264926492649264926492649264926492649264926492649264926100748361040c565b036101e7576000606080848060200190518101906100929190610577565b60405192955090935091506000906001600160a01b038516906100b69085906105dd565b6000604051808303816000865af19150503d80600081146100f3576040519150601f19603f3d011682016040523d82523d6000602084013e6100f8565b606091505b50509050876001600160a01b03163b60000361016057806101605760405162461bcd60e51b815260206004820152601e60248201527f5369676e617475726556616c696461746f723a206465706c6f796d656e74000060448201526064015b60405180910390fd5b604051630b135d3f60e11b808252906001600160a01b038a1690631626ba7e90610190908b9087906004016105f9565b602060405180830381865afa1580156101ad573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101d19190610633565b6001600160e01b03191614945050505050610405565b6001600160a01b0384163b1561027a57604051630b135d3f60e11b808252906001600160a01b03861690631626ba7e9061022790879087906004016105f9565b602060405180830381865afa158015610244573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102689190610633565b6001600160e01b031916149050610405565b81516041146102df5760405162461bcd60e51b815260206004820152603a602482015260008051602061067483398151915260448201527f3a20696e76616c6964207369676e6174757265206c656e6774680000000000006064820152608401610157565b6102e7610425565b5060208201516040808401518451859392600091859190811061030c5761030c61065d565b016020015160f81c9050601b811480159061032b57508060ff16601c14155b1561038c5760405162461bcd60e51b815260206004820152603b602482015260008051602061067483398151915260448201527f3a20696e76616c6964207369676e617475726520762076616c756500000000006064820152608401610157565b60408051600081526020810180835289905260ff83169181019190915260608101849052608081018390526001600160a01b0389169060019060a0016020604051602081039080840390855afa1580156103ea573d6000803e3d6000fd5b505050602060405103516001600160a01b0316149450505050505b9392505050565b600060208251101561041d57600080fd5b508051015190565b60405180606001604052806003906020820280368337509192915050565b6001600160a01b038116811461045857600080fd5b50565b634e487b7160e01b600052604160045260246000fd5b60005b8381101561048c578181015183820152602001610474565b50506000910152565b600082601f8301126104a657600080fd5b81516001600160401b038111156104bf576104bf61045b565b604051601f8201601f19908116603f011681016001600160401b03811182821017156104ed576104ed61045b565b60405281815283820160200185101561050557600080fd5b610516826020830160208701610471565b949350505050565b60008060006060848603121561053357600080fd5b835161053e81610443565b6020850151604086015191945092506001600160401b0381111561056157600080fd5b61056d86828701610495565b9150509250925092565b60008060006060848603121561058c57600080fd5b835161059781610443565b60208501519093506001600160401b038111156105b357600080fd5b6105bf86828701610495565b604086015190935090506001600160401b0381111561056157600080fd5b600082516105ef818460208701610471565b9190910192915050565b828152604060208201526000825180604084015261061e816060850160208701610471565b601f01601f1916919091016060019392505050565b60006020828403121561064557600080fd5b81516001600160e01b03198116811461040557600080fd5b634e487b7160e01b600052603260045260246000fdfe5369676e617475726556616c696461746f72237265636f7665725369676e6572";
@@ -36670,6 +36846,7 @@ ${prettyStateOverride(stateOverride)}`;
   var ChainDoesNotSupportContract, ChainMismatchError, ChainNotFoundError, ClientChainNotConfiguredError, InvalidChainIdError;
   var init_chain = __esm({
     "node_modules/viem/_esm/errors/chain.js"() {
+      init_browser_node_globals();
       init_base();
       ChainDoesNotSupportContract = class extends BaseError2 {
         constructor({ blockNumber, chain, contract }) {
@@ -36740,6 +36917,7 @@ ${prettyStateOverride(stateOverride)}`;
   var docsPath5;
   var init_encodeDeployData = __esm({
     "node_modules/viem/_esm/utils/abi/encodeDeployData.js"() {
+      init_browser_node_globals();
       init_abi();
       init_concat();
       init_encodeAbiParameters();
@@ -36768,6 +36946,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_getChainContractAddress = __esm({
     "node_modules/viem/_esm/utils/chain/getChainContractAddress.js"() {
+      init_browser_node_globals();
       init_chain();
     }
   });
@@ -36787,6 +36966,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_getCallError = __esm({
     "node_modules/viem/_esm/utils/errors/getCallError.js"() {
+      init_browser_node_globals();
       init_contract();
       init_node();
       init_getNodeError();
@@ -36805,6 +36985,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_withResolvers = __esm({
     "node_modules/viem/_esm/utils/promise/withResolvers.js"() {
+      init_browser_node_globals();
     }
   });
 
@@ -36855,6 +37036,7 @@ ${prettyStateOverride(stateOverride)}`;
   var schedulerCache;
   var init_createBatchScheduler = __esm({
     "node_modules/viem/_esm/utils/promise/createBatchScheduler.js"() {
+      init_browser_node_globals();
       init_withResolvers();
       schedulerCache = /* @__PURE__ */ new Map();
     }
@@ -36864,6 +37046,7 @@ ${prettyStateOverride(stateOverride)}`;
   var OffchainLookupError, OffchainLookupResponseMalformedError, OffchainLookupSenderMismatchError;
   var init_ccip = __esm({
     "node_modules/viem/_esm/errors/ccip.js"() {
+      init_browser_node_globals();
       init_stringify2();
       init_base();
       init_utils3();
@@ -36929,6 +37112,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
   var init_decodeFunctionData = __esm({
     "node_modules/viem/_esm/utils/abi/decodeFunctionData.js"() {
+      init_browser_node_globals();
       init_abi();
       init_slice();
       init_toFunctionSelector();
@@ -36962,6 +37146,7 @@ ${prettyStateOverride(stateOverride)}`;
   var docsPath6;
   var init_encodeErrorResult = __esm({
     "node_modules/viem/_esm/utils/abi/encodeErrorResult.js"() {
+      init_browser_node_globals();
       init_abi();
       init_concat();
       init_toFunctionSelector();
@@ -37000,6 +37185,7 @@ ${prettyStateOverride(stateOverride)}`;
   var docsPath7;
   var init_encodeFunctionResult = __esm({
     "node_modules/viem/_esm/utils/abi/encodeFunctionResult.js"() {
+      init_browser_node_globals();
       init_abi();
       init_encodeAbiParameters();
       init_getAbiItem();
@@ -37044,6 +37230,7 @@ ${prettyStateOverride(stateOverride)}`;
   var localBatchGatewayUrl;
   var init_localBatchGatewayRequest = __esm({
     "node_modules/viem/_esm/utils/ens/localBatchGatewayRequest.js"() {
+      init_browser_node_globals();
       init_abis();
       init_solidity();
       init_decodeFunctionData();
@@ -37159,6 +37346,7 @@ ${prettyStateOverride(stateOverride)}`;
   var offchainLookupSignature, offchainLookupAbiItem;
   var init_ccip2 = __esm({
     "node_modules/viem/_esm/utils/ccip.js"() {
+      init_browser_node_globals();
       init_call();
       init_ccip();
       init_request();
@@ -37442,6 +37630,7 @@ ${prettyStateOverride(stateOverride)}`;
   var requestOptionsId, requestOptionsIds;
   var init_call = __esm({
     "node_modules/viem/_esm/actions/public/call.js"() {
+      init_browser_node_globals();
       init_exports();
       init_BlockOverrides();
       init_parseAccount();
@@ -37468,6 +37657,18 @@ ${prettyStateOverride(stateOverride)}`;
       requestOptionsIds = /* @__PURE__ */ new WeakMap();
     }
   });
+
+  // src/arqis-swap-browser.js
+  init_browser_node_globals();
+
+  // node_modules/@circle-fin/app-kit/index.mjs
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/index.js
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/v3/index.js
+  init_browser_node_globals();
 
   // node_modules/zod/dist/esm/v3/external.js
   var external_exports = {};
@@ -37580,8 +37781,19 @@ ${prettyStateOverride(stateOverride)}`;
     util: () => util,
     void: () => voidType
   });
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/v3/errors.js
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/v3/locales/en.js
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/v3/ZodError.js
+  init_browser_node_globals();
 
   // node_modules/zod/dist/esm/v3/helpers/util.js
+  init_browser_node_globals();
   var util;
   (function(util2) {
     util2.assertEqual = (_) => {
@@ -37943,6 +38155,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
 
   // node_modules/zod/dist/esm/v3/helpers/parseUtil.js
+  init_browser_node_globals();
   var makeIssue = (params) => {
     const { data, path, errorMaps, issueData } = params;
     const fullPath = [...path, ...issueData.path || []];
@@ -38052,7 +38265,14 @@ ${prettyStateOverride(stateOverride)}`;
   var isValid = (x) => x.status === "valid";
   var isAsync = (x) => typeof Promise !== "undefined" && x instanceof Promise;
 
+  // node_modules/zod/dist/esm/v3/helpers/typeAliases.js
+  init_browser_node_globals();
+
+  // node_modules/zod/dist/esm/v3/types.js
+  init_browser_node_globals();
+
   // node_modules/zod/dist/esm/v3/helpers/errorUtil.js
+  init_browser_node_globals();
   var errorUtil;
   (function(errorUtil2) {
     errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
@@ -41508,10 +41728,24 @@ ${prettyStateOverride(stateOverride)}`;
   // node_modules/@circle-fin/app-kit/index.mjs
   var import_pino = __toESM(require_browser(), 1);
 
+  // node_modules/@ethersproject/units/lib.esm/index.js
+  init_browser_node_globals();
+
+  // node_modules/@ethersproject/bignumber/lib.esm/index.js
+  init_browser_node_globals();
+
   // node_modules/@ethersproject/bignumber/lib.esm/bignumber.js
+  init_browser_node_globals();
   var import_bn = __toESM(require_bn());
 
+  // node_modules/@ethersproject/bytes/lib.esm/index.js
+  init_browser_node_globals();
+
+  // node_modules/@ethersproject/logger/lib.esm/index.js
+  init_browser_node_globals();
+
   // node_modules/@ethersproject/logger/lib.esm/_version.js
+  init_browser_node_globals();
   var version = "logger/5.8.0";
 
   // node_modules/@ethersproject/logger/lib.esm/index.js
@@ -41803,6 +42037,7 @@ ${prettyStateOverride(stateOverride)}`;
   Logger.levels = LogLevel;
 
   // node_modules/@ethersproject/bytes/lib.esm/_version.js
+  init_browser_node_globals();
   var version2 = "bytes/5.8.0";
 
   // node_modules/@ethersproject/bytes/lib.esm/index.js
@@ -41968,6 +42203,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
 
   // node_modules/@ethersproject/bignumber/lib.esm/_version.js
+  init_browser_node_globals();
   var version3 = "bignumber/5.8.0";
 
   // node_modules/@ethersproject/bignumber/lib.esm/bignumber.js
@@ -42234,6 +42470,7 @@ ${prettyStateOverride(stateOverride)}`;
   }
 
   // node_modules/@ethersproject/bignumber/lib.esm/fixednumber.js
+  init_browser_node_globals();
   var logger3 = new Logger(version3);
   var _constructorGuard2 = {};
   var Zero = BigNumber.from(0);
@@ -42575,6 +42812,7 @@ ${prettyStateOverride(stateOverride)}`;
   var BUMP = FixedNumber.from("0.5");
 
   // node_modules/@ethersproject/units/lib.esm/_version.js
+  init_browser_node_globals();
   var version4 = "units/5.8.0";
 
   // node_modules/@ethersproject/units/lib.esm/index.js
@@ -42610,13 +42848,18 @@ ${prettyStateOverride(stateOverride)}`;
     return parseFixed(value, unitName != null ? unitName : 18);
   }
 
+  // node_modules/@ethersproject/address/lib.esm/index.js
+  init_browser_node_globals();
+
   // node_modules/@ethersproject/keccak256/lib.esm/index.js
+  init_browser_node_globals();
   var import_js_sha3 = __toESM(require_sha3());
   function keccak256(data) {
     return "0x" + import_js_sha3.default.keccak_256(arrayify(data));
   }
 
   // node_modules/@ethersproject/address/lib.esm/_version.js
+  init_browser_node_globals();
   var version5 = "address/5.8.0";
 
   // node_modules/@ethersproject/address/lib.esm/index.js
@@ -42701,7 +42944,11 @@ ${prettyStateOverride(stateOverride)}`;
     return result;
   }
 
+  // node_modules/@circle-fin/app-kit/node_modules/bs58/src/esm/index.js
+  init_browser_node_globals();
+
   // node_modules/@circle-fin/app-kit/node_modules/base-x/src/esm/index.js
+  init_browser_node_globals();
   function base(ALPHABET3) {
     if (ALPHABET3.length >= 255) {
       throw new TypeError("Alphabet too long");
@@ -42841,16 +43088,18 @@ ${prettyStateOverride(stateOverride)}`;
   var import_bn4 = __toESM(require_bn(), 1);
 
   // node_modules/@coral-xyz/anchor/dist/browser/index.js
+  init_browser_node_globals();
   var import_bn2 = __toESM(require_bn());
   var import_bn3 = __toESM(require_bn());
   var import_web3 = __toESM(require_index_browser_cjs());
   var web3_js = __toESM(require_index_browser_cjs());
-  var import_buffer = __toESM(require_buffer2());
+  var import_buffer2 = __toESM(require_buffer());
   var import_bs58 = __toESM(require_bs58());
   var import_camelcase = __toESM(require_camelcase());
   var borsh = __toESM(require_dist2());
 
   // node_modules/pako/dist/pako.esm.mjs
+  init_browser_node_globals();
   var Z_FIXED$1 = 4;
   var Z_BINARY = 0;
   var Z_TEXT = 1;
@@ -47526,7 +47775,7 @@ ${prettyStateOverride(stateOverride)}`;
     }))))),
     unitsConsumed: optional(number())
   }));
-  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : {};
   function getDefaultExportFromCjs(x) {
     return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
   }
@@ -48607,7 +48856,7 @@ ${prettyStateOverride(stateOverride)}`;
      */
     getVariant(vb, offset2) {
       let variant = vb;
-      if (Buffer.isBuffer(vb)) {
+      if (import_buffer.Buffer.isBuffer(vb)) {
         if (void 0 === offset2) {
           offset2 = 0;
         }
@@ -48759,7 +49008,7 @@ ${prettyStateOverride(stateOverride)}`;
       if (this.length instanceof ExternalLayout) {
         span = src.length;
       }
-      if (!(Buffer.isBuffer(src) && span === src.length)) {
+      if (!(import_buffer.Buffer.isBuffer(src) && span === src.length)) {
         throw new TypeError(nameWithProperty("Blob.encode", this) + " requires (length " + span + ") Buffer as src");
       }
       if (offset2 + span > b.length) {
@@ -48795,7 +49044,7 @@ ${prettyStateOverride(stateOverride)}`;
         return this.layout.span;
       }
       const data = {
-        chars: Buffer.from(src, "utf8")
+        chars: import_buffer.Buffer.from(src, "utf8")
       };
       return this.layout.encode(data, b, offset2);
     }
@@ -49411,14 +49660,14 @@ ${prettyStateOverride(stateOverride)}`;
      */
     toBuffer() {
       const a = super.toArray().reverse();
-      const b = Buffer.from(a);
+      const b = import_buffer.Buffer.from(a);
       if (b.length === 8) {
         return b;
       }
       if (b.length >= 8) {
         throw new Error("u64 too large");
       }
-      const zeroPad = Buffer.alloc(8);
+      const zeroPad = import_buffer.Buffer.alloc(8);
       b.copy(zeroPad);
       return zeroPad;
     }
@@ -55004,7 +55253,7 @@ ${prettyStateOverride(stateOverride)}`;
   };
   function bytes32ToSolana(bytes32) {
     const hex = bytes32.startsWith("0x") ? bytes32.slice(2) : bytes32;
-    const buffer2 = Buffer.from(hex, "hex");
+    const buffer2 = import_buffer.Buffer.from(hex, "hex");
     return esm_default2.encode(new Uint8Array(buffer2));
   }
   var convertAddress = (address, targetFormat) => {
@@ -62619,7 +62868,7 @@ ${prettyStateOverride(stateOverride)}`;
     0
   ]);
   function writeUint256BE(buffer2, value, offset2) {
-    const buf = Buffer.alloc(32);
+    const buf = import_buffer.Buffer.alloc(32);
     const mask64 = 0xffffffffffffffffn;
     buf.writeBigUInt64BE(value >> 192n & mask64, 0);
     buf.writeBigUInt64BE(value >> 128n & mask64, 8);
@@ -62629,7 +62878,7 @@ ${prettyStateOverride(stateOverride)}`;
     return 32;
   }
   function writeBytes32(buffer2, hex, offset2) {
-    const bytes = Buffer.from(hex.slice(2), "hex");
+    const bytes = import_buffer.Buffer.from(hex.slice(2), "hex");
     if (bytes.length !== 32) {
       throw createValidationFailedError$1("bytes32", hex, `Expected 32 bytes (66-char hex), got ${String(bytes.length)} bytes`);
     }
@@ -62642,13 +62891,13 @@ ${prettyStateOverride(stateOverride)}`;
       throw createValidationFailedError$1("burnIntent", intent, "must be a valid BurnIntent with a spec object");
     }
     const { spec } = intent;
-    const hookData = Buffer.from((spec.hookData || "0x").slice(2), "hex");
+    const hookData = import_buffer.Buffer.from((spec.hookData || "0x").slice(2), "hex");
     const transferSpecLength = 4 + 4 + 4 + 4 + 10 * 32 + 4 + hookData.length;
     const intentSize = 4 + 32 + 32 + 4 + transferSpecLength;
     const totalSize = SOLANA_SIGNING_DOMAIN.length + intentSize;
-    const buffer2 = Buffer.alloc(totalSize);
+    const buffer2 = import_buffer.Buffer.alloc(totalSize);
     let offset2 = 0;
-    Buffer.from(SOLANA_SIGNING_DOMAIN).copy(buffer2, offset2);
+    import_buffer.Buffer.from(SOLANA_SIGNING_DOMAIN).copy(buffer2, offset2);
     offset2 += SOLANA_SIGNING_DOMAIN.length;
     offset2 = buffer2.writeUInt32BE(BURN_INTENT_MAGIC, offset2);
     offset2 += writeUint256BE(buffer2, intent.maxBlockHeight, offset2);
@@ -71104,7 +71353,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
       throw createValidationFailedError$1("crypto.getRandomValues", void 0, "A secure random source is required for salt generation but crypto.getRandomValues is not available");
     }
     globalThis.crypto.getRandomValues(bytes);
-    return `0x${Buffer.from(bytes).toString("hex")}`;
+    return `0x${import_buffer.Buffer.from(bytes).toString("hex")}`;
   }
   function findChainByDomain(domain, isTestnet) {
     return Object.values(Chains).find((c) => c.gateway?.domain === domain && c.isTestnet === isTestnet);
@@ -75569,10 +75818,15 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     }
   };
 
+  // node_modules/@circle-fin/adapter-viem-v2/index.mjs
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/index.js
+  init_browser_node_globals();
   init_exports();
 
   // node_modules/viem/_esm/utils/getAction.js
+  init_browser_node_globals();
   function getAction(client, actionFn, name3) {
     const action_implicit = client[actionFn.name];
     if (typeof action_implicit === "function")
@@ -75583,10 +75837,15 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return (params) => actionFn(client, params);
   }
 
+  // node_modules/viem/_esm/actions/public/createContractEventFilter.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/abi/encodeEventTopics.js
+  init_browser_node_globals();
   init_abi();
 
   // node_modules/viem/_esm/errors/log.js
+  init_browser_node_globals();
   init_base();
   var FilterTypeNotSupportedError = class extends BaseError2 {
     constructor(type2) {
@@ -75645,6 +75904,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_toHex();
 
   // node_modules/viem/_esm/utils/filters/createFilterRequestScope.js
+  init_browser_node_globals();
   function createFilterRequestScope(client, { method }) {
     const requestMap = {};
     if (client.transport.type === "fallback")
@@ -75689,10 +75949,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/estimateContractGas.js
+  init_browser_node_globals();
   init_parseAccount();
   init_encodeFunctionData();
 
   // node_modules/viem/_esm/utils/errors/getContractError.js
+  init_browser_node_globals();
   init_abi();
   init_base();
   init_contract();
@@ -75727,10 +75989,18 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/estimateGas.js
+  init_browser_node_globals();
   init_parseAccount();
   init_base();
 
+  // node_modules/viem/_esm/utils/authorization/recoverAuthorizationAddress.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/utils/signature/recoverAddress.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/accounts/utils/publicKeyToAddress.js
+  init_browser_node_globals();
   init_getAddress();
   init_keccak256();
   function publicKeyToAddress(publicKey3) {
@@ -75739,6 +76009,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/signature/recoverPublicKey.js
+  init_browser_node_globals();
   init_isHex();
   init_size();
   init_fromHex();
@@ -75779,11 +76050,13 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/authorization/hashAuthorization.js
+  init_browser_node_globals();
   init_concat();
   init_toBytes();
   init_toHex();
 
   // node_modules/viem/_esm/utils/encoding/toRlp.js
+  init_browser_node_globals();
   init_base();
   init_cursor2();
   init_toBytes();
@@ -75906,7 +76179,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   // node_modules/viem/_esm/actions/public/estimateGas.js
   init_toHex();
 
+  // node_modules/viem/_esm/utils/errors/getEstimateGasError.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/errors/estimateGas.js
+  init_browser_node_globals();
   init_formatEther();
   init_formatGwei();
   init_base();
@@ -75967,9 +76244,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_assertRequest();
 
   // node_modules/viem/_esm/actions/wallet/prepareTransactionRequest.js
+  init_browser_node_globals();
   init_parseAccount();
 
+  // node_modules/viem/_esm/actions/public/estimateFeesPerGas.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/errors/fee.js
+  init_browser_node_globals();
   init_formatGwei();
   init_base();
   var BaseFeeScalarError = class extends BaseError2 {
@@ -75993,9 +76275,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/actions/public/estimateMaxPriorityFeePerGas.js
+  init_browser_node_globals();
   init_fromHex();
 
+  // node_modules/viem/_esm/actions/public/getBlock.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/errors/block.js
+  init_browser_node_globals();
   init_base();
   var BlockNotFoundError = class extends BaseError2 {
     constructor({ blockHash, blockNumber }) {
@@ -76012,9 +76299,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_toHex();
 
   // node_modules/viem/_esm/utils/formatters/block.js
+  init_browser_node_globals();
   init_formatter();
 
   // node_modules/viem/_esm/utils/formatters/transaction.js
+  init_browser_node_globals();
   init_fromHex();
   init_formatter();
   var transactionType = {
@@ -76139,6 +76428,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getGasPrice.js
+  init_browser_node_globals();
   async function getGasPrice(client) {
     const gasPrice = await client.request({
       method: "eth_gasPrice"
@@ -76239,6 +76529,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getTransactionCount.js
+  init_browser_node_globals();
   init_formatBlockParameter();
   init_fromHex();
   async function getTransactionCount(client, { address, blockHash, blockNumber, blockTag = "latest", requireCanonical }) {
@@ -76258,6 +76549,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/blob/blobsToCommitments.js
+  init_browser_node_globals();
   init_toBytes();
   init_toHex();
   function blobsToCommitments(parameters) {
@@ -76271,6 +76563,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/blob/blobsToProofs.js
+  init_browser_node_globals();
   init_toBytes();
   init_toHex();
   function blobsToProofs(parameters) {
@@ -76287,10 +76580,18 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return to === "bytes" ? proofs : proofs.map((x) => bytesToHex(x));
   }
 
+  // node_modules/viem/_esm/utils/blob/commitmentsToVersionedHashes.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/blob/commitmentToVersionedHash.js
+  init_browser_node_globals();
   init_toHex();
 
+  // node_modules/viem/_esm/utils/hash/sha256.js
+  init_browser_node_globals();
+
   // node_modules/viem/node_modules/@noble/hashes/esm/sha256.js
+  init_browser_node_globals();
   init_sha2();
   var sha2562 = sha256;
 
@@ -76330,7 +76631,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return hashes;
   }
 
+  // node_modules/viem/_esm/utils/blob/toBlobSidecars.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/utils/blob/toBlobs.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/constants/blob.js
+  init_browser_node_globals();
   var blobsPerTransaction = 6;
   var bytesPerFieldElement = 32;
   var fieldElementsPerBlob = 4096;
@@ -76339,7 +76647,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   1 - // zero byte (0x00) appended to each field element.
   1 * fieldElementsPerBlob * blobsPerTransaction;
 
+  // node_modules/viem/_esm/errors/blob.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/constants/kzg.js
+  init_browser_node_globals();
   var versionedHashVersionKzg = 1;
 
   // node_modules/viem/_esm/errors/blob.js
@@ -76437,6 +76749,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_assertRequest();
 
   // node_modules/viem/_esm/utils/transaction/getTransactionType.js
+  init_browser_node_globals();
   init_transaction();
   function getTransactionType(transaction) {
     if (transaction.type)
@@ -76457,9 +76770,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/fillTransaction.js
+  init_browser_node_globals();
   init_parseAccount();
 
   // node_modules/viem/_esm/utils/errors/getTransactionError.js
+  init_browser_node_globals();
   init_node();
   init_transaction();
   init_getNodeError();
@@ -76482,6 +76797,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_assertRequest();
 
   // node_modules/viem/_esm/actions/public/getChainId.js
+  init_browser_node_globals();
   init_fromHex();
   async function getChainId(client) {
     const chainIdHex = await client.request({
@@ -76915,13 +77231,19 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getContractEvents.js
+  init_browser_node_globals();
   init_getAbiItem();
 
+  // node_modules/viem/_esm/actions/public/getLogs.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/abi/parseEventLogs.js
+  init_browser_node_globals();
   init_isAddressEqual();
   init_toBytes();
 
   // node_modules/viem/_esm/utils/formatters/log.js
+  init_browser_node_globals();
   function formatLog(log, { args, eventName } = {}) {
     return {
       ...log,
@@ -76940,6 +77262,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_toEventSelector();
 
   // node_modules/viem/_esm/utils/abi/decodeEventLog.js
+  init_browser_node_globals();
   init_abi();
   init_cursor();
   init_size();
@@ -77201,6 +77524,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/readContract.js
+  init_browser_node_globals();
   init_decodeFunctionResult();
   init_encodeFunctionData();
   init_call();
@@ -77235,6 +77559,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/simulateContract.js
+  init_browser_node_globals();
   init_parseAccount();
   init_decodeFunctionResult();
   init_encodeFunctionData();
@@ -77283,10 +77608,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/watchContractEvent.js
+  init_browser_node_globals();
   init_abi();
   init_rpc();
 
   // node_modules/viem/_esm/utils/observe.js
+  init_browser_node_globals();
   var listenersCache = /* @__PURE__ */ new Map();
   var cleanupCache = /* @__PURE__ */ new Map();
   var callbackCount = 0;
@@ -77339,7 +77666,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return unwatch;
   }
 
+  // node_modules/viem/_esm/utils/poll.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/wait.js
+  init_browser_node_globals();
   init_utils3();
   async function wait(time, { signal } = {}) {
     return new Promise((resolve, reject) => {
@@ -77387,7 +77718,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   // node_modules/viem/_esm/actions/public/watchContractEvent.js
   init_stringify2();
 
+  // node_modules/viem/_esm/actions/public/getBlockNumber.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/promise/withCache.js
+  init_browser_node_globals();
   var promiseCache = /* @__PURE__ */ new Map();
   var responseCache = /* @__PURE__ */ new Map();
   function getCache(cacheKey2) {
@@ -77439,6 +77774,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getFilterChanges.js
+  init_browser_node_globals();
   async function getFilterChanges(_client, { filter }) {
     const strict = "strict" in filter && filter.strict;
     const logs = await filter.request({
@@ -77458,6 +77794,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/uninstallFilter.js
+  init_browser_node_globals();
   async function uninstallFilter(_client, { filter }) {
     return filter.request({
       method: "eth_uninstallFilter",
@@ -77642,9 +77979,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/writeContract.js
+  init_browser_node_globals();
   init_parseAccount();
 
   // node_modules/viem/_esm/errors/account.js
+  init_browser_node_globals();
   init_base();
   var AccountNotFoundError = class extends BaseError2 {
     constructor({ docsPath: docsPath8 } = {}) {
@@ -77672,10 +78011,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_encodeFunctionData();
 
   // node_modules/viem/_esm/actions/wallet/sendTransaction.js
+  init_browser_node_globals();
   init_parseAccount();
   init_base();
 
   // node_modules/viem/_esm/utils/chain/assertCurrentChain.js
+  init_browser_node_globals();
   init_chain();
   function assertCurrentChain({ chain, currentChainId }) {
     if (!chain)
@@ -77692,6 +78033,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_assertRequest();
 
   // node_modules/viem/_esm/actions/wallet/sendRawTransaction.js
+  init_browser_node_globals();
   async function sendRawTransaction(client, { serializedTransaction }) {
     return client.request({
       method: "eth_sendRawTransaction",
@@ -77889,9 +78231,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   })(writeContract || (writeContract = {}));
 
   // node_modules/viem/_esm/actions/wallet/waitForCallsStatus.js
+  init_browser_node_globals();
   init_base();
 
   // node_modules/viem/_esm/errors/calls.js
+  init_browser_node_globals();
   init_base();
   var BundleFailedError = class extends BaseError2 {
     constructor(result) {
@@ -77912,6 +78256,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_withResolvers();
 
   // node_modules/viem/_esm/utils/promise/withRetry.js
+  init_browser_node_globals();
   init_utils3();
   function withRetry(fn, { delay: delay_ = 100, retryCount = 2, shouldRetry: shouldRetry2 = () => true, signal } = {}) {
     return new Promise((resolve, reject) => {
@@ -77957,11 +78302,13 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_stringify2();
 
   // node_modules/viem/_esm/actions/wallet/getCallsStatus.js
+  init_browser_node_globals();
   init_slice();
   init_trim();
   init_fromHex();
 
   // node_modules/viem/_esm/utils/formatters/transactionReceipt.js
+  init_browser_node_globals();
   init_fromHex();
   init_formatter();
   var receiptStatuses = {
@@ -77991,6 +78338,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   var defineTransactionReceipt = /* @__PURE__ */ defineFormatter("transactionReceipt", formatTransactionReceipt);
 
   // node_modules/viem/_esm/actions/wallet/sendCalls.js
+  init_browser_node_globals();
   init_parseAccount();
   init_base();
   init_rpc();
@@ -78236,9 +78584,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/clients/createClient.js
+  init_browser_node_globals();
   init_parseAccount();
 
   // node_modules/viem/_esm/utils/uid.js
+  init_browser_node_globals();
   var size4 = 256;
   var index = size4;
   var buffer;
@@ -78296,7 +78646,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return Object.assign(client, { extend: extend(client) });
   }
 
+  // node_modules/viem/_esm/clients/createPublicClient.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/clients/decorators/public.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/actions/ens/getEnsAddress.js
+  init_browser_node_globals();
   init_abis();
   init_decodeFunctionResult();
   init_encodeFunctionData();
@@ -78307,6 +78664,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_toHex();
 
   // node_modules/viem/_esm/utils/ens/errors.js
+  init_browser_node_globals();
   init_base();
   init_contract();
   function isNullUniversalResolverError(err2) {
@@ -78334,12 +78692,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_localBatchGatewayRequest();
 
   // node_modules/viem/_esm/utils/ens/namehash.js
+  init_browser_node_globals();
   init_concat();
   init_toBytes();
   init_toHex();
   init_keccak256();
 
   // node_modules/viem/_esm/utils/ens/encodedLabelToLabelhash.js
+  init_browser_node_globals();
   init_isHex();
   function encodedLabelToLabelhash(label) {
     if (label.length !== 66)
@@ -78369,14 +78729,17 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/ens/packetToBytes.js
+  init_browser_node_globals();
   init_toBytes();
 
   // node_modules/viem/_esm/utils/ens/encodeLabelhash.js
+  init_browser_node_globals();
   function encodeLabelhash(hash3) {
     return `[${hash3.slice(2)}]`;
   }
 
   // node_modules/viem/_esm/utils/ens/labelhash.js
+  init_browser_node_globals();
   init_toBytes();
   init_toHex();
   init_keccak256();
@@ -78485,7 +78848,17 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     }
   }
 
+  // node_modules/viem/_esm/actions/ens/getEnsAvatar.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/utils/ens/avatar/parseAvatarRecord.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/utils/ens/avatar/utils.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/errors/ens.js
+  init_browser_node_globals();
   init_base();
   var EnsAvatarInvalidMetadataError = class extends BaseError2 {
     constructor({ data }) {
@@ -78719,6 +79092,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/ens/getEnsText.js
+  init_browser_node_globals();
   init_abis();
   init_decodeFunctionResult();
   init_encodeFunctionData();
@@ -78802,6 +79176,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/ens/getEnsName.js
+  init_browser_node_globals();
   init_abis();
   init_getChainContractAddress();
   init_localBatchGatewayRequest();
@@ -78841,6 +79216,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/ens/getEnsResolver.js
+  init_browser_node_globals();
   init_getChainContractAddress();
   init_toHex();
   async function getEnsResolver(client, parameters) {
@@ -78887,6 +79263,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_call();
 
   // node_modules/viem/_esm/actions/public/createAccessList.js
+  init_browser_node_globals();
   init_parseAccount();
   init_base();
   init_toHex();
@@ -78937,6 +79314,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/createBlockFilter.js
+  init_browser_node_globals();
   async function createBlockFilter(client) {
     const getRequest = createFilterRequestScope(client, {
       method: "eth_newBlockFilter"
@@ -78948,6 +79326,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/createEventFilter.js
+  init_browser_node_globals();
   init_toHex();
   async function createEventFilter(client, { address, args, event, events: events_, fromBlock, strict, toBlock } = {}) {
     const events = events_ ?? (event ? [event] : void 0);
@@ -78990,6 +79369,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/createPendingTransactionFilter.js
+  init_browser_node_globals();
   async function createPendingTransactionFilter(client) {
     const getRequest = createFilterRequestScope(client, {
       method: "eth_newPendingTransactionFilter"
@@ -79001,6 +79381,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getBalance.js
+  init_browser_node_globals();
   init_abis();
   init_decodeFunctionResult();
   init_encodeFunctionData();
@@ -79043,6 +79424,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getBlobBaseFee.js
+  init_browser_node_globals();
   async function getBlobBaseFee(client) {
     const baseFee = await client.request({
       method: "eth_blobBaseFee"
@@ -79051,6 +79433,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getBlockReceipts.js
+  init_browser_node_globals();
   init_toHex();
   async function getBlockReceipts(client, { blockHash, blockNumber, blockTag = client.experimental_blockTag ?? "latest" } = {}) {
     const blockNumberHex = blockNumber !== void 0 ? numberToHex(blockNumber) : void 0;
@@ -79065,6 +79448,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getBlockTransactionCount.js
+  init_browser_node_globals();
   init_fromHex();
   init_toHex();
   async function getBlockTransactionCount(client, { blockHash, blockNumber, blockTag = "latest" } = {}) {
@@ -79085,6 +79469,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getCode.js
+  init_browser_node_globals();
   init_formatBlockParameter();
   async function getCode(client, { address, blockHash, blockNumber, blockTag = "latest", requireCanonical }) {
     const block = formatBlockParameter({
@@ -79105,6 +79490,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getDelegation.js
+  init_browser_node_globals();
   init_getAddress();
   init_size();
   init_slice();
@@ -79122,7 +79508,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return getAddress2(slice(code, 3, 23));
   }
 
+  // node_modules/viem/_esm/actions/public/getEip712Domain.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/errors/eip712.js
+  init_browser_node_globals();
   init_base();
   var Eip712DomainNotFoundError = class extends BaseError2 {
     constructor({ address }) {
@@ -79187,9 +79577,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   ];
 
   // node_modules/viem/_esm/actions/public/getFeeHistory.js
+  init_browser_node_globals();
   init_toHex();
 
   // node_modules/viem/_esm/utils/formatters/feeHistory.js
+  init_browser_node_globals();
   function formatFeeHistory(feeHistory) {
     return {
       baseFeePerGas: feeHistory.baseFeePerGas.map((value) => BigInt(value)),
@@ -79214,6 +79606,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getFilterLogs.js
+  init_browser_node_globals();
   async function getFilterLogs(_client, { filter }) {
     const strict = filter.strict ?? false;
     const logs = await filter.request({
@@ -79231,18 +79624,28 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getProof.js
+  init_browser_node_globals();
   init_formatBlockParameter();
 
+  // node_modules/viem/_esm/utils/formatters/proof.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/utils/index.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/authorization/serializeAuthorizationList.js
+  init_browser_node_globals();
   init_toHex();
 
   // node_modules/viem/_esm/utils/transaction/serializeTransaction.js
+  init_browser_node_globals();
   init_transaction();
   init_concat();
   init_trim();
   init_toHex();
 
   // node_modules/viem/_esm/utils/transaction/assertTransaction.js
+  init_browser_node_globals();
   init_number();
   init_address();
   init_base();
@@ -79320,6 +79723,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/transaction/serializeAccessList.js
+  init_browser_node_globals();
   init_address();
   init_transaction();
   init_isAddress();
@@ -79561,6 +79965,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/authorization/verifyAuthorization.js
+  init_browser_node_globals();
   init_getAddress();
   init_isAddressEqual();
   async function verifyAuthorization({ address, authorization, signature }) {
@@ -79571,12 +79976,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/buildRequest.js
+  init_browser_node_globals();
   init_base();
   init_request();
   init_rpc();
   init_utils3();
 
   // node_modules/viem/_esm/utils/promise/withDedupe.js
+  init_browser_node_globals();
   init_lru();
   var promiseCache2 = /* @__PURE__ */ new LruMap(8192);
   function withDedupe(fn, { enabled = true, id }) {
@@ -79776,6 +80183,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/chain/defineChain.js
+  init_browser_node_globals();
   function defineChain2(chain) {
     const chainInstance = {
       formatters: void 0,
@@ -79799,10 +80207,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_fromHex();
 
   // node_modules/viem/_esm/utils/rpc/http.js
+  init_browser_node_globals();
   init_request();
   init_utils3();
 
   // node_modules/viem/_esm/utils/promise/withTimeout.js
+  init_browser_node_globals();
   init_utils3();
   function withTimeout(fn, { errorInstance = new Error("timed out"), timeout, signal }) {
     return new Promise((resolve, reject) => {
@@ -79838,6 +80248,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_stringify2();
 
   // node_modules/viem/_esm/utils/rpc/id.js
+  init_browser_node_globals();
   function createIdStore() {
     return {
       current: 0,
@@ -79959,9 +80370,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/signature/hashMessage.js
+  init_browser_node_globals();
   init_keccak256();
 
+  // node_modules/viem/_esm/utils/signature/toPrefixedMessage.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/constants/strings.js
+  init_browser_node_globals();
   var presignMessagePrefix = "Ethereum Signed Message:\n";
 
   // node_modules/viem/_esm/utils/signature/toPrefixedMessage.js
@@ -79986,16 +80402,19 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/utils/signature/hashTypedData.js
+  init_browser_node_globals();
   init_encodeAbiParameters();
   init_concat();
   init_toHex();
   init_keccak256();
 
   // node_modules/viem/_esm/utils/typedData.js
+  init_browser_node_globals();
   init_abi();
   init_address();
 
   // node_modules/viem/_esm/errors/typedData.js
+  init_browser_node_globals();
   init_stringify2();
   init_base();
   var InvalidDomainError = class extends BaseError2 {
@@ -80227,6 +80646,9 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return [{ type: type2 }, value];
   }
 
+  // node_modules/ox/_esm/erc8010/index.js
+  init_browser_node_globals();
+
   // node_modules/ox/_esm/erc8010/SignatureErc8010.js
   var SignatureErc8010_exports = {};
   __export(SignatureErc8010_exports, {
@@ -80239,14 +80661,21 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     validate: () => validate7,
     wrap: () => wrap
   });
+  init_browser_node_globals();
 
   // node_modules/ox/_esm/core/AbiParameters.js
+  init_browser_node_globals();
   init_exports();
 
   // node_modules/ox/_esm/core/Address.js
+  init_browser_node_globals();
   init_Bytes();
 
+  // node_modules/ox/_esm/core/Caches.js
+  init_browser_node_globals();
+
   // node_modules/ox/_esm/core/internal/lru.js
+  init_browser_node_globals();
   var LruMap2 = class extends Map {
     constructor(size5) {
       super();
@@ -80286,7 +80715,17 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   // node_modules/ox/_esm/core/Address.js
   init_Errors();
 
+  // node_modules/ox/_esm/core/Hash.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/hashes/esm/hmac.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/hashes/esm/utils.js
+  init_browser_node_globals();
+
   // node_modules/ox/node_modules/@noble/hashes/esm/crypto.js
+  init_browser_node_globals();
   var crypto3 = typeof globalThis === "object" && "crypto" in globalThis ? globalThis.crypto : void 0;
 
   // node_modules/ox/node_modules/@noble/hashes/esm/utils.js
@@ -80462,6 +80901,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   hmac2.create = (hash3, key) => new HMAC2(hash3, key);
 
   // node_modules/ox/node_modules/@noble/hashes/esm/_md.js
+  init_browser_node_globals();
   function setBigUint642(view, byteOffset, value, isLE3) {
     if (typeof view.setBigUint64 === "function")
       return view.setBigUint64(byteOffset, value, isLE3);
@@ -80581,7 +81021,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     1541459225
   ]);
 
+  // node_modules/ox/node_modules/@noble/hashes/esm/sha3.js
+  init_browser_node_globals();
+
   // node_modules/ox/node_modules/@noble/hashes/esm/_u64.js
+  init_browser_node_globals();
   var U32_MASK642 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
   var _32n2 = /* @__PURE__ */ BigInt(32);
   function fromBig2(n, le = false) {
@@ -80786,6 +81230,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   var keccak_2562 = /* @__PURE__ */ (() => gen2(1, 136, 256 / 8))();
 
   // node_modules/ox/node_modules/@noble/hashes/esm/sha2.js
+  init_browser_node_globals();
   var SHA256_K2 = /* @__PURE__ */ Uint32Array.from([
     1116352408,
     1899447441,
@@ -80937,6 +81382,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/ox/_esm/core/PublicKey.js
+  init_browser_node_globals();
   init_Bytes();
   init_Errors();
   init_Hex();
@@ -81189,11 +81635,13 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_Hex();
 
   // node_modules/ox/_esm/core/internal/abiParameters.js
+  init_browser_node_globals();
   init_Bytes();
   init_Errors();
   init_Hex();
 
   // node_modules/ox/_esm/core/Solidity.js
+  init_browser_node_globals();
   var arrayRegex = /^(.*)\[([0-9]*)\]$/;
   var bytesRegex3 = /^bytes([1-9]|1[0-9]|2[0-9]|3[0-2])?$/;
   var integerRegex3 = /^(u?int)(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?$/;
@@ -81684,6 +82132,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/ox/_esm/core/internal/cursor.js
+  init_browser_node_globals();
   init_Errors();
   var staticCursor2 = {
     bytes: new Uint8Array(),
@@ -82089,9 +82538,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/ox/_esm/core/Authorization.js
+  init_browser_node_globals();
   init_Hex();
 
   // node_modules/ox/_esm/core/Rlp.js
+  init_browser_node_globals();
   init_Bytes();
   init_Errors();
   init_Hex();
@@ -82188,7 +82639,23 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     throw new BaseError3("Length is too large.");
   }
 
+  // node_modules/ox/_esm/core/Signature.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/curves/esm/secp256k1.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/curves/esm/_shortw_utils.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/curves/esm/abstract/weierstrass.js
+  init_browser_node_globals();
+
+  // node_modules/ox/node_modules/@noble/curves/esm/abstract/curve.js
+  init_browser_node_globals();
+
   // node_modules/ox/node_modules/@noble/curves/esm/abstract/modular.js
+  init_browser_node_globals();
   init_utils5();
   var _0n9 = BigInt(0);
   var _1n9 = BigInt(1);
@@ -83895,6 +84362,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_Hex();
 
   // node_modules/ox/_esm/core/Secp256k1.js
+  init_browser_node_globals();
   init_Hex();
   function recoverAddress2(options) {
     return fromPublicKey(recoverPublicKey2(options));
@@ -84013,6 +84481,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getStorageAt.js
+  init_browser_node_globals();
   init_formatBlockParameter();
   async function getStorageAt(client, { address, blockHash, blockNumber, blockTag = "latest", requireCanonical, slot }) {
     const block = formatBlockParameter({
@@ -84029,6 +84498,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getTransaction.js
+  init_browser_node_globals();
   init_transaction();
   init_toHex();
   async function getTransaction(client, { blockHash, blockNumber, blockTag: blockTag_, hash: hash3, index: index2, sender, nonce }) {
@@ -84069,6 +84539,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getTransactionConfirmations.js
+  init_browser_node_globals();
   async function getTransactionConfirmations(client, { hash: hash3, transactionReceipt }) {
     const [blockNumber, transaction] = await Promise.all([
       getAction(client, getBlockNumber, "getBlockNumber")({}),
@@ -84081,6 +84552,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/getTransactionReceipt.js
+  init_browser_node_globals();
   init_transaction();
   async function getTransactionReceipt(client, { hash: hash3 }) {
     const receipt = await client.request({
@@ -84094,6 +84566,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/multicall.js
+  init_browser_node_globals();
   init_abis();
   init_contracts();
   init_abi();
@@ -84233,6 +84706,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/simulateBlocks.js
+  init_browser_node_globals();
   init_BlockOverrides();
   init_parseAccount();
   init_abi();
@@ -84333,12 +84807,20 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     }
   }
 
+  // node_modules/viem/_esm/actions/public/simulateCalls.js
+  init_browser_node_globals();
+
+  // node_modules/ox/_esm/core/AbiConstructor.js
+  init_browser_node_globals();
+
   // node_modules/ox/_esm/core/AbiItem.js
+  init_browser_node_globals();
   init_exports();
   init_Errors();
   init_Hex();
 
   // node_modules/ox/_esm/core/internal/abiItem.js
+  init_browser_node_globals();
   init_Errors();
   function normalizeSignature2(signature) {
     let active = true;
@@ -84627,6 +85109,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/ox/_esm/core/AbiFunction.js
+  init_browser_node_globals();
   init_Hex();
   function encodeData2(...parameters) {
     const [abiFunction, args = []] = (() => {
@@ -84662,6 +85145,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_parseAccount();
 
   // node_modules/viem/_esm/constants/address.js
+  init_browser_node_globals();
   var ethAddress = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
   var zeroAddress = "0x0000000000000000000000000000000000000000";
 
@@ -84865,6 +85349,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     };
   }
 
+  // node_modules/viem/_esm/actions/public/verifyHash.js
+  init_browser_node_globals();
+
+  // node_modules/ox/_esm/erc6492/index.js
+  init_browser_node_globals();
+
   // node_modules/ox/_esm/erc6492/SignatureErc6492.js
   var SignatureErc6492_exports = {};
   __export(SignatureErc6492_exports, {
@@ -84878,6 +85368,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     validate: () => validate8,
     wrap: () => wrap2
   });
+  init_browser_node_globals();
   init_Errors();
   init_Hex();
   var magicBytes2 = "0x6492649264926492649264926492649264926492649264926492649264926492";
@@ -84982,6 +85473,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   init_toHex();
 
   // node_modules/viem/_esm/utils/signature/serializeSignature.js
+  init_browser_node_globals();
   init_secp256k1();
   init_fromHex();
   init_toBytes();
@@ -85171,6 +85663,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/actions/public/verifyMessage.js
+  init_browser_node_globals();
   async function verifyMessage(client, { address, message, factory, factoryData, signature, ...callRequest }) {
     const hash3 = hashMessage(message);
     return getAction(client, verifyHash, "verifyHash")({
@@ -85184,6 +85677,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/verifyTypedData.js
+  init_browser_node_globals();
   async function verifyTypedData(client, parameters) {
     const { address, factory, factoryData, signature, message, primaryType, types, domain, ...callRequest } = parameters;
     const hash3 = hashTypedData({ message, primaryType, types, domain });
@@ -85198,11 +85692,13 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/waitForTransactionReceipt.js
+  init_browser_node_globals();
   init_transaction();
   init_withResolvers();
   init_stringify2();
 
   // node_modules/viem/_esm/actions/public/watchBlockNumber.js
+  init_browser_node_globals();
   init_fromHex();
   init_stringify2();
   function watchBlockNumber(client, { emitOnBegin = false, emitMissed = false, onBlockNumber, onError, poll: poll_, pollingInterval = client.pollingInterval }) {
@@ -85429,6 +85925,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/watchBlocks.js
+  init_browser_node_globals();
   init_stringify2();
   function watchBlocks(client, { blockTag = client.experimental_blockTag ?? "latest", emitMissed = false, emitOnBegin = false, onBlock, onError, includeTransactions: includeTransactions_, poll: poll_, pollingInterval = client.pollingInterval }) {
     const enablePolling = (() => {
@@ -85551,6 +86048,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/watchEvent.js
+  init_browser_node_globals();
   init_abi();
   init_rpc();
   init_stringify2();
@@ -85717,6 +86215,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/public/watchPendingTransactions.js
+  init_browser_node_globals();
   init_stringify2();
   function watchPendingTransactions(client, { batch = true, onError, onTransactions, poll: poll_, pollingInterval = client.pollingInterval }) {
     const enablePolling = typeof poll_ !== "undefined" ? poll_ : client.transport.type !== "webSocket" && client.transport.type !== "ipc";
@@ -85791,7 +86290,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return enablePolling ? pollPendingTransactions() : subscribePendingTransactions();
   }
 
+  // node_modules/viem/_esm/actions/siwe/verifySiweMessage.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/utils/siwe/parseSiweMessage.js
+  init_browser_node_globals();
   function parseSiweMessage(message) {
     const { scheme, statement, ...prefix } = message.match(prefixRegex)?.groups ?? {};
     const { chainId, expirationTime, issuedAt, notBefore, requestId, ...suffix } = message.match(suffixRegex)?.groups ?? {};
@@ -85813,6 +86316,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   var suffixRegex = /(?:URI: (?<uri>.+))\n(?:Version: (?<version>.+))\n(?:Chain ID: (?<chainId>\d+))\n(?:Nonce: (?<nonce>[a-zA-Z0-9]+))\n(?:Issued At: (?<issuedAt>.+))(?:\nExpiration Time: (?<expirationTime>.+))?(?:\nNot Before: (?<notBefore>.+))?(?:\nRequest ID: (?<requestId>.+))?/;
 
   // node_modules/viem/_esm/utils/siwe/validateSiweMessage.js
+  init_browser_node_globals();
   init_isAddress();
   init_isAddressEqual();
   function validateSiweMessage(parameters) {
@@ -85866,6 +86370,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/sendRawTransactionSync.js
+  init_browser_node_globals();
   init_transaction();
   async function sendRawTransactionSync(client, { serializedTransaction, throwOnReceiptRevert, timeout }) {
     const receipt = await client.request({
@@ -85956,7 +86461,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     return client.extend(publicActions);
   }
 
+  // node_modules/viem/_esm/clients/createWalletClient.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/clients/decorators/wallet.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/actions/wallet/addChain.js
+  init_browser_node_globals();
   init_toHex();
   async function addChain(client, { chain }) {
     const { id, name: name3, nativeCurrency, rpcUrls, blockExplorers } = chain;
@@ -85975,6 +86487,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/deployContract.js
+  init_browser_node_globals();
   init_encodeDeployData();
   function deployContract(walletClient, parameters) {
     const { abi: abi2, args, bytecode, ...request } = parameters;
@@ -85987,6 +86500,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/getAddresses.js
+  init_browser_node_globals();
   init_getAddress();
   async function getAddresses(client) {
     if (client.account?.type === "local")
@@ -85996,6 +86510,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/getCapabilities.js
+  init_browser_node_globals();
   init_parseAccount();
   init_toHex();
   async function getCapabilities(client, parameters = {}) {
@@ -86019,12 +86534,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/getPermissions.js
+  init_browser_node_globals();
   async function getPermissions(client) {
     const permissions = await client.request({ method: "wallet_getPermissions" }, { dedupe: true });
     return permissions;
   }
 
   // node_modules/viem/_esm/actions/wallet/prepareAuthorization.js
+  init_browser_node_globals();
   init_parseAccount();
   init_isAddressEqual();
   async function prepareAuthorization(client, parameters) {
@@ -86060,6 +86577,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/requestAddresses.js
+  init_browser_node_globals();
   init_getAddress();
   async function requestAddresses(client) {
     const addresses = await client.request({ method: "eth_requestAccounts" }, { dedupe: true, retryCount: 0 });
@@ -86067,6 +86585,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/requestPermissions.js
+  init_browser_node_globals();
   async function requestPermissions(client, permissions) {
     return client.request({
       method: "wallet_requestPermissions",
@@ -86075,6 +86594,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/sendCallsSync.js
+  init_browser_node_globals();
   async function sendCallsSync(client, parameters) {
     const { chain = client.chain } = parameters;
     const timeout = parameters.timeout ?? Math.max((chain?.blockTime ?? 0) * 3, 5e3);
@@ -86088,6 +86608,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/sendTransactionSync.js
+  init_browser_node_globals();
   init_parseAccount();
   init_base();
   init_transaction();
@@ -86261,6 +86782,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/showCallsStatus.js
+  init_browser_node_globals();
   async function showCallsStatus(client, parameters) {
     const { id } = parameters;
     await client.request({
@@ -86271,6 +86793,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/signAuthorization.js
+  init_browser_node_globals();
   init_parseAccount();
   async function signAuthorization(client, parameters) {
     const { account: account_ = client.account } = parameters;
@@ -86292,6 +86815,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/signMessage.js
+  init_browser_node_globals();
   init_parseAccount();
   init_toHex();
   async function signMessage(client, { account: account_ = client.account, message }) {
@@ -86316,6 +86840,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/signTransaction.js
+  init_browser_node_globals();
   init_parseAccount();
   init_toHex();
   init_transactionRequest();
@@ -86361,6 +86886,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/signTypedData.js
+  init_browser_node_globals();
   init_parseAccount();
   async function signTypedData(client, parameters) {
     const { account: account_ = client.account, domain, message, primaryType } = parameters;
@@ -86384,6 +86910,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/switchChain.js
+  init_browser_node_globals();
   init_toHex();
   async function switchChain(client, { id }) {
     await client.request({
@@ -86397,6 +86924,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/watchAsset.js
+  init_browser_node_globals();
   async function watchAsset(client, params) {
     const added = await client.request({
       method: "wallet_watchAsset",
@@ -86406,6 +86934,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/actions/wallet/writeContractSync.js
+  init_browser_node_globals();
   async function writeContractSync(client, parameters) {
     return writeContract.internal(client, sendTransactionSync, "sendTransactionSync", parameters);
   }
@@ -86458,6 +86987,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/clients/transports/createTransport.js
+  init_browser_node_globals();
   function createTransport({ key, methods, name: name3, request, retryCount = 3, retryDelay = 150, timeout, type: type2 }, value) {
     const uid2 = uid();
     return {
@@ -86477,6 +87007,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/clients/transports/custom.js
+  init_browser_node_globals();
   function custom2(provider, config = {}) {
     const { key = "custom", methods, name: name3 = "Custom Provider", retryDelay } = config;
     return ({ retryCount: defaultRetryCount }) => createTransport({
@@ -86491,6 +87022,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/clients/transports/fallback.js
+  init_browser_node_globals();
   init_node();
   init_rpc();
   function fallback(transports_, config = {}) {
@@ -86626,9 +87158,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/clients/transports/http.js
+  init_browser_node_globals();
   init_request();
 
   // node_modules/viem/_esm/errors/transport.js
+  init_browser_node_globals();
   init_base();
   var UrlRequiredError = class extends BaseError2 {
     constructor() {
@@ -86719,7 +87253,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   // node_modules/viem/_esm/index.js
   init_encodeFunctionData();
 
+  // node_modules/@circle-fin/adapter-viem-v2/node_modules/bs58/src/esm/index.js
+  init_browser_node_globals();
+
   // node_modules/@circle-fin/adapter-viem-v2/node_modules/base-x/src/esm/index.js
+  init_browser_node_globals();
   function base2(ALPHABET3) {
     if (ALPHABET3.length >= 255) {
       throw new TypeError("Alphabet too long");
@@ -86854,13 +87392,21 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   var ALPHABET2 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
   var esm_default4 = esm_default3(ALPHABET2);
 
+  // node_modules/viem/_esm/chains/index.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/zksync/chainConfig.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/zksync/formatters.js
+  init_browser_node_globals();
   init_fromHex();
   init_toBytes();
   init_toHex();
   init_transactionRequest();
 
   // node_modules/viem/_esm/zksync/constants/number.js
+  init_browser_node_globals();
   init_number();
   var gasPerPubdataDefault = 50000n;
   var maxBytecodeSize = maxUint16 * 32n;
@@ -86965,16 +87511,19 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/zksync/serializers.js
+  init_browser_node_globals();
   init_concat();
   init_toHex();
 
   // node_modules/viem/_esm/zksync/utils/assertEip712Transaction.js
+  init_browser_node_globals();
   init_address();
   init_base();
   init_chain();
   init_isAddress();
 
   // node_modules/viem/_esm/zksync/errors/transaction.js
+  init_browser_node_globals();
   init_base();
   var InvalidEip712TransactionError = class extends BaseError2 {
     constructor() {
@@ -86989,6 +87538,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/zksync/utils/isEip712Transaction.js
+  init_browser_node_globals();
   function isEIP712Transaction(transaction) {
     if (transaction.type === "eip712")
       return true;
@@ -87056,13 +87606,16 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/zksync/utils/getEip712Domain.js
+  init_browser_node_globals();
   init_toHex();
 
   // node_modules/viem/_esm/zksync/utils/hashBytecode.js
+  init_browser_node_globals();
   init_pad();
   init_toBytes();
 
   // node_modules/viem/_esm/zksync/errors/bytecode.js
+  init_browser_node_globals();
   init_base();
   var BytecodeLengthExceedsMaxSizeError = class extends BaseError2 {
     constructor({ givenLength, maxBytecodeSize: maxBytecodeSize2 }) {
@@ -87168,7 +87721,11 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     }
   };
 
+  // node_modules/viem/_esm/op-stack/chainConfig.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/op-stack/contracts.js
+  init_browser_node_globals();
   var contracts = {
     gasPriceOracle: { address: "0x420000000000000000000000000000000000000F" },
     l1Block: { address: "0x4200000000000000000000000000000000000015" },
@@ -87183,6 +87740,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/op-stack/formatters.js
+  init_browser_node_globals();
   init_fromHex();
   var formatters2 = {
     block: /* @__PURE__ */ defineBlock({
@@ -87230,6 +87788,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/op-stack/serializers.js
+  init_browser_node_globals();
   init_address();
   init_isAddress();
   init_concat();
@@ -87284,6 +87843,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/chains/definitions/arbitrum.js
+  init_browser_node_globals();
   var arbitrum = /* @__PURE__ */ defineChain2({
     id: 42161,
     name: "Arbitrum One",
@@ -87310,6 +87870,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/arbitrumSepolia.js
+  init_browser_node_globals();
   var arbitrumSepolia = /* @__PURE__ */ defineChain2({
     id: 421614,
     name: "Arbitrum Sepolia",
@@ -87341,6 +87902,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/avalanche.js
+  init_browser_node_globals();
   var avalanche = /* @__PURE__ */ defineChain2({
     id: 43114,
     name: "Avalanche",
@@ -87369,6 +87931,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/avalancheFuji.js
+  init_browser_node_globals();
   var avalancheFuji = /* @__PURE__ */ defineChain2({
     id: 43113,
     name: "Avalanche Fuji",
@@ -87397,6 +87960,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/base.js
+  init_browser_node_globals();
   var sourceId = 1;
   var base3 = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -87457,6 +88021,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/baseSepolia.js
+  init_browser_node_globals();
   var sourceId2 = 11155111;
   var baseSepolia = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -87518,7 +88083,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     }
   });
 
+  // node_modules/viem/_esm/chains/definitions/celo.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/celo/chainConfig.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/celo/fees.js
+  init_browser_node_globals();
   var fees = {
     /*
        * Estimates the fees per gas for a transaction.
@@ -87559,10 +88131,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   }
 
   // node_modules/viem/_esm/celo/formatters.js
+  init_browser_node_globals();
   init_fromHex();
   init_transactionRequest();
 
   // node_modules/viem/_esm/celo/utils.js
+  init_browser_node_globals();
   init_trim();
   function isEmpty(value) {
     return value === 0 || value === 0n || value === void 0 || value === null || value === "0" || value === "" || typeof value === "string" && (trim(value).toLowerCase() === "0x" || trim(value).toLowerCase() === "0x00");
@@ -87636,6 +88210,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
 
   // node_modules/viem/_esm/celo/serializers.js
+  init_browser_node_globals();
   init_number();
   init_address();
   init_base();
@@ -87733,6 +88308,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/celoAlfajores.js
+  init_browser_node_globals();
   var sourceId3 = 17e3;
   var celoAlfajores = /* @__PURE__ */ defineChain2({
     ...chainConfig3,
@@ -87789,7 +88365,14 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     testnet: true
   });
 
+  // node_modules/viem/_esm/chains/definitions/linea.js
+  init_browser_node_globals();
+
+  // node_modules/viem/_esm/linea/chainConfig.js
+  init_browser_node_globals();
+
   // node_modules/viem/_esm/linea/actions/estimateGas.js
+  init_browser_node_globals();
   init_parseAccount();
   init_toHex();
   init_getCallError();
@@ -87917,6 +88500,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/lineaSepolia.js
+  init_browser_node_globals();
   var lineaSepolia = /* @__PURE__ */ defineChain2({
     ...chainConfig4,
     id: 59141,
@@ -87954,6 +88538,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/mainnet.js
+  init_browser_node_globals();
   var mainnet = /* @__PURE__ */ defineChain2({
     id: 1,
     name: "Ethereum",
@@ -87984,6 +88569,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/optimism.js
+  init_browser_node_globals();
   var sourceId4 = 1;
   var optimism = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88033,6 +88619,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/optimismSepolia.js
+  init_browser_node_globals();
   var sourceId5 = 11155111;
   var optimismSepolia = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88083,6 +88670,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/polygon.js
+  init_browser_node_globals();
   var polygon = /* @__PURE__ */ defineChain2({
     id: 137,
     name: "Polygon",
@@ -88109,6 +88697,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/polygonAmoy.js
+  init_browser_node_globals();
   var polygonAmoy = /* @__PURE__ */ defineChain2({
     id: 80002,
     name: "Polygon Amoy",
@@ -88135,6 +88724,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/sei.js
+  init_browser_node_globals();
   var sei = /* @__PURE__ */ defineChain2({
     id: 1329,
     name: "Sei Network",
@@ -88160,6 +88750,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/seiTestnet.js
+  init_browser_node_globals();
   var seiTestnet = /* @__PURE__ */ defineChain2({
     id: 1328,
     name: "Sei Testnet",
@@ -88187,6 +88778,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/sepolia.js
+  init_browser_node_globals();
   var sepolia = /* @__PURE__ */ defineChain2({
     id: 11155111,
     name: "Sepolia",
@@ -88217,6 +88809,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/sonic.js
+  init_browser_node_globals();
   var sonic = /* @__PURE__ */ defineChain2({
     id: 146,
     name: "Sonic",
@@ -88245,6 +88838,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/unichain.js
+  init_browser_node_globals();
   var sourceId6 = 1;
   var unichain = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88290,6 +88884,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/unichainSepolia.js
+  init_browser_node_globals();
   var sourceId7 = 11155111;
   var unichainSepolia = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88340,6 +88935,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/worldchain.js
+  init_browser_node_globals();
   var sourceId8 = 1;
   var worldchain = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88394,6 +88990,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/worldchainSepolia.js
+  init_browser_node_globals();
   var sourceId9 = 11155111;
   var worldchainSepolia = /* @__PURE__ */ defineChain2({
     ...chainConfig2,
@@ -88448,6 +89045,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/xdc.js
+  init_browser_node_globals();
   var xdc = /* @__PURE__ */ defineChain2({
     id: 50,
     name: "XDC Network",
@@ -88474,6 +89072,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/xdcTestnet.js
+  init_browser_node_globals();
   var xdcTestnet = /* @__PURE__ */ defineChain2({
     id: 51,
     name: "Apothem Network",
@@ -88501,6 +89100,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/zksync.js
+  init_browser_node_globals();
   var zksync = /* @__PURE__ */ defineChain2({
     ...chainConfig,
     blockTime: 200,
@@ -88538,6 +89138,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   });
 
   // node_modules/viem/_esm/chains/definitions/zksyncSepoliaTestnet.js
+  init_browser_node_globals();
   var zksyncSepoliaTestnet = /* @__PURE__ */ defineChain2({
     ...chainConfig,
     blockTime: 200,
@@ -93060,7 +93661,7 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   };
   function bytes32ToSolana2(bytes32) {
     const hex = bytes32.startsWith("0x") ? bytes32.slice(2) : bytes32;
-    const buffer2 = Buffer.from(hex, "hex");
+    const buffer2 = import_buffer.Buffer.from(hex, "hex");
     return esm_default4.encode(new Uint8Array(buffer2));
   }
   var convertAddress2 = (address, targetFormat) => {
@@ -103075,16 +103676,6 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
 })();
 /*! Bundled license information:
 
-js-sha3/src/sha3.js:
-  (**
-   * [js-sha3]{@link https://github.com/emn178/js-sha3}
-   *
-   * @version 0.8.0
-   * @author Chen, Yi-Cyuan [emn178@gmail.com]
-   * @copyright Chen, Yi-Cyuan 2015-2018
-   * @license MIT
-   *)
-
 ieee754/index.js:
   (*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> *)
 
@@ -103094,6 +103685,16 @@ buffer/index.js:
    *
    * @author   Feross Aboukhadijeh <https://feross.org>
    * @license  MIT
+   *)
+
+js-sha3/src/sha3.js:
+  (**
+   * [js-sha3]{@link https://github.com/emn178/js-sha3}
+   *
+   * @version 0.8.0
+   * @author Chen, Yi-Cyuan [emn178@gmail.com]
+   * @copyright Chen, Yi-Cyuan 2015-2018
+   * @license MIT
    *)
 
 @noble/hashes/utils.js:
