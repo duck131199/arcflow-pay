@@ -102881,6 +102881,12 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
   async function createArcAdapter(inputProvider) {
     return createViemAdapterFromProvider({ provider: providerFrom(inputProvider) });
   }
+  async function createUnifiedAdapter(inputProvider) {
+    return createViemAdapterFromProvider({
+      provider: providerFrom(inputProvider),
+      capabilities: { addressContext: "user-controlled" }
+    });
+  }
   function assertConfig() {
     if (!kitKey()) {
       throw new Error("Circle Kit Key is not configured. Set window.ARQIS_CONFIG.CIRCLE_KIT_KEY in assets/arqis-config.js.");
@@ -102939,6 +102945,35 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
       fees: estimate2?.fees || []
     };
   }
+  function normalizeUnifiedEstimate(estimate2) {
+    return {
+      fees: estimate2?.fees || []
+    };
+  }
+  function normalizeUnifiedSpendResult(result) {
+    return {
+      allocations: result?.allocations || [],
+      recipientAddress: result?.recipientAddress || "",
+      destinationChain: result?.destinationChain || "Arc_Testnet",
+      txHash: result?.txHash || "",
+      explorerUrl: result?.explorerUrl || (result?.txHash ? `https://testnet.arcscan.app/tx/${result.txHash}` : ""),
+      fees: result?.fees || [],
+      transferId: result?.transferId || "",
+      expirationBlock: result?.expirationBlock || "",
+      steps: result?.steps || []
+    };
+  }
+  function normalizeUnifiedDepositResult(result) {
+    return {
+      amount: result?.amount || "",
+      token: result?.token || "USDC",
+      depositedTo: result?.depositedTo || "",
+      depositedBy: result?.depositedBy || "",
+      chain: result?.chain || "",
+      txHash: result?.txHash || "",
+      explorerUrl: result?.explorerUrl || (result?.txHash ? `https://testnet.arcscan.app/tx/${result.txHash}` : "")
+    };
+  }
   async function estimateSwapToUsdc({ provider, tokenIn, amountIn, slippageBps = 300 }) {
     assertConfig();
     installCircleProxyFetch();
@@ -102973,10 +103008,69 @@ Action: Add at least ${actionAmount} to your wallet to complete this swap.`;
     const status = await kit.getSwapStatus({ txHash, chainIn, chainOut, kitKey: kitKey() });
     return status;
   }
+  async function estimateUnifiedSpend({ provider, amount, allocations, recipientAddress }) {
+    assertConfig();
+    installCircleProxyFetch();
+    if (!amount) throw new Error("amount is required");
+    if (!recipientAddress) throw new Error("recipientAddress is required");
+    if (!allocations || !allocations.length) throw new Error("allocations are required");
+    const adapter = await createUnifiedAdapter(provider);
+    const estimate2 = await kit.unifiedBalance.estimateSpend({
+      from: { adapter, allocations },
+      to: { chain: "Arc_Testnet", recipientAddress, useForwarder: true },
+      token: "USDC",
+      amount: String(amount)
+    });
+    return normalizeUnifiedEstimate(estimate2);
+  }
+  async function spendUnifiedBalance({ provider, amount, allocations, recipientAddress }) {
+    assertConfig();
+    installCircleProxyFetch();
+    if (!amount) throw new Error("amount is required");
+    if (!recipientAddress) throw new Error("recipientAddress is required");
+    if (!allocations || !allocations.length) throw new Error("allocations are required");
+    const adapter = await createUnifiedAdapter(provider);
+    const result = await kit.unifiedBalance.spend({
+      from: { adapter, allocations },
+      to: { chain: "Arc_Testnet", recipientAddress, useForwarder: true },
+      token: "USDC",
+      amount: String(amount)
+    });
+    return normalizeUnifiedSpendResult(result);
+  }
+  async function depositUnifiedBalance({ provider, chain, amount, allowanceStrategy = "authorize" }) {
+    assertConfig();
+    installCircleProxyFetch();
+    if (!chain) throw new Error("chain is required");
+    if (!amount) throw new Error("amount is required");
+    const adapter = await createUnifiedAdapter(provider);
+    const result = await kit.unifiedBalance.deposit({
+      from: { adapter, chain },
+      amount: String(amount),
+      token: "USDC",
+      allowanceStrategy
+    });
+    return normalizeUnifiedDepositResult(result);
+  }
+  async function getUnifiedBalances({ provider, chains = ["Ethereum_Sepolia", "Base_Sepolia", "Avalanche_Fuji"] } = {}) {
+    assertConfig();
+    installCircleProxyFetch();
+    const adapter = await createUnifiedAdapter(provider);
+    return kit.unifiedBalance.getBalances({
+      token: "USDC",
+      sources: { adapter, chains },
+      includePending: true,
+      networkType: "testnet"
+    });
+  }
   window.ArqisSwap = {
     estimateSwapToUsdc,
     swapToUsdc,
-    getSwapStatus: getSwapStatus2
+    getSwapStatus: getSwapStatus2,
+    estimateUnifiedSpend,
+    spendUnifiedBalance,
+    depositUnifiedBalance,
+    getUnifiedBalances
   };
 })();
 /*! Bundled license information:
