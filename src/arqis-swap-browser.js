@@ -1,4 +1,4 @@
-import { AppKit } from '@circle-fin/app-kit';
+import { AppKit, TransferSpeed } from '@circle-fin/app-kit';
 import { createViemAdapterFromProvider } from '@circle-fin/adapter-viem-v2';
 
 const kit = new AppKit();
@@ -11,7 +11,7 @@ function kitKey() {
 function providerFrom(inputProvider) {
   const provider = inputProvider || window.ethereum;
   if (!provider || typeof provider.request !== 'function') {
-    throw new Error('No compatible browser wallet provider found. Connect MetaMask, Rabby, OKX Wallet, or another EIP-1193 wallet.');
+    throw new Error('No compatible browser wallet provider found. Connect an EIP-1193 browser wallet.');
   }
   return provider;
 }
@@ -122,6 +122,19 @@ function normalizeUnifiedDepositResult(result) {
   };
 }
 
+function normalizeBridgeResult(result) {
+  return {
+    amount: result?.amount || '',
+    token: result?.token || 'USDC',
+    state: result?.state || result?.status || '',
+    txHash: result?.txHash || result?.hash || '',
+    explorerUrl: result?.explorerUrl || (result?.txHash ? `https://testnet.arcscan.app/tx/${result.txHash}` : ''),
+    fees: result?.fees || [],
+    steps: result?.steps || [],
+    transferId: result?.transferId || '',
+  };
+}
+
 async function estimateSwapToUsdc({ provider, tokenIn, amountIn, slippageBps = 300 }) {
   assertConfig();
   installCircleProxyFetch();
@@ -218,6 +231,44 @@ async function getUnifiedBalances({ provider, chains = ['Ethereum_Sepolia', 'Bas
   });
 }
 
+async function estimateBridgeUsdcToArc({ provider, fromChain, amount, recipientAddress, transferSpeed = TransferSpeed.FAST, useForwarder = false }) {
+  assertConfig();
+  installCircleProxyFetch();
+  if (!fromChain) throw new Error('fromChain is required');
+  if (!amount) throw new Error('amount is required');
+  if (!recipientAddress) throw new Error('recipientAddress is required');
+  const adapter = await createUnifiedAdapter(provider);
+  const to = { adapter, chain: 'Arc_Testnet', recipientAddress };
+  if (useForwarder) to.useForwarder = true;
+  const estimate = await kit.estimateBridge({
+    from: { adapter, chain: fromChain },
+    to,
+    amount: String(amount),
+    token: 'USDC',
+    config: { transferSpeed },
+  });
+  return normalizeBridgeResult(estimate);
+}
+
+async function bridgeUsdcToArc({ provider, fromChain, amount, recipientAddress, transferSpeed = TransferSpeed.FAST, useForwarder = false }) {
+  assertConfig();
+  installCircleProxyFetch();
+  if (!fromChain) throw new Error('fromChain is required');
+  if (!amount) throw new Error('amount is required');
+  if (!recipientAddress) throw new Error('recipientAddress is required');
+  const adapter = await createUnifiedAdapter(provider);
+  const to = { adapter, chain: 'Arc_Testnet', recipientAddress };
+  if (useForwarder) to.useForwarder = true;
+  const result = await kit.bridge({
+    from: { adapter, chain: fromChain },
+    to,
+    amount: String(amount),
+    token: 'USDC',
+    config: { transferSpeed },
+  });
+  return normalizeBridgeResult(result);
+}
+
 window.ArqisSwap = {
   estimateSwapToUsdc,
   swapToUsdc,
@@ -226,4 +277,6 @@ window.ArqisSwap = {
   spendUnifiedBalance,
   depositUnifiedBalance,
   getUnifiedBalances,
+  estimateBridgeUsdcToArc,
+  bridgeUsdcToArc,
 };
