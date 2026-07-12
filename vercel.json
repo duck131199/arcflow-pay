@@ -9,7 +9,23 @@
       "destination": "/index.html"
     },
     {
+      "source": "/create-invoice/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/pay-invoice",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pay-invoice/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/move-usdc",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/move-usdc/",
       "destination": "/index.html"
     },
     {
@@ -17,7 +33,15 @@
       "destination": "/index.html"
     },
     {
+      "source": "/seller-console/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/wallet-setup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/wallet-setup/",
       "destination": "/index.html"
     }
   ]
