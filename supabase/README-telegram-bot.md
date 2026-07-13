@@ -22,9 +22,10 @@ Invoice/payment alert flow mirrors the local test backend:
 4. `telegram-payment-alert` sends two deduped alerts when bots are connected/tested:
    - B gets `✅ Invoice paid` / receipt.
    - A gets `💸 Payment received`.
-5. `telegram-expired-invoice-alert` can be run after invoices expire to mark unpaid/pending invoices expired and send two deduped alerts:
+5. `telegram-expired-invoice-alert` runs after invoices expire to mark unpaid/pending invoices expired and send two deduped alerts for fresh expiries only:
    - B gets `⌛ Invoice expired`.
    - A gets `⌛ Invoice expired` / seller console link.
+   - Old backlog invoices are marked expired without Telegram catch-up spam.
 
 Frontend never stores or sends chat IDs for invoice/payment alerts. Frontend never stores BotFather tokens after connect.
 

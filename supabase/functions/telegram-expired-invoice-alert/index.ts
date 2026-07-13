@@ -5,6 +5,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const TOKEN_KEY = Deno.env.get('TELEGRAM_TOKEN_ENCRYPTION_KEY') || '';
 const PUBLIC_APP_URL = 'https://www.arqis.site';
+const MAX_ALERT_AGE_MS = 30 * 60 * 1000;
 
 function json(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, x-client-info, apikey, content-type', 'access-control-allow-methods': 'POST, OPTIONS' } });
@@ -64,6 +65,11 @@ Deno.serve(async (req) => {
           headers: { prefer: 'return=minimal' },
           body: JSON.stringify({ status: 'expired' })
         });
+      }
+      const expiredAt = new Date(invoice.expires_at).getTime();
+      if (Date.now() - expiredAt > MAX_ALERT_AGE_MS) {
+        results.push({ invoice_id: invoice.id, skipped: true, reason: 'Invoice expired more than 30 minutes ago; marked expired without Telegram catch-up alert' });
+        continue;
       }
       const amountLine = `${clean(invoice.amount, '0.00')} ${clean(invoice.token, 'USDC')} · ${clean(invoice.invoice_no, 'INV')}`;
       const sellerUsername = clean(invoice.from_username, 'seller');
