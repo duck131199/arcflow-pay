@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
     const sellerUsername = clean(invoice.from_username, 'seller');
     const payerUsername = clean(invoice.to_username, 'payer');
     const sellerText = ['🧾 Invoice sent', '', amountLine, `To: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Expires: ${fmtDate(invoice.expires_at)}`, 'Status: Pending', '', 'View created invoices:', 'https://www.arqis.site/#tab-create'].join('\n');
-    const payerText = ['📩 New invoice to pay', '', amountLine, `From: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Due: ${fmtDate(invoice.expires_at)}`, 'Status: Pending', '', 'Pay invoice:', 'https://www.arqis.site/#tab-pay'].join('\n');
+    const payerText = ['📩 New invoice to pay', '', amountLine, `From: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Due: ${fmtDate(invoice.expires_at)}`, 'Status: Pending', '', 'Pay invoice:', 'https://www.arqis.site/pay-invoice'].join('\n');
     const results = [];
     results.push(await sendToUser({ invoiceId: invoice_id, sellerUsername, recipientUsername: sellerUsername, alertType: 'invoice_sent', text: sellerText }));
     results.push(await sendToUser({ invoiceId: invoice_id, sellerUsername, recipientUsername: payerUsername, alertType: 'invoice_received', text: payerText }));
