@@ -71,8 +71,8 @@ Deno.serve(async (req) => {
     const payerUsername = clean(invoice.to_username, 'payer');
     const shortTx = shortAddr(tx_hash);
     const paidAt = fmtDate(invoice.paid_at || new Date().toISOString());
-    const payerText = ['✅ Invoice paid', '', amountLine, `Paid to: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Paid at: ${paidAt}`, `Tx: ${shortTx}`, '', 'Receipt:', 'https://arqis-web.vercel.app/#tab-pay'].join('\n');
-    const sellerText = ['💸 Payment received', '', amountLine, `Paid by: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Paid at: ${paidAt}`, `Tx: ${shortTx}`, '', 'Open Seller Console:', 'https://arqis-web.vercel.app/#tab-console'].join('\n');
+    const payerText = ['✅ Invoice paid', '', amountLine, `Paid to: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Paid at: ${paidAt}`, `Tx: ${shortTx}`, '', 'Receipt:', 'https://www.arqis.site/#tab-pay'].join('\n');
+    const sellerText = ['💸 Payment received', '', amountLine, `Paid by: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Paid at: ${paidAt}`, `Tx: ${shortTx}`, '', 'Open Seller Console:', 'https://www.arqis.site/#tab-console'].join('\n');
     const results = [];
     results.push(await sendToUser({ invoiceId: invoice_id, sellerUsername, recipientUsername: payerUsername, alertType: 'payer_receipt', txHash: tx_hash, text: payerText }));
     results.push(await sendToUser({ invoiceId: invoice_id, sellerUsername, recipientUsername: sellerUsername, alertType: 'payment_received', txHash: tx_hash, text: sellerText }));

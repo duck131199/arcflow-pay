@@ -15,9 +15,9 @@ USDC invoice payments on Arc Testnet, with a seller-first console and future-rea
 
 ## Public app and docs
 
-- App: https://arqis-web.vercel.app/
-- Docs home: https://arqis-web.vercel.app/docs.html
-- Registry docs: https://arqis-web.vercel.app/docs/arc-testnet-registry.html
+- App: https://www.arqis.site/
+- Docs home: https://www.arqis.site/docs.html
+- Registry docs: https://www.arqis.site/docs/arc-testnet-registry.html
 - GitHub: https://github.com/duck131199/arcflow-pay
 
 ## Arc Testnet contract proof

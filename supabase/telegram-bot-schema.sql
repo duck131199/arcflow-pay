@@ -25,7 +25,7 @@ create table if not exists public.telegram_alert_deliveries (
   invoice_id uuid references public.arcflow_invoices(id),
   seller_username text not null,
   recipient_username text,
-  alert_type text not null check (alert_type in ('invoice_sent', 'invoice_received', 'payer_receipt', 'payment_received', 'test', 'invoice_created')),
+  alert_type text not null check (alert_type in ('invoice_sent', 'invoice_received', 'payer_receipt', 'payment_received', 'invoice_expired_seller', 'invoice_expired_payer', 'test', 'invoice_created')),
   tx_hash text,
   telegram_bot_username text,
   telegram_chat_id text,
@@ -42,7 +42,7 @@ alter table if exists public.telegram_alert_deliveries add column if not exists 
 -- Older drafts used narrower alert types and a table constraint on (invoice_id, alert_type).
 alter table if exists public.telegram_alert_deliveries drop constraint if exists telegram_alert_deliveries_alert_type_check;
 alter table if exists public.telegram_alert_deliveries add constraint telegram_alert_deliveries_alert_type_check
-  check (alert_type in ('invoice_sent', 'invoice_received', 'payer_receipt', 'payment_received', 'test', 'invoice_created')) not valid;
+  check (alert_type in ('invoice_sent', 'invoice_received', 'payer_receipt', 'payment_received', 'invoice_expired_seller', 'invoice_expired_payer', 'test', 'invoice_created')) not valid;
 alter table if exists public.telegram_alert_deliveries validate constraint telegram_alert_deliveries_alert_type_check;
 alter table if exists public.telegram_alert_deliveries drop constraint if exists telegram_alert_deliveries_invoice_id_alert_type_key;
 

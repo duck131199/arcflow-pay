@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://arqis-web.vercel.app/</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/create-invoice.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/pay-invoice.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/seller-console.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/circle-faucet-setup.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/future-roadmap.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/security-verification.html</loc></url>
-  <url><loc>https://arqis-web.vercel.app/docs/arc-testnet-registry.html</loc></url>
+  <url><loc>https://www.arqis.site/</loc></url>
+  <url><loc>https://www.arqis.site/docs.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/create-invoice.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/pay-invoice.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/seller-console.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/circle-faucet-setup.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/future-roadmap.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/security-verification.html</loc></url>
+  <url><loc>https://www.arqis.site/docs/arc-testnet-registry.html</loc></url>
 </urlset>
