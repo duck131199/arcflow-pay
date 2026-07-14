@@ -145,18 +145,27 @@ Deno.serve(async (req) => {
     }
     if (action === 'mark-submitted') {
       if (!isUuid(body.invoice_id) || typeof body.tx_hash !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(body.tx_hash)) return json({ error: 'valid invoice_id and tx_hash are required' }, 400);
-      await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(String(body.invoice_id))}&status=in.(unpaid,pending)`, {
+      const invoiceId = String(body.invoice_id);
+      const txHash = String(body.tx_hash);
+      const existingTx = await supabase(`arcflow_invoices?tx_hash=eq.${encodeURIComponent(txHash)}&select=id,status&limit=1`);
+      if (existingTx.length && existingTx[0].id !== invoiceId) return json({ error: 'Transaction hash already used', failure_reason: 'duplicate_tx_hash' }, 409);
+      const invoiceRows = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoiceId)}&select=id,status,expires_at&limit=1`);
+      const invoice = invoiceRows[0];
+      if (!invoice) return json({ error: 'Invoice not found' }, 404);
+      if (!['unpaid', 'pending'].includes(String(invoice.status || '').toLowerCase())) return json({ error: `Invoice is ${invoice.status || 'not payable'}` }, 409);
+      if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now()) return json({ error: 'Invoice expired', failure_reason: 'invoice_expired' }, 409);
+      await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoiceId)}&status=in.(unpaid,pending)`, {
         method: 'PATCH',
         headers: { prefer: 'return=minimal' },
         body: JSON.stringify({
           status: 'pending',
-          tx_hash: body.tx_hash,
+          tx_hash: txHash,
           payment_method: 'standard_arc_usdc',
-          payment_status: 'submitted',
+          payment_status: 'verifying',
           receipt_version: '1.1',
           settlement_chain: 'arc-testnet',
           source_chains: ['arc-testnet'],
-          verification_checks: { submitted: true }
+          verification_checks: { submitted: true, backend_verifying: true }
         })
       });
       return json({ ok: true });

@@ -54,6 +54,42 @@ async function supabase(path: string, init: RequestInit = {}) {
   if (!r.ok) throw new Error(await r.text());
   return r.status === 204 ? null : await r.json();
 }
+async function patchInvoiceVerification(invoiceId: string, patch: Record<string, unknown>) {
+  const path = `arcflow_invoices?id=eq.${encodeURIComponent(invoiceId)}&status=in.(unpaid,pending)&select=id`;
+  try {
+    await supabase(path, { method: 'PATCH', headers: { prefer: 'return=minimal' }, body: JSON.stringify(patch) });
+  } catch (error) {
+    if (!Object.prototype.hasOwnProperty.call(patch, 'failure_reason')) throw error;
+    const { failure_reason: _unused, ...fallbackPatch } = patch;
+    await supabase(path, { method: 'PATCH', headers: { prefer: 'return=minimal' }, body: JSON.stringify(fallbackPatch) });
+  }
+}
+async function markVerificationPending(invoiceId: string, txHash: string) {
+  await patchInvoiceVerification(invoiceId, {
+    status: 'pending',
+    tx_hash: txHash,
+    payment_method: 'standard_arc_usdc',
+    payment_status: 'verifying',
+    receipt_version: '1.1',
+    settlement_chain: 'arc-testnet',
+    source_chains: ['arc-testnet'],
+    verification_checks: { submitted: true, backend_verifying: true, failure_reason: null },
+    failure_reason: null
+  });
+}
+async function markVerificationFailed(invoiceId: string, txHash: string, reason: string) {
+  await patchInvoiceVerification(invoiceId, {
+    status: 'failed',
+    tx_hash: txHash,
+    payment_method: 'standard_arc_usdc',
+    payment_status: 'failed',
+    receipt_version: '1.1',
+    settlement_chain: 'arc-testnet',
+    source_chains: ['arc-testnet'],
+    verification_checks: { submitted: true, backend_verified: false, failure_reason: reason },
+    failure_reason: reason
+  });
+}
 async function sendTelegramPaymentAlert(invoiceId: string, txHash: string) {
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/telegram-payment-alert`, {
@@ -85,7 +121,7 @@ Deno.serve(async (req) => {
     if (!isUuid(invoice_id) || !isHash(tx_hash)) return json({ error: 'valid invoice_id and tx_hash are required' }, 400);
 
     const existing = await supabase(`arcflow_invoices?tx_hash=eq.${encodeURIComponent(tx_hash)}&select=id`);
-    if (existing.length && existing[0].id !== invoice_id) return json({ error: 'Transaction hash already used' }, 409);
+    if (existing.length && existing[0].id !== invoice_id) return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'duplicate_tx_hash', error: 'Transaction hash already used' }, 409);
 
     const rows = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&select=*`);
     const invoice = rows[0];
@@ -97,11 +133,17 @@ Deno.serve(async (req) => {
     if (!['unpaid', 'pending'].includes(invoice.status)) return json({ error: `Invoice is ${invoice.status}` }, 409);
     if (!isAddress(invoice.from_wallet)) return json({ error: 'Invoice recipient wallet is invalid' }, 409);
     if (invoice.token && String(invoice.token).toUpperCase() !== 'USDC') return json({ error: 'Invoice token is not USDC' }, 409);
-    if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now()) return json({ error: 'Invoice expired' }, 409);
+    if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now()) return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'invoice_expired', error: 'Invoice expired' }, 409);
 
     const receipt = await rpc('eth_getTransactionReceipt', [tx_hash]);
-    if (!receipt) return json({ status: 'pending', invoice_id }, 202);
-    if (String(receipt.status).toLowerCase() !== '0x1') return json({ error: 'Transaction failed' }, 409);
+    if (!receipt) {
+      await markVerificationPending(invoice_id, tx_hash);
+      return json({ status: 'pending', payment_status: 'verifying', invoice_id, tx_hash, failure_reason: null }, 202);
+    }
+    if (String(receipt.status).toLowerCase() !== '0x1') {
+      await markVerificationFailed(invoice_id, tx_hash, 'transaction_failed');
+      return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'transaction_failed', error: 'Transaction failed' }, 409);
+    }
 
     const tx = await rpc('eth_getTransactionByHash', [tx_hash]);
     const nativeExpectedAmount = amountToUnits(invoice.amount, NATIVE_USDC_DECIMALS);
@@ -119,7 +161,10 @@ Deno.serve(async (req) => {
       if (String(topics[2] || '').toLowerCase() !== expectedRecipientTopic) return false;
       try { return BigInt(log.data || '0x0') >= tokenExpectedAmount; } catch (_) { return false; }
     });
-    if (!nativeMatched && !tokenMatched) return json({ error: 'No matching native or token USDC transfer for invoice' }, 409);
+    if (!nativeMatched && !tokenMatched) {
+      await markVerificationFailed(invoice_id, tx_hash, 'recipient_or_amount_mismatch');
+      return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'recipient_or_amount_mismatch', error: 'No matching native or token USDC transfer for invoice' }, 409);
+    }
 
     const verifiedAt = new Date().toISOString();
     const patch = {

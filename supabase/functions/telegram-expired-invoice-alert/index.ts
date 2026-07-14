@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
       const sellerUsername = clean(invoice.from_username, 'seller');
       const payerUsername = clean(invoice.to_username, 'payer');
       const sellerText = ['⌛ Invoice expired', '', amountLine, `To: @${payerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Expired at: ${fmtDate(invoice.expires_at)}`, 'Status: Expired', '', 'Open Seller Console:', `${PUBLIC_APP_URL}/#tab-console`].join('\n');
-      const payerText = ['⌛ Invoice expired', '', amountLine, `From: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Expired at: ${fmtDate(invoice.expires_at)}`, 'Status: Expired', '', 'Open Pay Invoice:', `${PUBLIC_APP_URL}/#tab-pay`].join('\n');
+      const payerText = ['⌛ Invoice expired', '', amountLine, `From: @${sellerUsername}`, `Memo: ${clean(invoice.memo, '-')}`, '', `Expired at: ${fmtDate(invoice.expires_at)}`, 'Status: Expired', '', 'Open Pay Invoice:', `${PUBLIC_APP_URL}/pay-invoice`].join('\n');
       const invoiceResults = [];
       invoiceResults.push(await sendToUser({ invoiceId: invoice.id, sellerUsername, recipientUsername: sellerUsername, alertType: 'invoice_expired_seller', text: sellerText }));
       invoiceResults.push(await sendToUser({ invoiceId: invoice.id, sellerUsername, recipientUsername: payerUsername, alertType: 'invoice_expired_payer', text: payerText }));
