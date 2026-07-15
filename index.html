@@ -523,7 +523,36 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     }
     requestAnimationFrame(tick);
   }
-  function init(){bindLaunchButtons();startLandingTicker();}
+  function fallbackSetAppScreen(screen){
+    if(!screen)return;
+    document.body.classList.add('app-open');
+    var landing=document.querySelector('.landingShell');
+    var shell=document.querySelector('.shell');
+    if(landing)landing.style.display='none';
+    if(shell)shell.style.display='block';
+    if(typeof window.setScreen==='function'){window.setScreen(screen,true,'push');return;}
+    document.querySelectorAll('.screen').forEach(function(el){el.classList.toggle('active',el.id===screen);});
+    document.querySelectorAll('.tab').forEach(function(tab){tab.classList.toggle('active',tab.getAttribute('data-screen')===screen);});
+    var titles={home:['Arqis Dashboard','Choose what you want to do next: create, pay, move USDC, or manage seller tools.'],create:['Create Invoice','Create and send a verified USDC invoice.'],pay:['Pay Invoice','Open your invoice inbox and pay with Arc USDC.'],move:['Move USDC','Prepare Arc Testnet USDC before checkout.'],console:['Seller Console','Track invoices, receipts, and payment status.'],faucet:['Wallet / Setup','Email notifications are enabled. Finish @name, wallet, Arc Testnet, and optional Telegram setup.']};
+    var t=titles[screen]||titles.home;
+    var title=document.getElementById('appHeroTitle');var subtitle=document.getElementById('appHeroSubtitle');
+    if(title)title.textContent=t[0];if(subtitle)subtitle.textContent=t[1];
+    var paths={home:'/app',create:'/app/create-invoice',pay:'/app/pay-invoice',move:'/app/move-usdc',console:'/app/seller-console',faucet:'/app/wallet-setup'};
+    try{history.pushState(null,'',paths[screen]||'/app');}catch(_){}
+  }
+  function bindAppTabsFallback(){
+    document.querySelectorAll('.tabs .tab[data-screen]').forEach(function(tab){
+      if(tab.dataset.arqisTabBound==='1')return;
+      tab.dataset.arqisTabBound='1';
+      tab.addEventListener('click',function(e){
+        var screen=tab.getAttribute('data-screen');
+        if(!screen)return;
+        if(typeof window.setScreen==='function')return;
+        e.preventDefault();e.stopPropagation();fallbackSetAppScreen(screen);
+      },true);
+    });
+  }
+  function init(){bindLaunchButtons();bindAppTabsFallback();startLandingTicker();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
   window.addEventListener('load',init);
   setTimeout(init,250);
