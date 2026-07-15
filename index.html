@@ -437,6 +437,24 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     }catch(e){setEmailLoginStatus((e&&e.message)||'Unable to send code.','bad');}
     finally{if(btn){btn.disabled=false;btn.textContent='Send verification code';}}
   }
+  function enterArqisAppAfterAuth(){
+    document.body.classList.add('app-open');
+    var landing=document.querySelector('.landingShell');
+    var shell=document.querySelector('.shell');
+    if(landing)landing.style.display='none';
+    if(shell)shell.style.display='block';
+    if(typeof window.openAppPrototype==='function'){window.openAppPrototype('faucet');return;}
+    if(typeof window.setScreen==='function'){window.setScreen('faucet',true,'replace');return;}
+    document.querySelectorAll('.screen').forEach(function(el){el.classList.remove('active');});
+    var faucet=document.getElementById('faucet');
+    if(faucet)faucet.classList.add('active');
+    document.querySelectorAll('.tab').forEach(function(tab){tab.classList.toggle('active',tab.getAttribute('data-screen')==='faucet');});
+    var title=document.getElementById('appHeroTitle');
+    var subtitle=document.getElementById('appHeroSubtitle');
+    if(title)title.textContent='Wallet / Setup';
+    if(subtitle)subtitle.textContent='Email notifications are enabled. Finish @name, wallet, Arc Testnet, and optional Telegram setup.';
+    try{history.replaceState(null,'','/app/wallet-setup');}catch(_){location.hash='tab-faucet';}
+  }
   async function verifyLoginEmailCode(){
     var email=String(localStorage.getItem('arqis:pendingEmail')||((document.getElementById('loginEmailInput')||{}).value)||'').trim().toLowerCase();
     var code=loginOtpCode();
@@ -448,8 +466,7 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
       localStorage.setItem('arqis:authVerified','email');
       localStorage.setItem('arqis:googleEmail',email);
       closeArqisEmailModal();
-      if(typeof window.openAppPrototype==='function')window.openAppPrototype('faucet');
-      else location.href='/app/wallet-setup';
+      enterArqisAppAfterAuth();
     }catch(e){setEmailLoginStatus((e&&e.message)||'Invalid or expired code.','bad');}
     finally{if(btn){btn.disabled=false;btn.textContent='Verify and enter Arqis';}}
   }
