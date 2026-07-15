@@ -369,6 +369,24 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
   body.app-open .grid2{grid-template-columns:1fr!important;}
 }
 </style>
+<style id="arqis-mobile-app-polish-fix">
+@media(max-width:760px){
+  body.app-open .siteFooter,
+  body.app-open .brandTicker,
+  body.app-open .landingTicker{display:none!important;}
+  body.app-open .top{align-items:flex-start!important;}
+  body.app-open .tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;align-items:stretch!important;}
+  body.app-open .tab{min-width:0!important;flex:none!important;min-height:38px!important;padding:10px 8px!important;font-size:12.5px!important;}
+  body.app-open .tab[data-screen="home"]{display:none!important;}
+  body.app-open .tab[data-screen="faucet"]{grid-column:1 / 2!important;flex-basis:auto!important;}
+  body.app-open .top .docsLink{grid-column:2 / 3!important;display:inline-flex!important;width:100%!important;min-height:38px!important;padding:10px 8px!important;font-size:12.5px!important;justify-content:center!important;margin:0!important;align-self:stretch!important;}
+  body.app-open .roadmapBox{display:none!important;}
+  body.app-open .roadmapOption{display:none!important;}
+  body.app-open .card{overflow:hidden!important;}
+  body.app-open .roadmapIntro .pill,
+  body.app-open .warn{white-space:normal!important;word-break:normal!important;}
+}
+</style>
 </head>
 <body>
 <div class="landingShell" id="landingShell">
