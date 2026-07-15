@@ -351,6 +351,9 @@ body:not(.app-open) .landingTicker .brandTickerTrack{animation-delay:0s!importan
 body:not(.app-open) .landingTicker .brandTickerSet:first-child{padding-left:2px!important}
 body:not(.app-open) .landingTicker .brandTicker{mask-image:linear-gradient(90deg,#000 0%,#000 94%,transparent)!important}
 </style>
+<style id="arqis-ticker-variable-fix">
+body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(--ticker-x,0px),0,0)!important;animation:none!important;}
+</style>
 </head>
 <body>
 <div class="landingShell" id="landingShell">
@@ -421,7 +424,7 @@ body:not(.app-open) .landingTicker .brandTicker{mask-image:linear-gradient(90deg
       x-=dt*0.035;
       var w=width();
       if(-x>=w)x+=w;
-      track.style.transform='translate3d('+x.toFixed(2)+'px,0,0)';
+      track.style.setProperty('--ticker-x',x.toFixed(2)+'px');
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
