@@ -429,10 +429,20 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     return window.__arqisEmailClient;
   }
   async function emailAlertSettings(action,body){
-    var res=await emailClient().functions.invoke('email-alert-settings',{body:Object.assign({action:action},body||{})});
-    if(res.error)throw res.error;
-    if(res.data&&res.data.error)throw new Error(res.data.error);
-    return res.data||{};
+    var payload=Object.assign({action:action},body||{});
+    var res=await fetch('https://mvoisxrxysfherkxrrpt.supabase.co/functions/v1/email-alert-settings',{
+      method:'POST',
+      headers:{'content-type':'application/json','authorization':'Bearer sb_publishable_g7Hr_E_HePl5CcQF70RjGg__avh8bN8','apikey':'sb_publishable_g7Hr_E_HePl5CcQF70RjGg__avh8bN8'},
+      body:JSON.stringify(payload)
+    });
+    var data=null;
+    try{data=await res.json();}catch(_){data={error:await res.text().catch(function(){return ''})};}
+    if(!res.ok){
+      var msg=(data&&(data.error||data.message))||('Email service error '+res.status);
+      var err=new Error(msg);err.status=res.status;err.data=data;throw err;
+    }
+    if(data&&data.error)throw new Error(data.error);
+    return data||{};
   }
   async function sendLoginEmailCode(){
     var email=String((document.getElementById('loginEmailInput')||{}).value||'').trim().toLowerCase();
@@ -484,7 +494,7 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
       setTimeout(function(){var first=loginOtpDigits()[0];if(first)first.focus();},30);
     }catch(e){
       var msg=(e&&e.message)||'Unable to resend code.';
-      if(/wait|429|another code/i.test(msg)) msg='Please wait about 60 seconds before requesting another code.';
+      if((e&&e.status===429)||/wait|429|another code/i.test(msg)) msg='Please wait about 60 seconds before requesting another code, then tap Resend once.';
       setEmailLoginStatus(msg,'bad');
     }finally{if(btn){btn.disabled=false;btn.textContent='Resend code';}}
   }
