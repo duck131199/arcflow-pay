@@ -360,9 +360,10 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
   body.app-open .top{position:sticky!important;top:0!important;z-index:80!important;margin:0 -14px!important;padding:12px 14px 10px!important;background:rgba(7,24,39,.96)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid rgba(151,207,255,.18)!important;gap:10px!important;}
   body.app-open .top .brand{width:100%!important;min-width:0!important;}
   body.app-open .top .docsLink{display:none!important;}
-  body.app-open .tabs{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;width:100vw!important;max-width:100vw!important;margin:0 -14px!important;padding:2px 14px 8px!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch!important;scroll-snap-type:x proximity!important;touch-action:pan-x!important;}
-  body.app-open .tabs::-webkit-scrollbar{display:none!important;}
-  body.app-open .tab{flex:0 0 auto!important;white-space:nowrap!important;min-height:40px!important;padding:10px 13px!important;font-size:13px!important;line-height:1!important;position:relative!important;z-index:82!important;touch-action:manipulation!important;scroll-snap-align:start!important;}
+  body.app-open .tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important;width:100%!important;max-width:none!important;margin:2px 0 0!important;padding:0!important;overflow:visible!important;touch-action:auto!important;}
+  body.app-open .tab[data-screen="home"]{display:none!important;}
+  body.app-open .tab{width:100%!important;min-width:0!important;white-space:nowrap!important;min-height:42px!important;padding:11px 10px!important;font-size:13px!important;line-height:1!important;position:relative!important;z-index:82!important;touch-action:manipulation!important;text-align:center!important;justify-content:center!important;}
+  body.app-open .tab[data-screen="faucet"]{grid-column:1 / -1!important;}
   body.app-open .hero{margin:18px 0 18px!important;padding-bottom:18px!important;}
   body.app-open h1{font-size:34px!important;}
   body.app-open .grid2{grid-template-columns:1fr!important;}
@@ -502,11 +503,11 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     document.querySelectorAll('.tab').forEach(function(tab){tab.classList.toggle('active',tab.getAttribute('data-screen')===targetScreen);});
     var title=document.getElementById('appHeroTitle');
     var subtitle=document.getElementById('appHeroSubtitle');
-    var titles={home:['Arqis Dashboard','Welcome back. Your email is connected; continue from your saved Arqis account.'],faucet:['Wallet / Setup','Email notifications are enabled. Finish @name, wallet, Arc Testnet, and optional Telegram setup.']};
+    var titles={create:['Create Invoice','Welcome back. Your email is connected; continue creating verified USDC invoices.'],faucet:['Wallet / Setup','Email notifications are enabled. Finish @name, wallet, Arc Testnet, and optional Telegram setup.']};
     var t=titles[targetScreen]||titles.faucet;
     if(title)title.textContent=t[0];
     if(subtitle)subtitle.textContent=t[1];
-    try{history.replaceState(null,'',targetScreen==='home'?'/app':'/app/wallet-setup');}catch(_){location.hash='tab-'+targetScreen;}
+    try{history.replaceState(null,'',targetScreen==='create'?'/app/create-invoice':'/app/wallet-setup');}catch(_){location.hash='tab-'+targetScreen;}
     saveEmailSessionSnapshot(localStorage.getItem('arqis:googleEmail')||'');
   }
   async function verifyLoginEmailCode(){
@@ -521,7 +522,7 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
       localStorage.setItem('arqis:googleEmail',email);
       var existingAccount=restoreEmailSessionSnapshot(email);
       closeArqisEmailModal();
-      enterArqisAppAfterAuth(existingAccount?'home':'faucet');
+      enterArqisAppAfterAuth(existingAccount?'create':'faucet');
     }catch(e){setEmailLoginStatus((e&&e.message)||'Invalid or expired code.','bad');}
     finally{if(btn){btn.disabled=false;btn.textContent='Verify and enter Arqis';}}
   }
