@@ -1196,6 +1196,25 @@ bindBillToSync();
 sync();
 </script>
 
+
+<script id="arqis-docs-click-fix">
+(function(){
+  function bindDocsClick(){
+    document.querySelectorAll('.docsLink').forEach(function(link){
+      if(link.dataset.arqisDocsClickBound==='1')return;
+      link.dataset.arqisDocsClickBound='1';
+      link.setAttribute('href','docs.html');
+      link.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href='docs.html';
+      },true);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bindDocsClick);else bindDocsClick();
+  window.addEventListener('load',bindDocsClick);
+})();
+</script>
 </body>
 </html>
 
