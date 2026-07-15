@@ -59,7 +59,7 @@ async function proxyCircle(req, res, parsed) {
 
 async function serveStatic(req, res, parsed) {
   let pathname = decodeURIComponent(parsed.pathname);
-  const appRoutes = new Set(['/', '/create-invoice', '/pay-invoice', '/move-usdc', '/seller-console', '/wallet-setup']);
+  const appRoutes = new Set(['/', '/app', '/app/', '/app/create-invoice', '/app/create-invoice/', '/app/pay-invoice', '/app/pay-invoice/', '/app/move-usdc', '/app/move-usdc/', '/app/seller-console', '/app/seller-console/', '/app/wallet-setup', '/app/wallet-setup/', '/create-invoice', '/pay-invoice', '/move-usdc', '/seller-console', '/wallet-setup']);
   if (appRoutes.has(pathname)) pathname = '/index.html';
   const full = path.resolve(root, pathname.replace(/^\/+/, ''));
   if (!full.startsWith(root)) {

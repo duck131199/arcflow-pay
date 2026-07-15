@@ -1,6 +1,54 @@
 {
   "rewrites": [
     {
+      "source": "/app",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/create-invoice",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/create-invoice/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/pay-invoice",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/pay-invoice/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/move-usdc",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/move-usdc/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/seller-console",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/seller-console/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/wallet-setup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app/wallet-setup/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/home",
       "destination": "/home.html"
     },
