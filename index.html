@@ -356,15 +356,15 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
 </style>
 <style id="arqis-mobile-app-nav-fix">
 @media(max-width:760px){
-  body.app-open .shell{width:100%!important;max-width:none!important;padding:0 14px 28px!important;overflow:visible!important;}
-  body.app-open .top{position:sticky!important;top:0!important;z-index:80!important;margin:0 -14px!important;padding:12px 14px 10px!important;background:rgba(7,24,39,.96)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid rgba(151,207,255,.18)!important;gap:10px!important;}
-  body.app-open .top .brand{width:100%!important;min-width:0!important;}
-  body.app-open .top .docsLink{display:none!important;}
-  body.app-open .tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important;width:100%!important;max-width:none!important;margin:2px 0 0!important;padding:0!important;overflow:visible!important;touch-action:auto!important;}
+  body.app-open .shell{width:100%!important;max-width:none!important;padding:0 14px max(28px,calc(18px + env(safe-area-inset-bottom)))!important;overflow:visible!important;}
+  body.app-open .top{position:relative!important;top:auto!important;z-index:20!important;margin:0 -14px 6px!important;padding:12px 14px 10px!important;background:rgba(7,24,39,.92)!important;backdrop-filter:blur(10px)!important;border-bottom:1px solid rgba(151,207,255,.14)!important;gap:10px!important;}
+  body.app-open .top .brand{flex:1 1 auto!important;min-width:0!important;}
+  body.app-open .top .docsLink{display:inline-flex!important;flex:0 0 auto!important;min-height:34px!important;padding:8px 10px!important;font-size:12px!important;}
+  body.app-open .tabs{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;width:100%!important;max-width:none!important;margin:4px 0 0!important;padding:0!important;overflow:visible!important;touch-action:auto!important;}
   body.app-open .tab[data-screen="home"]{display:none!important;}
-  body.app-open .tab{width:100%!important;min-width:0!important;white-space:nowrap!important;min-height:42px!important;padding:11px 10px!important;font-size:13px!important;line-height:1!important;position:relative!important;z-index:82!important;touch-action:manipulation!important;text-align:center!important;justify-content:center!important;}
-  body.app-open .tab[data-screen="faucet"]{grid-column:1 / -1!important;}
-  body.app-open .hero{margin:18px 0 18px!important;padding-bottom:18px!important;}
+  body.app-open .tab{flex:1 1 calc(50% - 8px)!important;min-width:132px!important;white-space:nowrap!important;min-height:38px!important;padding:10px 9px!important;font-size:12.5px!important;line-height:1!important;position:relative!important;z-index:22!important;touch-action:manipulation!important;text-align:center!important;justify-content:center!important;}
+  body.app-open .tab[data-screen="faucet"]{flex-basis:100%!important;}
+  body.app-open .hero{margin:16px 0 18px!important;padding-bottom:18px!important;}
   body.app-open h1{font-size:34px!important;}
   body.app-open .grid2{grid-template-columns:1fr!important;}
 }
