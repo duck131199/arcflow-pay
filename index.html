@@ -745,7 +745,14 @@ function refreshSellerConsole(force=false){if(!state.wallet)return;if(state.txLo
 const SCREEN_PATHS={home:'/app',create:'/app/create-invoice',pay:'/app/pay-invoice',move:'/app/move-usdc',console:'/app/seller-console',faucet:'/app/wallet-setup'};
 const PATH_SCREENS={'/app':'home','/app/':'home','/app/create-invoice':'create','/app/create-invoice/':'create','/app/pay-invoice':'pay','/app/pay-invoice/':'pay','/app/move-usdc':'move','/app/move-usdc/':'move','/app/seller-console':'console','/app/seller-console/':'console','/app/wallet-setup':'faucet','/app/wallet-setup/':'faucet','/create-invoice':'create','/create-invoice/':'create','/pay-invoice':'pay','/pay-invoice/':'pay','/move-usdc':'move','/move-usdc/':'move','/seller-console':'console','/seller-console/':'console','/wallet-setup':'faucet','/wallet-setup/':'faucet'};
 
-function showLanding(){document.body.classList.remove('app-open')}
+function showLanding(){
+  if(screenFromPath()){
+    document.body.classList.add('app-open');
+    setScreen(screenFromPath(),true,'replace');
+    return;
+  }
+  document.body.classList.remove('app-open')
+}
 function openAppPrototype(id='create'){document.body.classList.add('app-open');setScreen(id||'create',true,'replace')}
 async function emailAlertSettings(action,body={}){if(!supabaseClient)throw new Error('Supabase is not configured');const {data,error}=await supabaseClient.functions.invoke('email-alert-settings',{body:{action,...body}});if(error)throw error;if(data&&data.error)throw new Error(data.error);return data||{}}
 function setEmailLoginStatus(text,cls=''){const el=document.getElementById('emailLoginStatus');if(!el)return;el.textContent=text;el.className='fieldHint '+cls}
