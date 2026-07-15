@@ -399,6 +399,60 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     modal.classList.remove('show');
     modal.setAttribute('aria-hidden','true');
   }
+  function setEmailLoginStatus(msg,type){
+    var el=document.getElementById('emailLoginStatus');
+    if(!el)return;
+    el.textContent=msg||'';
+    el.className='fieldHint '+(type||'');
+  }
+  function loginOtpDigits(){return Array.prototype.slice.call(document.querySelectorAll('#loginOtpBoxes .otpDigit'));}
+  function loginOtpCode(){return loginOtpDigits().map(function(i){return String(i.value||'').replace(/\D/g,'')}).join('');}
+  function emailClient(){
+    if(window.__arqisEmailClient)return window.__arqisEmailClient;
+    if(!window.supabase||!window.supabase.createClient)throw new Error('Email service is still loading. Try again in a moment.');
+    window.__arqisEmailClient=window.supabase.createClient('https://mvoisxrxysfherkxrrpt.supabase.co','sb_publishable_g7Hr_E_HePl5CcQF70RjGg__avh8bN8');
+    return window.__arqisEmailClient;
+  }
+  async function emailAlertSettings(action,body){
+    var res=await emailClient().functions.invoke('email-alert-settings',{body:Object.assign({action:action},body||{})});
+    if(res.error)throw res.error;
+    if(res.data&&res.data.error)throw new Error(res.data.error);
+    return res.data||{};
+  }
+  async function sendLoginEmailCode(){
+    var email=String((document.getElementById('loginEmailInput')||{}).value||'').trim().toLowerCase();
+    if(!/^\S+@\S+\.\S+$/.test(email)){setEmailLoginStatus('Enter a valid email address.','bad');return;}
+    var btn=document.getElementById('sendLoginEmailCodeBtn');
+    if(btn){btn.disabled=true;btn.textContent='Sending...';}
+    try{
+      await emailAlertSettings('send-auth-code',{email:email});
+      localStorage.setItem('arqis:pendingEmail',email);
+      var emailStep=document.getElementById('emailLoginStepEmail');
+      var codeStep=document.getElementById('emailLoginStepCode');
+      if(emailStep)emailStep.style.display='none';
+      if(codeStep)codeStep.style.display='block';
+      loginOtpDigits().forEach(function(i){i.value='';});
+      setEmailLoginStatus('Code sent to '+email+'. Enter the 6-digit code.','ok');
+      setTimeout(function(){var first=loginOtpDigits()[0];if(first)first.focus();},30);
+    }catch(e){setEmailLoginStatus((e&&e.message)||'Unable to send code.','bad');}
+    finally{if(btn){btn.disabled=false;btn.textContent='Send verification code';}}
+  }
+  async function verifyLoginEmailCode(){
+    var email=String(localStorage.getItem('arqis:pendingEmail')||((document.getElementById('loginEmailInput')||{}).value)||'').trim().toLowerCase();
+    var code=loginOtpCode();
+    if(code.length!==6){setEmailLoginStatus('Enter the 6-digit code.','bad');return;}
+    var btn=document.getElementById('verifyLoginEmailCodeBtn');
+    if(btn){btn.disabled=true;btn.textContent='Verifying...';}
+    try{
+      await emailAlertSettings('verify-auth-code',{email:email,code:code});
+      localStorage.setItem('arqis:authVerified','email');
+      localStorage.setItem('arqis:googleEmail',email);
+      closeArqisEmailModal();
+      if(typeof window.openAppPrototype==='function')window.openAppPrototype('faucet');
+      else location.href='/app/wallet-setup';
+    }catch(e){setEmailLoginStatus((e&&e.message)||'Invalid or expired code.','bad');}
+    finally{if(btn){btn.disabled=false;btn.textContent='Verify and enter Arqis';}}
+  }
   function bindLaunchButtons(){
     document.querySelectorAll('#launchAppBtn,.navLaunch').forEach(function(btn){
       if(btn.dataset.arqisLaunchBound==='1')return;
@@ -409,6 +463,15 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
     if(close&&!close.dataset.arqisCloseBound){close.dataset.arqisCloseBound='1';close.addEventListener('click',closeArqisEmailModal,true);}
     var modal=document.getElementById('emailLoginModal');
     if(modal&&!modal.dataset.arqisBackdropBound){modal.dataset.arqisBackdropBound='1';modal.addEventListener('click',function(e){if(e.target===modal)closeArqisEmailModal();},true);}
+    var send=document.getElementById('sendLoginEmailCodeBtn');
+    if(send&&!send.dataset.arqisSendBound){send.dataset.arqisSendBound='1';send.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();sendLoginEmailCode();},true);}
+    var verify=document.getElementById('verifyLoginEmailCodeBtn');
+    if(verify&&!verify.dataset.arqisVerifyBound){verify.dataset.arqisVerifyBound='1';verify.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();verifyLoginEmailCode();},true);}
+    var resend=document.getElementById('resendLoginEmailCodeBtn');
+    if(resend&&!resend.dataset.arqisResendBound){resend.dataset.arqisResendBound='1';resend.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();sendLoginEmailCode();},true);}
+    var change=document.getElementById('changeLoginEmailBtn');
+    if(change&&!change.dataset.arqisChangeBound){change.dataset.arqisChangeBound='1';change.addEventListener('click',function(e){e.preventDefault();var codeStep=document.getElementById('emailLoginStepCode');var emailStep=document.getElementById('emailLoginStepEmail');if(codeStep)codeStep.style.display='none';if(emailStep)emailStep.style.display='block';setEmailLoginStatus('Enter your email to receive a 6-digit verification code.');},true);}
+    loginOtpDigits().forEach(function(input,idx){if(input.dataset.arqisOtpBound)return;input.dataset.arqisOtpBound='1';input.addEventListener('input',function(){input.value=String(input.value||'').replace(/\D/g,'').slice(-1);if(input.value&&idx<5){var next=loginOtpDigits()[idx+1];if(next)next.focus();}});input.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!input.value&&idx>0){var prev=loginOtpDigits()[idx-1];if(prev)prev.focus();}if(e.key==='Enter')verifyLoginEmailCode();});});
   }
   function startLandingTicker(){
     var track=document.querySelector('.landingTicker .brandTickerTrack');
@@ -434,6 +497,8 @@ body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(-
   window.addEventListener('load',init);
   setTimeout(init,250);
   window.openArqisEmailModal=openArqisEmailModal;
+  window.sendLoginEmailCode=sendLoginEmailCode;
+  window.verifyLoginEmailCode=verifyLoginEmailCode;
 })();
 </script>
 <div class="arqis-wave-bg" aria-hidden="true"><svg viewBox="0 0 1440 900" preserveAspectRatio="none"><defs><linearGradient id="arqisWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="rgba(95, 191, 255, 0)"/><stop offset="45%" stop-color="rgba(95, 191, 255, 0.34)"/><stop offset="60%" stop-color="rgba(136, 216, 255, 0.46)"/><stop offset="100%" stop-color="rgba(95, 191, 255, 0)"/></linearGradient></defs><path class="wave wave-1" d="M-120 360 C 120 220, 260 520, 500 360 S 840 210, 1080 380 S 1320 560, 1560 330"/><path class="wave wave-2" d="M-120 470 C 160 300, 320 620, 560 440 S 900 280, 1140 500 S 1340 660, 1560 420"/><path class="wave wave-3" d="M-120 590 C 180 440, 340 720, 610 560 S 940 410, 1180 610 S 1390 760, 1560 520"/><path class="wave wave-4" d="M-160 310 C 80 180, 260 430, 520 300 S 880 170, 1120 340 S 1340 470, 1600 260"/><path class="wave wave-5" d="M-160 690 C 130 520, 330 790, 620 640 S 950 520, 1200 700 S 1420 830, 1600 610"/></svg></div>
