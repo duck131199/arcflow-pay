@@ -354,6 +354,20 @@ body:not(.app-open) .landingTicker .brandTicker{mask-image:linear-gradient(90deg
 <style id="arqis-ticker-variable-fix">
 body:not(.app-open) .landingTicker .brandTickerTrack{transform:translate3d(var(--ticker-x,0px),0,0)!important;animation:none!important;}
 </style>
+<style id="arqis-mobile-app-nav-fix">
+@media(max-width:760px){
+  body.app-open .shell{width:100%!important;max-width:none!important;padding:0 14px 28px!important;overflow:visible!important;}
+  body.app-open .top{position:sticky!important;top:0!important;z-index:80!important;margin:0 -14px!important;padding:12px 14px 10px!important;background:rgba(7,24,39,.96)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid rgba(151,207,255,.18)!important;gap:10px!important;}
+  body.app-open .top .brand{width:100%!important;min-width:0!important;}
+  body.app-open .top .docsLink{display:none!important;}
+  body.app-open .tabs{display:flex!important;flex-wrap:nowrap!important;gap:8px!important;width:100vw!important;max-width:100vw!important;margin:0 -14px!important;padding:2px 14px 8px!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch!important;scroll-snap-type:x proximity!important;touch-action:pan-x!important;}
+  body.app-open .tabs::-webkit-scrollbar{display:none!important;}
+  body.app-open .tab{flex:0 0 auto!important;white-space:nowrap!important;min-height:40px!important;padding:10px 13px!important;font-size:13px!important;line-height:1!important;position:relative!important;z-index:82!important;touch-action:manipulation!important;scroll-snap-align:start!important;}
+  body.app-open .hero{margin:18px 0 18px!important;padding-bottom:18px!important;}
+  body.app-open h1{font-size:34px!important;}
+  body.app-open .grid2{grid-template-columns:1fr!important;}
+}
+</style>
 </head>
 <body>
 <div class="landingShell" id="landingShell">
