@@ -141,10 +141,10 @@ html[data-theme="dark"] .brandTicker{display:block!important}
 
 /* Mobile header layout: keep nav desktop-like and scroll horizontally instead of wrapping */
 @media(max-width:900px){
-  .top{justify-content:flex-start!important;gap:10px!important;overflow-x:auto!important;overflow-y:hidden!important;flex-wrap:nowrap!important;white-space:nowrap!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
+  .top{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;flex-wrap:nowrap!important;white-space:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
   .top::-webkit-scrollbar{display:none!important}
-  .top>.brand,.top>.tabs,.top>.docsLink{flex:0 0 auto!important}
-  .top>.tabs{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;width:auto!important;max-width:none!important;overflow:visible!important}
+  .top>.brand,.top>.tabs,.top>.docsLink{flex:0 0 auto!important;min-width:max-content!important}
+  .top>.tabs{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:6px!important;width:max-content!important;max-width:none!important;overflow:visible!important;white-space:nowrap!important}
   .top>.tabs>.tab{flex:0 0 auto!important;white-space:nowrap!important;padding:9px 10px!important;font-size:13px!important}
   .top>.docsLink{white-space:nowrap!important;padding:9px 11px!important}
 }
