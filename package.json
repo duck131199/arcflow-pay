@@ -9,7 +9,7 @@
     "deploy:arc-testnet": "hardhat run scripts/deploy-arqis-registry.js --network arcTestnet",
     "spike:swap:estimate": "node scripts/arc-app-kit-swap-spike.mjs",
     "spike:swap:execute": "node scripts/arc-app-kit-swap-spike.mjs --execute",
-    "build:swap": "esbuild src/arqis-swap-browser.js --bundle --format=iife --global-name=ArqisSwapBundle --inject:src/browser-node-globals.js --define:global=globalThis --outfile=assets/arqis-swap.js",
+    "build:swap": "node scripts/build-swap.cjs",
     "dev": "node scripts/dev-server.mjs"
   },
   "devDependencies": {
