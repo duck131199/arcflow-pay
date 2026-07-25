@@ -10,6 +10,8 @@ const USDC_TOKEN = (Deno.env.get('USDC_TOKEN') || '0x360000000000000000000000000
 const USDC_DECIMALS = Number(Deno.env.get('USDC_DECIMALS') || '6');
 const NATIVE_USDC_DECIMALS = Number(Deno.env.get('NATIVE_USDC_DECIMALS') || '18');
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || '';
+const EMAIL_FROM = Deno.env.get('EMAIL_FROM') || 'Arqis <alerts@arqis.site>';
 
 function json(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -107,6 +109,112 @@ async function sendTelegramPaymentAlert(invoiceId: string, txHash: string) {
   }
 }
 
+function cleanEmail(v: unknown) {
+  const s = String(v || '').trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) && s.length <= 254 ? s : '';
+}
+function escapeHtml(v: unknown) {
+  return String(v ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch] || ch));
+}
+function detailRow(label: string, value: unknown) {
+  return `<tr><td style="padding:10px 0;font-size:13px;line-height:1.5;color:#667085;border-bottom:1px solid #eef2f7">${escapeHtml(label)}</td><td align="right" style="padding:10px 0;font-size:13px;line-height:1.5;color:#344054;font-weight:700;border-bottom:1px solid #eef2f7">${escapeHtml(value || '-')}</td></tr>`;
+}
+function displayNetwork(value: unknown) {
+  return String(value || 'arc-testnet').toLowerCase() === 'arc-testnet' ? 'Arc Testnet' : String(value || 'Arc Testnet');
+}
+function formatPaidAt(value: unknown) {
+  const date = new Date(String(value || ''));
+  if (Number.isNaN(date.getTime())) return String(value || '-');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+  const hour = String(date.getUTCHours()).padStart(2, '0');
+  const minute = String(date.getUTCMinutes()).padStart(2, '0');
+  return `${day} ${month} ${year} - ${hour}:${minute} UTC`;
+}
+function shortenTxHash(value: unknown) {
+  const hash = String(value || '');
+  return hash.length > 11 ? `${hash.slice(0, 6)}...${hash.slice(-5)}` : hash;
+}
+function invoiceDeepLink(invoice: Record<string, unknown>) {
+  return `https://www.arqis.site/app/pay-invoice?invoice_id=${encodeURIComponent(String(invoice.id || ''))}`;
+}
+function sellerInvoiceDeepLink(invoice: Record<string, unknown>) {
+  return `https://www.arqis.site/app/seller-console?invoice_id=${encodeURIComponent(String(invoice.id || ''))}`;
+}
+function emailLayout(title: string, intro: string, amountLabel: string, amountValue: string, rows: string, invoiceLink: string, ctaLabel = 'Open invoice') {
+  return `<!doctype html>
+<html>
+  <body style="margin:0;background:#f4f7fb;font-family:Inter,Arial,sans-serif;color:#111827">
+    <div style="display:none;max-height:0;overflow:hidden;color:transparent">${escapeHtml(intro)}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:28px 12px">
+      <tr><td align="center"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e8edf5;box-shadow:0 12px 32px rgba(15,23,42,.08)">
+        <tr><td style="padding:0;background:#ffffff"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#071827;border-radius:18px 18px 0 0;overflow:hidden"><tr><td valign="middle" style="padding:28px 0 28px 30px"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="padding-right:12px"><img src="https://arqis.site/assets/arqis-logo.png" width="44" alt="Arqis logo" style="display:block;border:0;width:44px;height:auto;border-radius:12px"></td><td valign="middle"><div style="font-size:22px;line-height:1;font-weight:800;letter-spacing:.08em;color:#ffffff">ARQIS</div><div style="margin-top:7px;font-size:13px;line-height:1.4;color:#c7d6e8">Stablecoin invoice payments on Arc Testnet</div></td></tr></table></td><td align="right" valign="middle" style="padding:22px 30px 22px 8px;width:86px">&nbsp;</td></tr></table><div style="padding:24px 30px 18px 30px"><div style="font-size:28px;line-height:1.18;font-weight:800;letter-spacing:-.03em;color:#101828">${escapeHtml(title)}</div><div style="margin-top:10px;font-size:15px;line-height:1.6;color:#667085">${escapeHtml(intro)}</div></div></td></tr>
+        <tr><td style="padding:26px 30px 10px 30px"><div style="font-size:13px;font-weight:700;color:#344054;margin-bottom:10px">${escapeHtml(amountLabel)}</div><div style="background:#f8fafc;border:1px solid #e5eaf2;border-radius:14px;padding:22px 18px;text-align:center;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.03em;color:#0f172a">${escapeHtml(amountValue)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-collapse:collapse">${rows}</table><div style="margin-top:18px;font-size:14px;line-height:1.65;color:#667085">This confirmation was sent after Arqis backend verification marked the invoice as <strong style="color:#344054">Paid</strong>.</div><div style="margin-top:18px"><a href="${escapeHtml(invoiceLink)}" style="display:block;width:100%;box-sizing:border-box;background:#071827;color:#ffffff;text-decoration:none;border-radius:999px;padding:12px 18px;font-weight:700;text-align:center">${escapeHtml(ctaLabel)}</a></div><div style="margin-top:18px;background:#f8fafc;border:1px solid #e5eaf2;border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.6;color:#475467"><strong style="color:#344054">Need help?</strong><br>Contact the Arqis team at <a href="mailto:support@arqis.site" style="color:#2563eb;text-decoration:none;font-weight:700">support@arqis.site</a>.</div></td></tr>
+        <tr><td style="padding:16px 30px 28px 30px"><div style="border-top:1px solid #eef2f7;padding-top:18px;font-size:13px;line-height:1.6;color:#98a2b3">Arqis payment emails are notifications only. Always verify payment details in your wallet or Arqis app before taking external action.</div></td></tr>
+      </table><div style="max-width:560px;text-align:left;padding:18px 8px 0 8px;font-size:12px;line-height:1.6;color:#98a2b3">Thanks for using Arqis.<br>Arqis Support Team<br><br>Arqis never asks for your seed phrase or private key.</div></td></tr>
+    </table>
+  </body>
+</html>`;
+}
+function paymentEmailHtml(kind: 'seller' | 'payer', invoice: Record<string, unknown>) {
+  const amount = `${invoice.amount} ${invoice.token || 'USDC'}`;
+  const invoiceId = invoice.invoice_no || invoice.id;
+  const paidAt = invoice.paid_at || invoice.verified_at || new Date().toISOString();
+  const isSeller = kind === 'seller';
+  const ctaUrl = isSeller ? sellerInvoiceDeepLink(invoice) : invoiceDeepLink(invoice);
+  const ctaLabel = isSeller ? 'View payment' : 'Open invoice';
+  const rows = [
+    detailRow(isSeller ? 'Paid by' : 'Paid to', `@${isSeller ? invoice.to_username : invoice.from_username}`),
+    detailRow('Invoice ID', invoiceId),
+    detailRow('Memo', invoice.memo),
+    detailRow('Network', displayNetwork(invoice.settlement_chain)),
+    detailRow('Paid At', formatPaidAt(paidAt)),
+    detailRow('Transaction Hash', shortenTxHash(invoice.tx_hash)),
+    detailRow('Status', 'Paid')
+  ].join('');
+  return emailLayout(
+    isSeller ? 'Your invoice has been paid' : 'Payment successful',
+    isSeller ? `@${invoice.to_username} paid your Arqis invoice.` : `Your payment to @${invoice.from_username} was successful.`,
+    isSeller ? 'Amount received' : 'Amount paid',
+    amount,
+    rows,
+    ctaUrl,
+    ctaLabel
+  );
+}
+async function getUserByUsername(username: unknown) {
+  const rows = await supabase(`arcflow_users?username=eq.${encodeURIComponent(String(username || ''))}&select=username,email,email_verified_at&limit=1`);
+  return rows[0] || null;
+}
+async function sendPaymentEmail(to: string, subject: string, text: string, html: string) {
+  if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: EMAIL_FROM, to, subject, text, html })
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(JSON.stringify(data));
+  return data;
+}
+async function sendPaymentConfirmationEmails(invoice: Record<string, unknown>) {
+  const [seller, payer] = await Promise.all([getUserByUsername(invoice.from_username), getUserByUsername(invoice.to_username)]);
+  const amount = `${invoice.amount} ${invoice.token || 'USDC'}`;
+  const invoiceId = invoice.invoice_no || invoice.id;
+  const paidAt = invoice.paid_at || invoice.verified_at || new Date().toISOString();
+  const baseDetails = `Invoice ID: ${invoiceId}\nMemo: ${invoice.memo || '-'}\nNetwork: ${invoice.settlement_chain || 'arc-testnet'}\nPaid At: ${paidAt}\nTransaction Hash: ${invoice.tx_hash}\nStatus: Paid`;
+  const results: Record<string, string> = { seller: 'skipped', payer: 'skipped' };
+  if (cleanEmail(seller?.email) && seller?.email_verified_at) {
+    await sendPaymentEmail(cleanEmail(seller.email), 'Your invoice has been paid', `Amount received: ${amount}\nPaid by: @${invoice.to_username}\n${baseDetails}`, paymentEmailHtml('seller', invoice));
+    results.seller = 'sent';
+  }
+  if (cleanEmail(payer?.email) && payer?.email_verified_at) {
+    await sendPaymentEmail(cleanEmail(payer.email), 'Payment successful', `Amount paid: ${amount}\nPaid to: @${invoice.from_username}\n${baseDetails}`, paymentEmailHtml('payer', invoice));
+    results.payer = 'sent';
+  }
+  return results;
+}
 Deno.serve(async (req) => {
   try {
     if (req.method === 'OPTIONS') return json({ ok: true });
@@ -192,8 +300,18 @@ Deno.serve(async (req) => {
       headers: { prefer: 'return=representation' },
       body: JSON.stringify(patch)
     });
-    if (Array.isArray(updated) && updated.length) await sendTelegramPaymentAlert(invoice_id, tx_hash);
-    return json({ status: 'paid', invoice_id, tx_hash });
+    let email_status: Record<string, string> = { seller: 'skipped', payer: 'skipped' };
+    if (Array.isArray(updated) && updated.length) {
+      const paidInvoice = { ...invoice, ...patch };
+      await sendTelegramPaymentAlert(invoice_id, tx_hash);
+      try {
+        email_status = await sendPaymentConfirmationEmails(paidInvoice);
+      } catch (error) {
+        console.error('payment confirmation email failed', error);
+        email_status = { seller: 'failed', payer: 'failed' };
+      }
+    }
+    return json({ status: 'paid', invoice_id, tx_hash, email_status });
   } catch (error) {
     console.error(error);
     return json({ error: 'Verification failed' }, 500);
