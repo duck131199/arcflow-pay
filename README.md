@@ -1,10 +1,10 @@
 # Arqis
 
-**Stablecoin-native invoice payments for Arc.**
+Arqis is a stablecoin-native invoice payment prototype built for Arc Testnet.
 
-Arqis is a seller-first invoice payment prototype for Arc Testnet. It focuses on a simple workflow: create an invoice, let the payer review and pay in testnet USDC, then give the seller a clear status and transaction reference.
+Instead of treating invoices as simple payment requests, Arqis focuses on a complete invoice lifecycle—from invoice creation to payment, receipt, and seller tracking.
 
-The current MVP is intentionally narrow. It proves the invoice and payment-reference experience first, while keeping the product direction ready for Arc's stablecoin-native liquidity, future quote previews, and cleaner settlement flows.
+The current MVP intentionally validates only the core USDC invoice flow. Future versions can build on Arc's liquidity infrastructure to introduce quote previews, liquidity-aware checkout, and more flexible settlement options without changing the core invoice experience.
 
 <p align="center">
   <img src="assets/readme/product-flow.svg" alt="Arqis product flow" width="760">
