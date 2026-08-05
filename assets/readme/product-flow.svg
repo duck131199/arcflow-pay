@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Arqis product flow</title>
+  <desc id="desc">Seller creates an invoice, payer reviews and pays with Arc Testnet USDC, Arqis records references, and seller reviews the receipt.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="100%" stop-color="#eef5ff"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1f3b6d" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#4f6f9f"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="360" rx="28" fill="url(#bg)"/>
+  <text x="48" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#14213d">How Arqis Works</text>
+  <text x="48" y="88" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" fill="#52627a">A narrow Arc Testnet MVP for invoice creation, payment, and seller receipt review.</text>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <g filter="url(#shadow)">
+      <rect x="48" y="132" width="150" height="142" rx="18" fill="url(#card)" stroke="#d9e6f8"/>
+      <circle cx="86" cy="169" r="20" fill="#e8f1ff"/>
+      <text x="86" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#2457a6">1</text>
+      <text x="74" y="213" font-size="17" font-weight="700" fill="#17233c">Create</text>
+      <text x="74" y="237" font-size="13" fill="#5d6b82">Seller creates</text>
+      <text x="74" y="255" font-size="13" fill="#5d6b82">an invoice</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="238" y="132" width="150" height="142" rx="18" fill="url(#card)" stroke="#d9e6f8"/>
+      <circle cx="276" cy="169" r="20" fill="#e8f1ff"/>
+      <text x="276" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#2457a6">2</text>
+      <text x="264" y="213" font-size="17" font-weight="700" fill="#17233c">Review</text>
+      <text x="264" y="237" font-size="13" fill="#5d6b82">Payer checks</text>
+      <text x="264" y="255" font-size="13" fill="#5d6b82">amount and seller</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="428" y="132" width="150" height="142" rx="18" fill="url(#card)" stroke="#d9e6f8"/>
+      <circle cx="466" cy="169" r="20" fill="#e8f1ff"/>
+      <text x="466" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#2457a6">3</text>
+      <text x="454" y="213" font-size="17" font-weight="700" fill="#17233c">Pay</text>
+      <text x="454" y="237" font-size="13" fill="#5d6b82">Payer sends</text>
+      <text x="454" y="255" font-size="13" fill="#5d6b82">testnet USDC</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="618" y="132" width="150" height="142" rx="18" fill="url(#card)" stroke="#d9e6f8"/>
+      <circle cx="656" cy="169" r="20" fill="#e8f1ff"/>
+      <text x="656" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#2457a6">4</text>
+      <text x="644" y="213" font-size="17" font-weight="700" fill="#17233c">Record</text>
+      <text x="644" y="237" font-size="13" fill="#5d6b82">Arqis stores</text>
+      <text x="644" y="255" font-size="13" fill="#5d6b82">payment refs</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="808" y="132" width="104" height="142" rx="18" fill="url(#card)" stroke="#d9e6f8"/>
+      <circle cx="846" cy="169" r="20" fill="#e8f1ff"/>
+      <text x="846" y="176" text-anchor="middle" font-size="18" font-weight="700" fill="#2457a6">5</text>
+      <text x="834" y="213" font-size="17" font-weight="700" fill="#17233c">Track</text>
+      <text x="834" y="237" font-size="13" fill="#5d6b82">Seller</text>
+      <text x="834" y="255" font-size="13" fill="#5d6b82">console</text>
+    </g>
+
+    <path d="M202 203 H232" stroke="#4f6f9f" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M392 203 H422" stroke="#4f6f9f" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M582 203 H612" stroke="#4f6f9f" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <path d="M772 203 H802" stroke="#4f6f9f" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+  </g>
+
+  <rect x="48" y="306" width="864" height="1" fill="#d9e6f8"/>
+  <text x="48" y="333" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" fill="#65748b">Current MVP: USDC-first Arc Testnet invoices. Future direction: quote-ready, liquidity-aware settlement flows.</text>
+</svg>

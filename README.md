@@ -1,67 +1,153 @@
-# Arqis Prototype
+# Arqis
 
-Arqis is a seller-first stablecoin invoice payment prototype built around Arc.
+**Stablecoin-native invoice payments for Arc.**
 
-**Positioning:** stablecoin-native invoice payments, quote-ready for Arc liquidity.
+Arqis is a seller-first invoice payment prototype for Arc Testnet. It focuses on a simple workflow: create an invoice, let the payer review and pay in testnet USDC, then give the seller a clear status and transaction reference.
 
-Arqis is built for Arc's stablecoin-native ecosystem, where deep onchain liquidity can make B2B payments more flexible. As Arc brings leading swap infrastructure like Uniswap into the ecosystem, invoices can evolve from static payment requests into quote-ready settlement flows.
+The current MVP is intentionally narrow. It proves the invoice and payment-reference experience first, while keeping the product direction ready for Arc's stablecoin-native liquidity, future quote previews, and cleaner settlement flows.
 
-The current prototype focuses on validating a clear USDC invoice flow on Arc Testnet first. Future versions can add liquidity-aware quote previews, multi-asset payer routing, production APIs, and automated settlement operations.
+<p align="center">
+  <img src="assets/readme/product-flow.svg" alt="Arqis product flow" width="760">
+</p>
 
-## MVP
-
-The current prototype focuses on four sections:
-
-1. **Create Invoice** — seller creates a simple invoice for another registered Arqis testnet user.
-2. **Pay Invoice** — payer chooses an available Arc Testnet asset/source and submits a testnet payment.
-3. **Seller Console** — seller reviews invoice payments and transaction details.
-4. **Circle Faucet / Setup** — testnet helper for getting Arc Testnet USDC.
-
-## Why Arc
-
-Arc is purpose-built for stablecoin-native applications. That makes Arqis a natural fit for invoice payments where sellers want predictable settlement and payers may eventually want more flexible funding options.
-
-Arqis should not try to become a swap engine. Instead, it can focus on the invoice, checkout, receipt, and settlement UX while staying ready to use Arc ecosystem liquidity as infrastructure becomes available.
-
-## Product Direction
-
-Arqis starts with a simple invoice lifecycle:
+## How Arqis Works
 
 ```text
 Seller creates an invoice
-Invoice appears in the payer inbox
-Payer reviews and pays the invoice
-Payment settles on Arc
-Seller tracks status and receipt in Seller Console
+Payer receives and reviews the invoice
+Payer pays with Arc Testnet USDC
+Arqis records invoice/payment references
+Seller reviews status and transaction details
 ```
 
-Next product direction:
+Arqis is not trying to become a swap engine or custody layer. The app owns the invoice, checkout, receipt, and seller-console experience. Arc infrastructure can later power quote-ready payment routes and liquidity-aware settlement.
 
-- **Quote-ready invoices** — show a settlement preview before payment.
-- **Liquidity-aware checkout** — payer can understand what they pay and what the seller receives.
-- **Clean seller settlement** — seller receives the preferred settlement asset, starting with USDC.
-- **Route transparency** — future swap/route details should be visible to the payer before confirmation.
+## Current MVP
+
+The prototype currently centers on four app sections:
+
+1. **Create Invoice** — a seller creates a simple invoice for another registered Arqis testnet user.
+2. **Pay Invoice** — the payer reviews the invoice and submits a testnet USDC payment.
+3. **Seller Console** — the seller tracks invoice status, payment references, and transaction details.
+4. **Circle Faucet / Setup** — setup helper for getting Arc Testnet USDC and preparing a wallet.
+
+The MVP is built to validate whether the invoice flow is understandable before expanding into richer payment routing.
+
+## Current Scope / Boundaries
+
+Current scope:
+
+- Arc Testnet only.
+- USDC-first invoice flow.
+- Client-side prototype UX.
+- App-owned invoice registry proof events and payment-reference records.
+- Seller and payer flows for product validation.
+
+Current boundaries:
+
+- Not production payment verification.
+- Not a custody contract.
+- Not a swap engine.
+- Not a bridge.
+- Not automated settlement operations.
+- Not a replacement for Circle, USDC, CCTP, Arcscan, or Arc ecosystem liquidity infrastructure.
+
+## Research & Future Direction
+
+Arqis is positioned for stablecoin-native B2B payments on Arc. Future work can explore:
+
+- **Quote-ready invoices** — show the payer a settlement preview before payment.
+- **Liquidity-aware checkout** — make funding and settlement expectations clear before confirmation.
+- **Multi-asset payer routing** — allow payers to fund from supported Arc assets while sellers receive their preferred settlement asset.
+- **Route transparency** — display route, fees, and expected output before payment.
+- **Production APIs** — support programmatic invoice creation, status updates, and reconciliation.
+- **Automated settlement operations** — move from manual/testnet references toward production-grade settlement and verification.
+
+## Requirements
+
+- Node.js 20+ recommended.
+- npm.
+- A browser wallet configured for Arc Testnet.
+- Arc Testnet USDC for testing.
+- Optional: Supabase/project environment variables if testing connected data flows.
 
 ## Open Locally
+
+Install dependencies if needed:
+
+```bash
+npm install
+```
+
+Run the local dev server:
+
+```bash
+npm run dev
+```
+
+Then open the local URL printed by the dev server.
+
+For a static-only review, you can also open:
 
 ```text
 index.html
 ```
 
-Or serve the folder with a local static server and open:
+Or serve the folder with any local static server and open:
 
 ```text
 http://127.0.0.1:8787/index.html
 ```
 
-## Docs
+## npm Scripts
 
-- [Overview](docs/overview.md)
-- [Product Flow](docs/product-flow.md)
-- [MVP Sections](docs/mvp-sections.md)
-- [Arc Testnet Setup](docs/arc-testnet-setup.md)
-- [Arc Testnet Registry](docs/arc-testnet-registry.html)
-- [Future Roadmap](docs/future-roadmap.md)
+```text
+npm run dev                  Start the local static/dev server
+npm run compile              Compile Hardhat contracts
+npm run test                 Run Hardhat tests
+npm run deploy:arc-testnet   Deploy the Arqis registry contract to Arc Testnet
+npm run spike:swap:estimate  Run the Arc App Kit swap estimate spike
+npm run spike:swap:execute   Run the Arc App Kit swap execution spike
+npm run build:swap           Build swap-related client assets
+```
+
+## Repository Structure
+
+```text
+.
+├── index.html
+├── assets/
+│   └── readme/
+│       ├── product-flow.svg
+│       └── architecture.svg
+├── contracts/
+├── docs/
+├── scripts/
+├── test/
+├── hardhat.config.js
+├── package.json
+└── README.md
+```
+
+## Current Status
+
+This is a testnet prototype. Some docs, screens, and examples may be placeholders for product review. Live wallet balances and transaction rows depend on the connected wallet, Arc Testnet, Arcscan, and any configured backend/data services.
+
+Quote-ready and liquidity-aware flows are product direction notes. The current MVP does not claim to perform live swaps, bridge assets, custody funds, or execute automated payment routing.
+
+## Technical Architecture
+
+<p align="center">
+  <img src="assets/readme/architecture.svg" alt="Arqis technical architecture" width="760">
+</p>
+
+At a high level, Arqis separates the product UX from the infrastructure it depends on:
+
+- **Frontend app** — invoice creation, payer checkout, seller console, and setup helpers.
+- **Wallet / Arc Testnet** — user signing, testnet USDC transfers, and transaction submission.
+- **ArqisInvoiceRegistry** — app-owned testnet proof contract for invoice/payment-reference events.
+- **Data layer / services** — prototype storage and operational state where configured.
+- **External explorers and infrastructure** — Arcscan, Circle/USDC tooling, and future Arc liquidity integrations.
 
 ## Arc Testnet Contract Proof
 
@@ -79,8 +165,11 @@ Example createInvoice tx: 0x3a46fac6c204ee75fac379c9e9569eddfa8f7ff8e48b979fe528
 
 This contract is not a custody contract, swap engine, bridge, or replacement for USDC/CCTP infrastructure. It records app-specific Arqis invoice proof events and payment transaction references for the testnet MVP. Full production payment verification is planned separately.
 
-## Status
+## Documentation
 
-This is a testnet prototype. Some docs/screens may use placeholder examples for product review; live wallet balances and transaction rows depend on the connected wallet, Arc Testnet, Arcscan, and Supabase availability. Do not treat the current client-side MVP as production payment verification.
-
-Quote-ready and liquidity-aware flows are product direction notes, not claims that the current MVP performs live swaps or automated routing.
+- [Overview](docs/overview.md)
+- [Product Flow](docs/product-flow.md)
+- [MVP Sections](docs/mvp-sections.md)
+- [Arc Testnet Setup](docs/arc-testnet-setup.md)
+- [Arc Testnet Registry](docs/arc-testnet-registry.html)
+- [Future Roadmap](docs/future-roadmap.md)
