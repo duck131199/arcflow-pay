@@ -12,13 +12,7 @@ The current MVP intentionally validates only the core USDC invoice flow. Future 
 
 ## How Arqis Works
 
-```text
-Seller creates an invoice
-Payer receives and reviews the invoice
-Payer pays with Arc Testnet USDC
-Arqis records invoice/payment references
-Seller reviews status and transaction details
-```
+The diagram above shows the full MVP invoice lifecycle: create, review, pay, record, and track. Arqis uses this flow to validate the invoice experience first, before expanding into more advanced settlement capabilities.
 
 Arqis is not trying to become a swap engine or custody layer. The app owns the invoice, checkout, receipt, and seller-console experience. Arc infrastructure can later power quote-ready payment routes and liquidity-aware settlement.
 
@@ -65,6 +59,8 @@ Arqis is positioned for stablecoin-native B2B payments on Arc. Future work can e
 
 ## Requirements
 
+To explore the prototype locally you'll need:
+
 - Node.js 20+ recommended.
 - npm.
 - A browser wallet configured for Arc Testnet.
@@ -86,6 +82,8 @@ npm run dev
 ```
 
 Then open the local URL printed by the dev server.
+
+Alternatively, you can open `index.html` directly for a static preview.
 
 For a static-only review, you can also open:
 
@@ -149,6 +147,8 @@ At a high level, Arqis separates the product UX from the infrastructure it depen
 - **Data layer / services** — prototype storage and operational state where configured.
 - **External explorers and infrastructure** — Arcscan, Circle/USDC tooling, and future Arc liquidity integrations.
 
+The current prototype is backed by a lightweight application-owned registry contract used to record invoice and payment-reference proofs on Arc Testnet.
+
 ## Arc Testnet Contract Proof
 
 Arqis has an app-owned Arc Testnet contract for provenance and lightweight invoice/payment-reference proof.
@@ -173,3 +173,5 @@ This contract is not a custody contract, swap engine, bridge, or replacement for
 - [Arc Testnet Setup](docs/arc-testnet-setup.md)
 - [Arc Testnet Registry](docs/arc-testnet-registry.html)
 - [Future Roadmap](docs/future-roadmap.md)
+
+Arqis is currently focused on an invoice-first user experience. The MVP validates the core invoice flow before expanding into quote-ready, liquidity-aware settlement capabilities. Future versions can build on Arc's infrastructure while keeping the invoice at the center of the product experience.
