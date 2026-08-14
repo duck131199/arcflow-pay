@@ -2,14 +2,19 @@
 // Browser clients submit invoice_id + tx_hash; this function verifies Arc Testnet USDC transfer
 // before marking the invoice paid with the Supabase service role.
 
+import { keccak_256 } from 'npm:@noble/hashes@1.3.2/sha3';
+
 const ARC_RPC_URL = Deno.env.get('ARC_RPC_URL') || 'https://rpc.testnet.arc.network';
 const ARC_CHAIN_ID = (Deno.env.get('ARC_CHAIN_ID') || '0x4cef52').toLowerCase(); // 5042002
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const ARC_MEMO_CONTRACT = '0x5294e9927c3306dcbadb03fe70b92e01ccede505';
 const USDC_TOKEN = (Deno.env.get('USDC_TOKEN') || '0x3600000000000000000000000000000000000000').toLowerCase();
 const USDC_DECIMALS = Number(Deno.env.get('USDC_DECIMALS') || '6');
 const NATIVE_USDC_DECIMALS = Number(Deno.env.get('NATIVE_USDC_DECIMALS') || '18');
 const TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const MEMO_EVENT_TOPIC = '0xeb15ee720798341c37739df41be53acfbbf70ae6802dade35457beec6e47a5e4';
+const TRANSFER_SELECTOR = '0xa9059cbb';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || '';
 const EMAIL_FROM = Deno.env.get('EMAIL_FROM') || 'Arqis <alerts@arqis.site>';
 
@@ -27,6 +32,30 @@ function isHash(v: unknown) { return typeof v === 'string' && /^0x[0-9a-fA-F]{64
 function isUuid(v: unknown) { return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v); }
 function isAddress(v: unknown) { return typeof v === 'string' && /^0x[0-9a-fA-F]{40}$/.test(v); }
 function padAddress(addr: string) { return addr.toLowerCase().replace(/^0x/, '').padStart(64, '0'); }
+function bytesToHex(bytes: Uint8Array) { return '0x' + [...bytes].map((b) => b.toString(16).padStart(2, '0')).join(''); }
+function hexToBytes(hex: string) {
+  const clean = String(hex || '').replace(/^0x/, '');
+  if (clean.length % 2 || !/^[0-9a-fA-F]*$/.test(clean)) throw new Error('Invalid hex');
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = Number.parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  return out;
+}
+function keccakHex(bytes: Uint8Array) { return bytesToHex(keccak_256(bytes)).toLowerCase(); }
+function keccakUtf8(value: string) { return keccakHex(new TextEncoder().encode(value)); }
+function uint256Word(value: bigint) { return value.toString(16).padStart(64, '0'); }
+function transferData(to: string, amount: bigint) { return (TRANSFER_SELECTOR + padAddress(to) + uint256Word(amount)).toLowerCase(); }
+function utf8Hex(value: unknown) { return bytesToHex(new TextEncoder().encode(String(value || ''))).toLowerCase(); }
+function memoIdForInvoice(invoiceId: unknown) { return keccakUtf8(`arqis:invoice:${String(invoiceId || '').trim().toLowerCase()}`); }
+function decodeAbiBytes(data: string, offsetWordIndex: number) {
+  const clean = String(data || '').replace(/^0x/, '');
+  const offsetHex = clean.slice(offsetWordIndex * 64, offsetWordIndex * 64 + 64);
+  if (!offsetHex) return '';
+  const start = Number(BigInt('0x' + offsetHex)) * 2;
+  const lenHex = clean.slice(start, start + 64);
+  if (!lenHex) return '0x';
+  const len = Number(BigInt('0x' + lenHex));
+  return ('0x' + clean.slice(start + 64, start + 64 + len * 2)).toLowerCase();
+}
 function amountToUnits(value: unknown, decimals = USDC_DECIMALS) {
   const raw = String(value ?? '0').trim();
   if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error('Invalid invoice amount');
@@ -238,10 +267,15 @@ Deno.serve(async (req) => {
       if (String(invoice.tx_hash || '').toLowerCase() === String(tx_hash).toLowerCase()) await sendTelegramPaymentAlert(invoice_id, tx_hash);
       return json({ status: 'paid', invoice_id, tx_hash: invoice.tx_hash || tx_hash });
     }
-    if (!['unpaid', 'pending'].includes(invoice.status)) return json({ error: `Invoice is ${invoice.status}` }, 409);
+    const isSubmittedVerification = String(invoice.payment_status || '').toLowerCase() === 'verifying'
+      && isHash(invoice.tx_hash)
+      && String(invoice.tx_hash || '').toLowerCase() === String(tx_hash).toLowerCase();
+    const isSubmittedExpiredVerification = String(invoice.status || '').toLowerCase() === 'expired' && isSubmittedVerification;
+    if (!['unpaid', 'pending'].includes(String(invoice.status || '').toLowerCase()) && !isSubmittedExpiredVerification) return json({ error: `Invoice is ${invoice.status}` }, 409);
     if (!isAddress(invoice.from_wallet)) return json({ error: 'Invoice recipient wallet is invalid' }, 409);
+    if (!isAddress(invoice.to_wallet)) return json({ error: 'Invoice payer wallet is invalid' }, 409);
     if (invoice.token && String(invoice.token).toUpperCase() !== 'USDC') return json({ error: 'Invoice token is not USDC' }, 409);
-    if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now()) return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'invoice_expired', error: 'Invoice expired' }, 409);
+    if (invoice.expires_at && new Date(invoice.expires_at).getTime() < Date.now() && !isSubmittedVerification) return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'invoice_expired', error: 'Invoice expired' }, 409);
 
     const receipt = await rpc('eth_getTransactionReceipt', [tx_hash]);
     if (!receipt) {
@@ -260,6 +294,7 @@ Deno.serve(async (req) => {
       && (() => { try { return BigInt(tx.value || '0x0') >= nativeExpectedAmount; } catch (_) { return false; } })();
 
     const expectedRecipientTopic = '0x' + padAddress(invoice.from_wallet);
+    const expectedPayerTopic = '0x' + padAddress(String(invoice.to_wallet || ''));
     const tokenExpectedAmount = amountToUnits(invoice.amount, USDC_DECIMALS);
     const logs = Array.isArray(receipt.logs) ? receipt.logs : [];
     const tokenMatched = logs.some((log) => {
@@ -269,7 +304,33 @@ Deno.serve(async (req) => {
       if (String(topics[2] || '').toLowerCase() !== expectedRecipientTopic) return false;
       try { return BigInt(log.data || '0x0') >= tokenExpectedAmount; } catch (_) { return false; }
     });
-    if (!nativeMatched && !tokenMatched) {
+    const expectedTransferData = transferData(invoice.from_wallet, tokenExpectedAmount);
+    const expectedMemoId = memoIdForInvoice(invoice.id);
+    const expectedCallDataHash = keccakHex(hexToBytes(expectedTransferData));
+    const expectedMemoData = utf8Hex(invoice.memo);
+    const memoTx = tx && String(tx.to || '').toLowerCase() === ARC_MEMO_CONTRACT;
+    const memoTransferMatched = logs.some((log) => {
+      const topics = log.topics || [];
+      if (String(log.address || '').toLowerCase() !== USDC_TOKEN) return false;
+      if (String(topics[0] || '').toLowerCase() !== TRANSFER_TOPIC) return false;
+      if (String(topics[1] || '').toLowerCase() !== expectedPayerTopic) return false;
+      if (String(topics[2] || '').toLowerCase() !== expectedRecipientTopic) return false;
+      try { return BigInt(log.data || '0x0') === tokenExpectedAmount; } catch (_) { return false; }
+    });
+    const memoEventMatched = logs.some((log) => {
+      const topics = log.topics || [];
+      if (String(log.address || '').toLowerCase() !== ARC_MEMO_CONTRACT) return false;
+      if (String(topics[0] || '').toLowerCase() !== MEMO_EVENT_TOPIC) return false;
+      if (String(topics[1] || '').toLowerCase() !== expectedPayerTopic) return false;
+      if (String(topics[2] || '').toLowerCase() !== '0x' + padAddress(USDC_TOKEN)) return false;
+      if (String(topics[3] || '').toLowerCase() !== expectedMemoId) return false;
+      const callDataHash = ('0x' + String(log.data || '').replace(/^0x/, '').slice(0, 64)).toLowerCase();
+      if (callDataHash !== expectedCallDataHash) return false;
+      return decodeAbiBytes(String(log.data || ''), 1) === expectedMemoData;
+    });
+    const memoMatched = memoTx && memoTransferMatched && memoEventMatched;
+    const paymentMatched = memoTx ? memoMatched : nativeMatched || tokenMatched;
+    if (!paymentMatched) {
       await markVerificationFailed(invoice_id, tx_hash, 'recipient_or_amount_mismatch');
       return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'recipient_or_amount_mismatch', error: 'No matching native or token USDC transfer for invoice' }, 409);
     }
@@ -290,16 +351,21 @@ Deno.serve(async (req) => {
         recipient: true,
         amount: true,
         token: true,
+        memo: memoMatched,
         tx_success: true,
         backend_verified: true
       },
       failure_reason: null
     };
-    const updated = await supabase(`arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=in.(unpaid,pending)&select=id`, {
+    const paidUpdateFilter = isSubmittedExpiredVerification
+      ? `arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=eq.expired&payment_status=eq.verifying&tx_hash=eq.${encodeURIComponent(tx_hash)}&select=id`
+      : `arcflow_invoices?id=eq.${encodeURIComponent(invoice_id)}&status=in.(unpaid,pending)&select=id`;
+    const updated = await supabase(paidUpdateFilter, {
       method: 'PATCH',
       headers: { prefer: 'return=representation' },
       body: JSON.stringify(patch)
     });
+    if (!Array.isArray(updated) || updated.length !== 1) return json({ status: 'failed', invoice_id, tx_hash, failure_reason: 'paid_update_not_applied', error: 'Paid update was not applied' }, 409);
     let email_status: Record<string, string> = { seller: 'skipped', payer: 'skipped' };
     if (Array.isArray(updated) && updated.length) {
       const paidInvoice = { ...invoice, ...patch };
