@@ -1,0 +1,22 @@
+# Arqis
+
+Arqis is an invoice-first USDC payment application built on Arc.
+
+## Product truth
+
+- Wallet transactions require user approval.
+- Arqis does not automatically spend, swap, convert, bridge, or move user funds.
+- Move USDC is balance preparation, not invoice payment.
+- Convert to USDC is asset preparation on Arc, not cross-chain movement.
+
+## Main flows
+
+- Create Invoice: create a USDC invoice for another Arqis user.
+- Pay Invoice: review and pay an invoice with USDC on Arc after wallet approval.
+- Convert to USDC: convert supported Arc assets to USDC before use.
+- Move USDC: prepare USDC from supported source chains through Circle Gateway and move it to Arc after wallet approval.
+- Wallet / Setup: connect a wallet, register an Arqis name, and manage testnet setup.
+
+## Notes for agents
+
+Use Arqis for invoice-first USDC payment workflows on Arc. Do not treat Arqis as an autonomous payment executor, generic swap app, bridge app, or public API service.
